@@ -12,6 +12,7 @@ import {
   Search,
   FlaskConical,
   LayoutDashboard,
+  Code2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
@@ -34,8 +35,7 @@ function HomePage() {
     LESSONS.find((l) => !completed.includes(l.slug)) ?? LESSONS[0];
 
   const filtered = useMemo(() => {
-    let list =
-      track === "全部" ? LESSONS : getLessonsByTrack(track);
+    let list = track === "全部" ? LESSONS : getLessonsByTrack(track);
     const s = q.trim().toLowerCase();
     if (s) {
       list = list.filter(
@@ -62,7 +62,7 @@ function HomePage() {
           <div className="flex flex-wrap items-center gap-2">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg/60 px-2.5 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              v2 · 进阶路线已上线
+              v3 · 真实 Vue SFC 编辑器
             </p>
             {streak > 0 ? (
               <span className="rounded-full bg-surface-3 px-2.5 py-1 font-mono text-xs text-muted">
@@ -74,21 +74,29 @@ function HomePage() {
             带你系统学 Vue 3
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">
-            基础 11 课 + 进阶 Router / Pinia / 常见坑 / 项目清单。新增学习中心、错题本、练习场与结业证明。
+            课程 + 测验之外，v3 提供官方级{" "}
+            <strong className="font-medium text-fg">.vue 单文件组件在线编译运行</strong>
+            。在浏览器里写真正的 SFC，立刻看到结果。
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link to="/playground" className="no-underline">
+              <Button size="lg">
+                <Code2 className="h-4 w-4" />
+                打开 SFC 编辑器
+              </Button>
+            </Link>
             <Link
               to="/lesson/$slug"
               params={{ slug: firstIncomplete.slug }}
               className="no-underline"
             >
-              <Button size="lg">
+              <Button size="lg" variant="secondary">
                 {completed.length > 0 ? "继续学习" : "开始第一节"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link to="/lab" className="no-underline">
-              <Button size="lg" variant="secondary">
+              <Button size="lg" variant="ghost">
                 <FlaskConical className="h-4 w-4" />
                 练习场
               </Button>
@@ -128,6 +136,28 @@ function HomePage() {
         </div>
       </section>
 
+      <section className="mt-6 rounded-xl border border-primary/25 bg-primary-soft/40 px-4 py-4 sm:px-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-primary">
+              New in v3
+            </p>
+            <h2 className="mt-1 font-display text-base font-semibold text-fg">
+              真实 Vue SFC 在线编辑器
+            </h2>
+            <p className="mt-1 max-w-lg text-sm text-muted">
+              使用 @vue/repl：浏览器内编译 script / template / style，支持多文件组件与即时预览。
+            </p>
+          </div>
+          <Link to="/playground" className="no-underline">
+            <Button>
+              <Code2 className="h-4 w-4" />
+              去写代码
+            </Button>
+          </Link>
+        </div>
+      </section>
+
       {bookmarks.length > 0 ? (
         <section className="mt-6 rounded-xl border border-border bg-surface-2 px-4 py-3">
           <p className="text-xs font-medium text-muted">我的收藏</p>
@@ -156,9 +186,7 @@ function HomePage() {
             <h2 className="font-display text-lg font-semibold text-fg">
               课程大纲
             </h2>
-            <p className="mt-1 text-sm text-muted">
-              支持搜索与路径筛选
-            </p>
+            <p className="mt-1 text-sm text-muted">支持搜索与路径筛选</p>
           </div>
           <div className="flex flex-wrap gap-2">
             {(["全部", "基础", "进阶"] as const).map((t) => (

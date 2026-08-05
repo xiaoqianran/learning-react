@@ -14,6 +14,7 @@ import { Route as CertificateRouteImport } from './routes/certificate'
 import { Route as HubRouteImport } from './routes/hub'
 import { Route as LabRouteImport } from './routes/lab'
 import { Route as MistakesRouteImport } from './routes/mistakes'
+import { Route as PlaygroundRouteImport } from './routes/playground'
 import { Route as LessonSlugRouteImport } from './routes/lesson.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const MistakesRoute = MistakesRouteImport.update({
   path: '/mistakes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlaygroundRoute = PlaygroundRouteImport.update({
+  id: '/playground',
+  path: '/playground',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LessonSlugRoute = LessonSlugRouteImport.update({
   id: '/lesson/$slug',
   path: '/lesson/$slug',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/hub': typeof HubRoute
   '/lab': typeof LabRoute
   '/mistakes': typeof MistakesRoute
+  '/playground': typeof PlaygroundRoute
   '/lesson/$slug': typeof LessonSlugRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/hub': typeof HubRoute
   '/lab': typeof LabRoute
   '/mistakes': typeof MistakesRoute
+  '/playground': typeof PlaygroundRoute
   '/lesson/$slug': typeof LessonSlugRoute
 }
 export interface FileRoutesById {
@@ -70,14 +78,28 @@ export interface FileRoutesById {
   '/hub': typeof HubRoute
   '/lab': typeof LabRoute
   '/mistakes': typeof MistakesRoute
+  '/playground': typeof PlaygroundRoute
   '/lesson/$slug': typeof LessonSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/certificate' | '/hub' | '/lab' | '/mistakes' | '/lesson/$slug'
+    | '/'
+    | '/certificate'
+    | '/hub'
+    | '/lab'
+    | '/mistakes'
+    | '/playground'
+    | '/lesson/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/certificate' | '/hub' | '/lab' | '/mistakes' | '/lesson/$slug'
+  to:
+    | '/'
+    | '/certificate'
+    | '/hub'
+    | '/lab'
+    | '/mistakes'
+    | '/playground'
+    | '/lesson/$slug'
   id:
     | '__root__'
     | '/'
@@ -85,6 +107,7 @@ export interface FileRouteTypes {
     | '/hub'
     | '/lab'
     | '/mistakes'
+    | '/playground'
     | '/lesson/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -94,6 +117,7 @@ export interface RootRouteChildren {
   HubRoute: typeof HubRoute
   LabRoute: typeof LabRoute
   MistakesRoute: typeof MistakesRoute
+  PlaygroundRoute: typeof PlaygroundRoute
   LessonSlugRoute: typeof LessonSlugRoute
 }
 
@@ -134,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MistakesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/playground': {
+      id: '/playground'
+      path: '/playground'
+      fullPath: '/playground'
+      preLoaderRoute: typeof PlaygroundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lesson/$slug': {
       id: '/lesson/$slug'
       path: '/lesson/$slug'
@@ -150,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   HubRoute: HubRoute,
   LabRoute: LabRoute,
   MistakesRoute: MistakesRoute,
+  PlaygroundRoute: PlaygroundRoute,
   LessonSlugRoute: LessonSlugRoute,
 }
 export const routeTree = rootRouteImport

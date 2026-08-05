@@ -38,6 +38,7 @@ const staticPages = [
   { path: "/lab" },
   { path: "/mistakes" },
   { path: "/certificate" },
+  { path: "/playground" },
   ...lessonPaths,
 ];
 
@@ -148,6 +149,15 @@ export default defineConfig(({ command }) => ({
     strictPort: true,
   },
   resolve: { tsconfigPaths: true },
+  optimizeDeps: {
+    exclude: ["@vue/repl"],
+    include: ["vue"],
+  },
+  ssr: {
+    // Keep REPL client-only; don't bundle it into SSR graph aggressively
+    external: ["@vue/repl"],
+    noExternal: [],
+  },
   plugins: [
     pgliteBootstrapPlugin(),
     authPopupPlugin(),

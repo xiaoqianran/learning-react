@@ -92,6 +92,29 @@
   }
 }
 
+/* Vue SFC REPL host (v3) — make official repl fill the card */
+.vue-sfc-repl-host {
+  --bg: #121614;
+  --bg-soft: #1a1f1c;
+  --border: #2a322d;
+  --text-light: #e8ebe9;
+  --color-branding: #42b883;
+}
+
+.vue-sfc-repl-host .vue-repl {
+  height: 100%;
+  border-radius: 0;
+  --bg: #121614;
+  --bg-soft: #1a1f1c;
+  --border: #2a322d;
+  --text-light: #e8ebe9;
+}
+
+.vue-sfc-repl-host .vue-repl,
+.vue-sfc-repl-host .vue-repl * {
+  box-sizing: border-box;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

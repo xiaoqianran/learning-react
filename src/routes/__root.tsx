@@ -15,6 +15,7 @@ import {
   LayoutDashboard,
   BookX,
   Award,
+  Code2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -28,12 +29,12 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
-        title: "Vue 3 实战学习 v2 · 交互式教程",
+        title: "Vue 3 实战学习 v3 · SFC 在线编辑器",
       },
       {
         name: "description",
         content:
-          "Vue 3 中文交互式教程 v2：进阶课、错题本、练习场、打卡与结业证明。",
+          "Vue 3 中文交互式教程 v3：真实 SFC 在线编辑器、进阶课、练习场与结业证明。",
       },
     ],
     links: [
@@ -72,6 +73,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 }
 
 const NAV_EXTRA = [
+  { to: "/playground" as const, label: "SFC 编辑器", icon: Code2 },
   { to: "/hub" as const, label: "学习中心", icon: LayoutDashboard },
   { to: "/lab" as const, label: "练习场", icon: FlaskConical },
   { to: "/mistakes" as const, label: "错题本", icon: BookX },
@@ -114,11 +116,11 @@ function AppShell({ children }: { children: ReactNode }) {
               Vue 3 实战学习
             </span>
             <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">
-              v2
+              v3
             </span>
           </Link>
 
-          <nav className="ml-2 hidden items-center gap-0.5 md:flex">
+          <nav className="ml-2 hidden items-center gap-0.5 lg:flex">
             {NAV_EXTRA.map((item) => (
               <Link
                 key={item.to}
