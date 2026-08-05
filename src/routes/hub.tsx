@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { LESSONS, TRACKS, getLessonsByTrack } from "@/data/lessons";
 import { ACHIEVEMENTS } from "@/data/achievements";
 import { useProgress, todayKey } from "@/store/progress";
@@ -27,6 +27,21 @@ function HubPage() {
   const checkIns = useProgress((s) => s.checkIns);
   const checkInToday = useProgress((s) => s.checkInToday);
   const achievements = useProgress((s) => s.achievements);
+  const calendarDays = useMemo(() => {
+    const days: { key: string; label: string; on: boolean }[] = [];
+    const d = new Date();
+    for (let i = 13; i >= 0; i--) {
+      const x = new Date(d);
+      x.setDate(d.getDate() - i);
+      const key = `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
+      days.push({
+        key,
+        label: `${x.getMonth() + 1}/${x.getDate()}`,
+        on: checkIns.includes(key),
+      });
+    }
+    return days;
+  }, [checkIns]);
   const exportSnapshot = useProgress((s) => s.exportSnapshot);
   const importSnapshot = useProgress((s) => s.importSnapshot);
   const [importMsg, setImportMsg] = useState<string | null>(null);
@@ -45,7 +60,7 @@ function HubPage() {
     <div className="mx-auto max-w-3xl pb-16">
       <header className="mb-6">
         <p className="text-xs font-medium uppercase tracking-wider text-primary">
-          v3
+          v5
         </p>
         <h1 className="mt-1 font-display text-2xl font-semibold text-fg">
           学习中心
@@ -181,6 +196,27 @@ function HubPage() {
             );
           })}
         </ul>
+      </section>
+
+
+      <section className="mt-6 rounded-xl border border-border bg-surface p-5">
+        <h2 className="font-display text-base font-semibold">近 14 天打卡</h2>
+        <div className="mt-3 grid grid-cols-7 gap-1.5 sm:grid-cols-14">
+          {calendarDays.map((d) => (
+            <div
+              key={d.key}
+              title={d.key}
+              className={
+                "flex aspect-square items-center justify-center rounded-md text-[10px] " +
+                (d.on
+                  ? "bg-primary text-primary-fg"
+                  : "bg-surface-3 text-subtle")
+              }
+            >
+              {d.label.split("/")[1]}
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="mt-6 rounded-xl border border-border bg-surface p-5">

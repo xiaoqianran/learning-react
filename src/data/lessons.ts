@@ -1600,6 +1600,102 @@ invalidateQueries({ queryKey: ['notes'] })`,
       },
     ],
   },
+  {
+    slug: "studio-query",
+    title: "工坊 × Query 对照",
+    summary: "把 CRUD 映射到 useQuery / useMutation。",
+    level: "实战",
+    track: "数据层",
+    minutes: 12,
+    blocks: [
+      {
+        type: "text",
+        title: "对照表",
+        body: "登录 = mutation；会话用户 = useQuery(['me'])；笔记列表 = useQuery(['notes'])；创建/改/删 = mutation + invalidateQueries(['notes'])。打开全栈工坊看顶部 fetchStatus。",
+      },
+      {
+        type: "code",
+        title: "关键",
+        lang: "tsx",
+        code: `const notes = useQuery({
+  queryKey: ['studio','notes', token],
+  enabled: !!token,
+  queryFn: () => apiListNotes(token),
+})
+const create = useMutation({
+  mutationFn: (body) => apiCreateNote(token, body),
+  onSuccess: () => qc.invalidateQueries({ queryKey: ['studio','notes'] }),
+})`,
+      },
+      { type: "demo", kind: "query", title: "缓存心智复习" },
+      {
+        type: "tip",
+        body: "工坊已用 QueryClientProvider 包住本页，不影响全站其它路由。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "sq1",
+            question: "写成功后？",
+            options: ["什么都不做", "invalidate 相关 query", "必须整页刷新", "删 QueryClient"],
+            answer: 1,
+            explain: "让列表重拉。",
+          },
+          {
+            id: "sq2",
+            question: "enabled: !!token？",
+            options: ["无意义", "无 token 不发 me/notes 请求", "强制 SSR", "仅 CSS"],
+            answer: 1,
+            explain: "条件查询。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "deferred-value",
+    title: "useDeferredValue",
+    summary: "延迟非紧急派生 UI。",
+    level: "进阶",
+    track: "现代 React",
+    minutes: 10,
+    blocks: [
+      {
+        type: "text",
+        title: "与 transition",
+        body: "useDeferredValue(value) 让基于 value 的昂贵渲染可延后；输入仍即时。适合搜索框 + 大结果列表。",
+      },
+      {
+        type: "code",
+        title: "示例",
+        lang: "tsx",
+        code: `const [q, setQ] = useState('')
+const deferred = useDeferredValue(q)
+const results = useMemo(() => filterHuge(deferred), [deferred])`,
+      },
+      { type: "demo", kind: "memo", title: "昂贵列表与输入" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "dv1",
+            question: "useDeferredValue 适合？",
+            options: ["替代服务端鉴权", "延迟昂贵派生渲染", "禁止 state", "仅 class"],
+            answer: 1,
+            explain: "保持输入流畅。",
+          },
+          {
+            id: "dv2",
+            question: "和 startTransition？",
+            options: ["完全无关", "都标记非紧急更新", "只能二选一永远", "仅 Vue"],
+            answer: 1,
+            explain: "并发特性家族。",
+          },
+        ],
+      },
+    ],
+  },
 
 ];
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { useNavigate } from "@tanstack/react-router";
 import { LESSONS } from "@/data/lessons";
-import { BookOpen, Code2, FlaskConical, LayoutDashboard, Server, BookMarked, Award, BookX, Home, Map as MapIcon, } from "lucide-react";
+import { BookOpen, Code2, FlaskConical, LayoutDashboard, Server, BookMarked, Award, BookX, Home, Map as MapIcon, Keyboard, } from "lucide-react";
 
 const PAGES = [
   { to: "/", label: "首页", icon: Home },
@@ -13,6 +13,7 @@ const PAGES = [
   { to: "/hub", label: "学习中心", icon: LayoutDashboard },
   { to: "/lab", label: "练习场", icon: FlaskConical },
   { to: "/mistakes", label: "错题本", icon: BookX },
+  { to: "/shortcuts", label: "快捷键", icon: Keyboard },
   { to: "/certificate", label: "结业", icon: Award },
 ] as const;
 

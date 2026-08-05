@@ -17,6 +17,7 @@ import { Route as LabRouteImport } from './routes/lab'
 import { Route as MistakesRouteImport } from './routes/mistakes'
 import { Route as PlaygroundRouteImport } from './routes/playground'
 import { Route as RoadmapRouteImport } from './routes/roadmap'
+import { Route as ShortcutsRouteImport } from './routes/shortcuts'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as LessonSlugRouteImport } from './routes/lesson.$slug'
 
@@ -60,6 +61,11 @@ const RoadmapRoute = RoadmapRouteImport.update({
   path: '/roadmap',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShortcutsRoute = ShortcutsRouteImport.update({
+  id: '/shortcuts',
+  path: '/shortcuts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudioRoute = StudioRouteImport.update({
   id: '/studio',
   path: '/studio',
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/mistakes': typeof MistakesRoute
   '/playground': typeof PlaygroundRoute
   '/roadmap': typeof RoadmapRoute
+  '/shortcuts': typeof ShortcutsRoute
   '/studio': typeof StudioRoute
   '/lesson/$slug': typeof LessonSlugRoute
 }
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/mistakes': typeof MistakesRoute
   '/playground': typeof PlaygroundRoute
   '/roadmap': typeof RoadmapRoute
+  '/shortcuts': typeof ShortcutsRoute
   '/studio': typeof StudioRoute
   '/lesson/$slug': typeof LessonSlugRoute
 }
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/mistakes': typeof MistakesRoute
   '/playground': typeof PlaygroundRoute
   '/roadmap': typeof RoadmapRoute
+  '/shortcuts': typeof ShortcutsRoute
   '/studio': typeof StudioRoute
   '/lesson/$slug': typeof LessonSlugRoute
 }
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/mistakes'
     | '/playground'
     | '/roadmap'
+    | '/shortcuts'
     | '/studio'
     | '/lesson/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/mistakes'
     | '/playground'
     | '/roadmap'
+    | '/shortcuts'
     | '/studio'
     | '/lesson/$slug'
   id:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/mistakes'
     | '/playground'
     | '/roadmap'
+    | '/shortcuts'
     | '/studio'
     | '/lesson/$slug'
   fileRoutesById: FileRoutesById
@@ -156,6 +168,7 @@ export interface RootRouteChildren {
   MistakesRoute: typeof MistakesRoute
   PlaygroundRoute: typeof PlaygroundRoute
   RoadmapRoute: typeof RoadmapRoute
+  ShortcutsRoute: typeof ShortcutsRoute
   StudioRoute: typeof StudioRoute
   LessonSlugRoute: typeof LessonSlugRoute
 }
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoadmapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shortcuts': {
+      id: '/shortcuts'
+      path: '/shortcuts'
+      fullPath: '/shortcuts'
+      preLoaderRoute: typeof ShortcutsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/studio': {
       id: '/studio'
       path: '/studio'
@@ -244,6 +264,7 @@ const rootRouteChildren: RootRouteChildren = {
   MistakesRoute: MistakesRoute,
   PlaygroundRoute: PlaygroundRoute,
   RoadmapRoute: RoadmapRoute,
+  ShortcutsRoute: ShortcutsRoute,
   StudioRoute: StudioRoute,
   LessonSlugRoute: LessonSlugRoute,
 }

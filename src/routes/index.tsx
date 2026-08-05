@@ -65,7 +65,7 @@ function HomePage() {
           <div className="flex flex-wrap items-center gap-2">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg/60 px-2.5 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              learning-react · v4
+              learning-react · v5
             </p>
             {streak > 0 ? (
               <span className="rounded-full bg-surface-3 px-2.5 py-1 font-mono text-xs text-muted">
@@ -77,7 +77,7 @@ function HomePage() {
             带你系统学 React
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">
-            v4：数据层路径、学习路线图、练习场闪卡模式。
+            v5：工坊接入 TanStack Query，打卡日历与快捷键说明。
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link

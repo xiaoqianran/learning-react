@@ -20,7 +20,7 @@ function RoadmapPage() {
       <header className="mb-6">
         <p className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-primary">
           <MapIcon className="h-3.5 w-3.5" />
-          v4 · 路线图
+          v5 · 路线图
         </p>
         <h1 className="mt-1 font-display text-2xl font-semibold text-fg">
           学习路线

@@ -48,6 +48,8 @@ const lessonSlugs = [
   "mutations",
   "query-keys",
   "composition-patterns",
+  "studio-query",
+  "deferred-value",
 ];
 
 const lessonPaths = lessonSlugs.map((slug) => ({ path: `/lesson/${slug}` }));
@@ -62,6 +64,7 @@ const staticPages = [
   { path: "/studio" },
   { path: "/cheatsheet" },
   { path: "/roadmap" },
+  { path: "/shortcuts" },
   ...lessonPaths,
 ];
 

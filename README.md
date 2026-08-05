@@ -1,32 +1,27 @@
 # React 实战学习
 
-交互式中文 React 教程。
-
 **在线：** https://xiaoqianran.github.io/learning-react/  
 **仓库：** https://github.com/xiaoqianran/learning-react
 
-## 版本与分支
+## 分支 / 标签
 
 | 分支 | 标签 | 说明 |
 |------|------|------|
-| `v1` | `v1.0.0` | 首发 + 工坊 |
-| `v2` | `v2.0.0` | 进阶模式 + 成就 + 主题 |
-| `v3` | `v3.0.0` | 现代 React + 命令面板 + 进度备份 |
-| `v4` | `v4.0.0` | 数据层 + 路线图 + 闪卡（当前） |
-| `main` | 最新稳定 | 与当前线同步 |
+| v1 | v1.0.0 | 首发 |
+| v2 | v2.0.0 | 进阶模式 + 成就 + 主题 |
+| v3 | v3.0.0 | 现代 React + 命令面板 |
+| v4 | v4.0.0 | 数据层 + 路线图 + 闪卡 |
+| **v5** | **v5.0.0** | Query 工坊 + 打卡日历（当前） |
+| main | 最新 | 同步当前线 |
 
-## v4 亮点
+## v5 亮点
 
-- **数据层** 课程：TanStack Query、Mutation、Query Key、组合模式
-- **路线图** `/roadmap`：分阶段进度与下一步
-- **练习场闪卡** 模式
-- 共 **35** 节课 · Ctrl/⌘K · 进度导入导出 · 工坊闯关
+- 全栈工坊用 **TanStack Query**（useQuery / useMutation / invalidate）
+- 学习中心 **14 天打卡日历**
+- **快捷键** 页 `/shortcuts`
+- 新课：工坊×Query 对照、useDeferredValue
 
-### 工坊
-
-```text
-demo@react.dev / password123
-```
+工坊：`demo@react.dev` / `password123`
 
 ```bash
 npm install && npm run dev

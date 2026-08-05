@@ -6,7 +6,7 @@ import {
   Scripts,
   Link,
 } from "@tanstack/react-router";
-import { BookOpen, Check, Menu, X, FlaskConical, LayoutDashboard, BookX, Award, Code2, Server, BookMarked, Map as MapIcon, Sun, Moon, } from "lucide-react";
+import { BookOpen, Check, Menu, X, FlaskConical, LayoutDashboard, BookX, Award, Code2, Server, BookMarked, Map as MapIcon, Sun, Moon, Keyboard, } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useProgress } from "@/store/progress";
@@ -19,11 +19,11 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "React 实战学习 v4 · learning-react" },
+      { title: "React 实战学习 v5 · learning-react" },
       {
         name: "description",
         content:
-          "React 中文交互式教程 v4：数据层、路线图、闪卡练习、Query 心智。",
+          "React 中文交互式教程 v5：Query 工坊、打卡日历、快捷键页。",
       },
     ],
     links: [
@@ -69,6 +69,7 @@ const NAV_EXTRA = [
   { to: "/hub" as const, label: "学习中心", icon: LayoutDashboard },
   { to: "/lab" as const, label: "练习场", icon: FlaskConical },
   { to: "/mistakes" as const, label: "错题本", icon: BookX },
+  { to: "/shortcuts" as const, label: "快捷键", icon: Keyboard },
   { to: "/certificate" as const, label: "结业", icon: Award },
 ];
 
@@ -116,7 +117,7 @@ function AppShell({ children }: { children: ReactNode }) {
               React 实战学习
             </span>
             <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">
-              v4
+              v5
             </span>
           </Link>
 

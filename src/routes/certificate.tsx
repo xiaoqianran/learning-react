@@ -95,7 +95,7 @@ function CertificatePage() {
               Certificate of Completion
             </p>
             <h2 className="mt-3 font-display text-2xl font-semibold text-fg">
-              React 实战学习 · v4
+              React 实战学习 · v5
             </h2>
             <p className="mx-auto mt-3 max-w-md text-sm text-muted">
               兹证明持有人已完成本站全部课程：Hooks、组件、路由、状态、全栈准备与工程化实践。
@@ -119,7 +119,7 @@ function CertificatePage() {
               </div>
             </dl>
             <p className="mt-6 font-mono text-[10px] text-subtle">
-              learning-react v4 · local achievement · not an official certificate
+              learning-react v5 · local achievement · not an official certificate
             </p>
           </div>
         </section>
