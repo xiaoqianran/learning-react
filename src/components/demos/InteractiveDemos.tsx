@@ -64,6 +64,16 @@ function DemoBody({ kind }: { kind: DemoKind }) {
       return <PiniaDemo />;
     case "challenge":
       return <ChallengeDemo />;
+    case "slots":
+      return <SlotsDemo />;
+    case "provide":
+      return <ProvideDemo />;
+    case "async":
+      return <AsyncDemo />;
+    case "guard":
+      return <GuardDemo />;
+    case "validate":
+      return <ValidateDemo />;
     default:
       return null;
   }
@@ -589,9 +599,6 @@ function TodoDemo() {
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-xs text-muted">
-        父持有列表状态；子项通过点击「发出」完成/删除意图（此处内联模拟 emit）。
-      </p>
       <Button
         variant="ghost"
         size="sm"
@@ -618,7 +625,7 @@ function RouterDemo() {
       title: "Lesson",
       body: "动态路由 /lesson/:slug → intro",
     },
-    { path: "/about", title: "About", body: "关于页 · 嵌套路由也可放这里" },
+    { path: "/about", title: "About", body: "关于页" },
   ] as const;
   const [path, setPath] = useState<(typeof pages)[number]["path"]>("/");
   const current = pages.find((p) => p.path === path) ?? pages[0];
@@ -734,9 +741,6 @@ function ChallengeDemo() {
           rows={5}
           className="w-full rounded-md border border-border bg-bg p-3 font-mono text-xs text-code-fg"
         />
-        <p className="mt-2 text-xs text-muted">
-          目标：用 ref 声明 count，并在 inc 里修改 count.value。
-        </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button size="sm" onClick={check}>
             运行检查
@@ -763,6 +767,296 @@ function ChallengeDemo() {
           </p>
         ) : null}
       </Panel>
+    </div>
+  );
+}
+
+/* ——— v4 demos ——— */
+
+function SlotsDemo() {
+  const [customHeader, setCustomHeader] = useState(true);
+  const [customFooter, setCustomFooter] = useState(true);
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="父模板控制插槽">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={customHeader}
+            onChange={(e) => setCustomHeader(e.target.checked)}
+            className="h-4 w-4 accent-[var(--color-primary)]"
+          />
+          使用 #header
+        </label>
+        <label className="mt-2 flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={customFooter}
+            onChange={(e) => setCustomFooter(e.target.checked)}
+            className="h-4 w-4 accent-[var(--color-primary)]"
+          />
+          使用 #footer=&#123; year &#125;
+        </label>
+      </Panel>
+      <Panel label="Card 渲染结果">
+        <div className="rounded-lg border border-border bg-bg p-3">
+          <header className="border-b border-border pb-2 text-sm font-medium text-primary">
+            {customHeader ? "自定义头 · 来自父级" : "默认 title prop"}
+          </header>
+          <div className="py-3 text-sm text-fg">默认插槽：卡片主体内容</div>
+          <footer className="border-t border-border pt-2 text-xs text-muted">
+            {customFooter ? "© 2026 · 作用域插槽 year" : "默认页脚"}
+          </footer>
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+function ProvideDemo() {
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  return (
+    <div className="grid gap-3">
+      <Panel label="祖先 provide(themeKey, theme)">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant={theme === "dark" ? "default" : "secondary"}
+            onClick={() => setTheme("dark")}
+          >
+            dark
+          </Button>
+          <Button
+            size="sm"
+            variant={theme === "light" ? "default" : "secondary"}
+            onClick={() => setTheme("light")}
+          >
+            light
+          </Button>
+        </div>
+      </Panel>
+      <div
+        className={cn(
+          "rounded-lg border p-4 transition-colors",
+          theme === "dark"
+            ? "border-border bg-bg text-fg"
+            : "border-border-strong bg-fg text-bg",
+        )}
+      >
+        <p className="text-xs opacity-70">深层子组件 inject(themeKey)</p>
+        <p className="mt-1 text-sm font-medium">
+          当前主题：{theme}（无需 props 逐层传递）
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function AsyncDemo() {
+  const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">(
+    "idle",
+  );
+  const [items, setItems] = useState<{ id: number; title: string }[]>([]);
+
+  function load(mode: "ok" | "error") {
+    setStatus("loading");
+    setItems([]);
+    window.setTimeout(() => {
+      if (mode === "error") {
+        setStatus("error");
+        return;
+      }
+      setItems([
+        { id: 1, title: "学 async composable" },
+        { id: 2, title: "处理 loading / error" },
+        { id: 3, title: "准备接真实 API" },
+      ]);
+      setStatus("ok");
+    }, 700);
+  }
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="触发请求">
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" onClick={() => load("ok")} disabled={status === "loading"}>
+            模拟成功
+          </Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => load("error")}
+            disabled={status === "loading"}
+          >
+            模拟失败
+          </Button>
+        </div>
+        <p className="mt-3 font-mono text-xs text-muted">status = {status}</p>
+      </Panel>
+      <Panel label="UI 三态">
+        {status === "idle" ? (
+          <p className="text-sm text-muted">尚未请求</p>
+        ) : null}
+        {status === "loading" ? (
+          <p className="text-sm text-primary">loading…</p>
+        ) : null}
+        {status === "error" ? (
+          <p className="text-sm text-danger">error: HTTP 500（可点重试）</p>
+        ) : null}
+        {status === "ok" ? (
+          <ul className="space-y-1 text-sm">
+            {items.map((it) => (
+              <li key={it.id} className="rounded-md bg-bg px-2 py-1.5">
+                {it.title}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </Panel>
+    </div>
+  );
+}
+
+function GuardDemo() {
+  const [token, setToken] = useState<string | null>(null);
+  const [page, setPage] = useState<"home" | "dash" | "login">("home");
+  const [msg, setMsg] = useState("在首页");
+
+  function go(target: "home" | "dash" | "login") {
+    if (target === "dash" && !token) {
+      setPage("login");
+      setMsg("beforeEach：requiresAuth 且未登录 → /login?redirect=/dashboard");
+      return;
+    }
+    if (target === "login" && token) {
+      setPage("home");
+      setMsg("已登录访问 /login → 重定向 /");
+      return;
+    }
+    setPage(target);
+    setMsg(
+      target === "dash"
+        ? "进入 /dashboard（受保护）"
+        : target === "login"
+          ? "登录页"
+          : "首页",
+    );
+  }
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="导航">
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="secondary" onClick={() => go("home")}>
+            / 
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => go("dash")}>
+            /dashboard
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => go("login")}>
+            /login
+          </Button>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            onClick={() => {
+              setToken("demo-token");
+              setMsg("localStorage token 已写入（模拟）");
+            }}
+          >
+            登录
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setToken(null);
+              setPage("home");
+              setMsg("已退出");
+            }}
+          >
+            退出
+          </Button>
+        </div>
+        <p className="mt-2 font-mono text-xs text-muted">
+          token: {token ? "present" : "null"}
+        </p>
+      </Panel>
+      <Panel label="当前视图">
+        <p className="font-mono text-xs text-subtle">page = {page}</p>
+        <p className="mt-2 text-sm font-medium text-fg">
+          {page === "dash"
+            ? "Dashboard · 私有内容"
+            : page === "login"
+              ? "Login · 请先登录"
+              : "Home · 公开"}
+        </p>
+        <p className="mt-2 text-xs text-muted">{msg}</p>
+      </Panel>
+    </div>
+  );
+}
+
+function ValidateDemo() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {},
+  );
+  const [ok, setOk] = useState(false);
+
+  function submit() {
+    const e: { email?: string; password?: string } = {};
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "邮箱格式不正确";
+    if (password.length < 8) e.password = "密码至少 8 位";
+    setErrors(e);
+    setOk(Object.keys(e).length === 0);
+  }
+
+  return (
+    <div className="mx-auto max-w-sm space-y-3">
+      <div>
+        <label className="text-xs text-muted">email</label>
+        <input
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setOk(false);
+          }}
+          className={cn(
+            "mt-1 h-10 w-full rounded-md border bg-bg px-3 text-sm",
+            errors.email ? "border-danger" : "border-border",
+          )}
+          placeholder="you@example.com"
+        />
+        {errors.email ? (
+          <p className="mt-1 text-xs text-danger">{errors.email}</p>
+        ) : null}
+      </div>
+      <div>
+        <label className="text-xs text-muted">password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setOk(false);
+          }}
+          className={cn(
+            "mt-1 h-10 w-full rounded-md border bg-bg px-3 text-sm",
+            errors.password ? "border-danger" : "border-border",
+          )}
+          placeholder="至少 8 位"
+        />
+        {errors.password ? (
+          <p className="mt-1 text-xs text-danger">{errors.password}</p>
+        ) : null}
+      </div>
+      <Button onClick={submit}>提交</Button>
+      {ok ? (
+        <p className="text-sm text-primary">校验通过，可以请求 /api/login</p>
+      ) : null}
     </div>
   );
 }

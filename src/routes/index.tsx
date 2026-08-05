@@ -21,6 +21,8 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
+type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备";
+
 function HomePage() {
   const completed = useProgress((s) => s.completed);
   const quizScores = useProgress((s) => s.quizScores);
@@ -28,14 +30,16 @@ function HomePage() {
   const bookmarks = useProgress((s) => s.bookmarks);
   const reset = useProgress((s) => s.reset);
   const [q, setQ] = useState("");
-  const [track, setTrack] = useState<"全部" | "基础" | "进阶">("全部");
+  const [track, setTrack] = useState<TrackFilter>("全部");
 
   const progress = Math.round((completed.length / LESSONS.length) * 100);
   const firstIncomplete =
     LESSONS.find((l) => !completed.includes(l.slug)) ?? LESSONS[0];
+  const fullstackCount = LESSONS.filter((l) => l.track === "全栈准备").length;
 
   const filtered = useMemo(() => {
-    let list = track === "全部" ? LESSONS : getLessonsByTrack(track);
+    let list =
+      track === "全部" ? LESSONS : getLessonsByTrack(track);
     const s = q.trim().toLowerCase();
     if (s) {
       list = list.filter(
@@ -62,7 +66,7 @@ function HomePage() {
           <div className="flex flex-wrap items-center gap-2">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg/60 px-2.5 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              v3 · 真实 Vue SFC 编辑器
+              v4 · 全栈准备线
             </p>
             {streak > 0 ? (
               <span className="rounded-full bg-surface-3 px-2.5 py-1 font-mono text-xs text-muted">
@@ -74,15 +78,23 @@ function HomePage() {
             带你系统学 Vue 3
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">
-            课程 + 测验之外，v3 提供官方级{" "}
-            <strong className="font-medium text-fg">.vue 单文件组件在线编译运行</strong>
-            。在浏览器里写真正的 SFC，立刻看到结果。
+            基础与进阶之上，v4 补齐接 API 前的前端拼图：Slots、依赖注入、异步请求态、路由守卫与表单校验（+{fullstackCount} 课）。
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            <Link to="/playground" className="no-underline">
+            <Link
+              to="/lesson/$slug"
+              params={{ slug: "slots" }}
+              className="no-underline"
+            >
               <Button size="lg">
+                开始全栈准备
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/playground" className="no-underline">
+              <Button size="lg" variant="secondary">
                 <Code2 className="h-4 w-4" />
-                打开 SFC 编辑器
+                SFC 编辑器
               </Button>
             </Link>
             <Link
@@ -90,9 +102,8 @@ function HomePage() {
               params={{ slug: firstIncomplete.slug }}
               className="no-underline"
             >
-              <Button size="lg" variant="secondary">
-                {completed.length > 0 ? "继续学习" : "开始第一节"}
-                <ArrowRight className="h-4 w-4" />
+              <Button size="lg" variant="ghost">
+                {completed.length > 0 ? "继续学习" : "从第一节"}
               </Button>
             </Link>
             <Link to="/lab" className="no-underline">
@@ -136,28 +147,6 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="mt-6 rounded-xl border border-primary/25 bg-primary-soft/40 px-4 py-4 sm:px-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-primary">
-              New in v3
-            </p>
-            <h2 className="mt-1 font-display text-base font-semibold text-fg">
-              真实 Vue SFC 在线编辑器
-            </h2>
-            <p className="mt-1 max-w-lg text-sm text-muted">
-              使用 @vue/repl：浏览器内编译 script / template / style，支持多文件组件与即时预览。
-            </p>
-          </div>
-          <Link to="/playground" className="no-underline">
-            <Button>
-              <Code2 className="h-4 w-4" />
-              去写代码
-            </Button>
-          </Link>
-        </div>
-      </section>
-
       {bookmarks.length > 0 ? (
         <section className="mt-6 rounded-xl border border-border bg-surface-2 px-4 py-3">
           <p className="text-xs font-medium text-muted">我的收藏</p>
@@ -186,10 +175,10 @@ function HomePage() {
             <h2 className="font-display text-lg font-semibold text-fg">
               课程大纲
             </h2>
-            <p className="mt-1 text-sm text-muted">支持搜索与路径筛选</p>
+            <p className="mt-1 text-sm text-muted">搜索与路径筛选</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {(["全部", "基础", "进阶"] as const).map((t) => (
+            {(["全部", "基础", "进阶", "全栈准备"] as const).map((t) => (
               <button
                 key={t}
                 type="button"
@@ -254,6 +243,11 @@ function HomePage() {
                       {lesson.track === "进阶" ? (
                         <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[10px] font-medium text-primary">
                           进阶线
+                        </span>
+                      ) : null}
+                      {lesson.track === "全栈准备" ? (
+                        <span className="rounded-full bg-accent/30 px-2 py-0.5 text-[10px] font-medium text-fg">
+                          全栈准备
                         </span>
                       ) : null}
                     </div>

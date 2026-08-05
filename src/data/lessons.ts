@@ -19,7 +19,12 @@ export type DemoKind =
   | "todo"
   | "router"
   | "pinia"
-  | "challenge";
+  | "challenge"
+  | "slots"
+  | "provide"
+  | "async"
+  | "guard"
+  | "validate";
 
 export type LessonBlock =
   | { type: "text"; title?: string; body: string }
@@ -33,8 +38,7 @@ export type Lesson = {
   title: string;
   summary: string;
   level: "入门" | "进阶" | "实战";
-  /** Learning path track — v2 */
-  track: "基础" | "进阶";
+  track: "基础" | "进阶" | "全栈准备";
   minutes: number;
   blocks: LessonBlock[];
 };
@@ -79,7 +83,7 @@ const count = ref(0)
       },
       {
         type: "tip",
-        body: "后面所有 Demo 都在模拟 Vue 的行为逻辑，帮助你理解概念。真正项目里你会写 .vue 单文件组件，由 Vite 编译。",
+        body: "后面所有 Demo 都在模拟 Vue 的行为逻辑，帮助你理解概念。真正项目里你会写 .vue 单文件组件，由 Vite 编译。v3 起可在「SFC 编辑器」写真实 .vue。",
       },
       {
         type: "quiz",
@@ -134,7 +138,6 @@ const raw = ref('<b>粗体</b>')
 <template>
   <p>{{ msg }}</p>
   <p :class="{ active: isActive }">属性绑定用 v-bind 或 :</p>
-  <!-- 谨慎：会插入 HTML -->
   <div v-html="raw"></div>
 </template>`,
       },
@@ -198,17 +201,13 @@ const raw = ref('<b>粗体</b>')
         lang: "ts",
         code: `import { ref, reactive } from 'vue'
 
-// 基本类型 / 任意值 → ref
 const count = ref(0)
-count.value++          // 脚本里要 .value
+count.value++
 
-// 对象 → reactive（或 ref 包对象）
 const state = reactive({ name: 'Vue', n: 1 })
-state.n++              // 不用 .value
+state.n++
 
-// 注意：解构会丢失响应式
-// const { n } = state  // 坏：n 不再是响应式
-// 用 toRefs(state) 再解构`,
+// 解构会丢失响应式 → toRefs(state)`,
       },
       {
         type: "demo",
@@ -257,7 +256,7 @@ state.n++              // 不用 .value
       {
         type: "text",
         title: "computed：派生状态",
-        body: "依赖的响应式数据不变时，computed 会缓存上次结果，避免重复计算。适合「由已有状态推导出的值」，而不是在模板里写一长串表达式。",
+        body: "依赖的响应式数据不变时，computed 会缓存上次结果，避免重复计算。适合「由已有状态推导出的值」。",
       },
       {
         type: "code",
@@ -274,7 +273,6 @@ watch(full, (now, prev) => {
 })
 
 watchEffect(() => {
-  // 自动追踪内部用到的依赖
   document.title = full.value
 })`,
       },
@@ -286,7 +284,7 @@ watchEffect(() => {
       },
       {
         type: "tip",
-        body: "需要「返回值」用 computed；需要「副作用」（请求、日志、同步到 localStorage）用 watch / watchEffect。",
+        body: "需要「返回值」用 computed；需要「副作用」用 watch / watchEffect。",
       },
       {
         type: "quiz",
@@ -313,7 +311,7 @@ watchEffect(() => {
               "不能清理副作用",
             ],
             answer: 1,
-            explain: "watchEffect 立即运行并自动收集依赖；watch 通常需显式指定源。",
+            explain: "watchEffect 立即运行并自动收集依赖。",
           },
         ],
       },
@@ -330,7 +328,7 @@ watchEffect(() => {
       {
         type: "text",
         title: "v-if 还是 v-show？",
-        body: "v-if 是真正的条件渲染（不满足时不创建 DOM），适合切换不频繁的场景。v-show 始终渲染，用 CSS display 切换，适合频繁显隐。列表用 v-for，务必提供稳定的 key。",
+        body: "v-if 是真正的条件渲染；v-show 用 CSS display 切换。列表用 v-for，务必提供稳定的 key。",
       },
       {
         type: "code",
@@ -347,12 +345,8 @@ const items = ref([
 
 <template>
   <p v-if="ok">显示中</p>
-  <p v-else>已隐藏</p>
-
   <ul>
-    <li v-for="item in items" :key="item.id">
-      {{ item.text }}
-    </li>
+    <li v-for="item in items" :key="item.id">{{ item.text }}</li>
   </ul>
 </template>`,
       },
@@ -360,7 +354,7 @@ const items = ref([
         type: "demo",
         kind: "list",
         title: "动手：条件 + 列表",
-        hint: "切换显示、添加/删除项，观察列表变化。key 用稳定 id，不要用 index 当唯一标识（在会重排时）。",
+        hint: "切换显示、添加/删除项，观察列表变化。",
       },
       {
         type: "quiz",
@@ -375,14 +369,14 @@ const items = ref([
               "强制重新请求数据",
             ],
             answer: 1,
-            explain: "稳定 key 让 diff 算法正确识别节点身份，避免错误复用状态。",
+            explain: "稳定 key 让 diff 算法正确识别节点身份。",
           },
           {
             id: "l2",
             question: "频繁切换显隐更适合？",
             options: ["v-if", "v-show", "v-html", "v-once"],
             answer: 1,
-            explain: "v-show 避免反复销毁/创建 DOM，切换成本更低。",
+            explain: "v-show 避免反复销毁/创建 DOM。",
           },
         ],
       },
@@ -399,7 +393,7 @@ const items = ref([
       {
         type: "text",
         title: "绑定事件",
-        body: "用 @click 等绑定处理器。可以写内联表达式，也可以指向方法。修饰符如 .prevent、.stop、.once 覆盖常见 DOM 事件需求。",
+        body: "用 @click 等绑定处理器。修饰符如 .prevent、.stop、.once 覆盖常见 DOM 事件需求。",
       },
       {
         type: "code",
@@ -408,19 +402,12 @@ const items = ref([
         code: `<script setup>
 import { ref } from 'vue'
 const n = ref(0)
-function add(delta: number) {
-  n.value += delta
-}
-function onSubmit(e: Event) {
-  // 或在模板用 @submit.prevent
-  e.preventDefault()
-}
+function add(delta: number) { n.value += delta }
 </script>
 
 <template>
   <button @click="add(1)">+1</button>
-  <button @click="n++">内联 +1</button>
-  <form @submit.prevent="onSubmit">
+  <form @submit.prevent="() => {}">
     <button type="submit">提交</button>
   </form>
 </template>`,
@@ -429,7 +416,7 @@ function onSubmit(e: Event) {
         type: "demo",
         kind: "events",
         title: "动手：点击与修饰符",
-        hint: "试试普通点击、+5，以及带 prevent 的提交（不会整页刷新）。",
+        hint: "试试普通点击、+5，以及带 prevent 的提交。",
       },
       {
         type: "quiz",
@@ -444,7 +431,7 @@ function onSubmit(e: Event) {
               "捕获阶段监听",
             ],
             answer: 1,
-            explain: ".prevent 对应 preventDefault；.stop 对应 stopPropagation；.once 只触发一次。",
+            explain: ".prevent 对应 preventDefault；.stop 对应 stopPropagation。",
           },
         ],
       },
@@ -461,7 +448,7 @@ function onSubmit(e: Event) {
       {
         type: "text",
         title: "v-model 在做什么",
-        body: "v-model 是「值绑定 + 监听输入事件」的语法糖。在 input 上约等于 :value + @input。修饰符 .lazy（change 时更新）、.number、.trim 很实用。",
+        body: "v-model 是「值绑定 + 监听输入事件」的语法糖。修饰符 .lazy、.number、.trim 很实用。",
       },
       {
         type: "code",
@@ -472,24 +459,19 @@ import { ref } from 'vue'
 const name = ref('')
 const age = ref(18)
 const agree = ref(false)
-const color = ref('green')
 </script>
 
 <template>
-  <input v-model.trim="name" placeholder="名字" />
+  <input v-model.trim="name" />
   <input v-model.number="age" type="number" />
   <label><input type="checkbox" v-model="agree" /> 同意</label>
-  <select v-model="color">
-    <option value="green">绿</option>
-    <option value="blue">蓝</option>
-  </select>
 </template>`,
       },
       {
         type: "demo",
         kind: "form",
         title: "动手：实时表单",
-        hint: "改输入，预览区同步更新——这就是双向绑定。",
+        hint: "改输入，预览区同步更新。",
       },
       {
         type: "quiz",
@@ -504,7 +486,7 @@ const color = ref('green')
               "禁用输入",
             ],
             answer: 1,
-            explain: ".number 用 parseFloat 处理用户输入，便于数值计算。",
+            explain: ".number 用 parseFloat 处理用户输入。",
           },
         ],
       },
@@ -521,27 +503,17 @@ const color = ref('green')
       {
         type: "text",
         title: "把 UI 拆成积木",
-        body: "组件是可复用的 UI 单元。Vue 单文件组件（SFC）把 <script>、<template>、<style> 放在同一个 .vue 文件。父组件通过模板使用子组件标签。",
+        body: "组件是可复用的 UI 单元。Vue 单文件组件（SFC）把 script、template、style 放在同一个 .vue 文件。",
       },
       {
         type: "code",
         title: "父用子",
         lang: "vue",
-        code: `<!-- CounterCard.vue -->
-<script setup>
-import { ref } from 'vue'
-const n = ref(0)
-</script>
-<template>
-  <button @click="n++">子组件计数 {{ n }}</button>
-</template>
-
-<!-- App.vue -->
+        code: `<!-- App.vue -->
 <script setup>
 import CounterCard from './CounterCard.vue'
 </script>
 <template>
-  <h1>父级</h1>
   <CounterCard />
   <CounterCard />
 </template>`,
@@ -551,10 +523,6 @@ import CounterCard from './CounterCard.vue'
         kind: "component",
         title: "动手：两个独立子组件",
         hint: "每个子组件有自己的状态，互不影响。",
-      },
-      {
-        type: "tip",
-        body: "组件名用多词 PascalCase（如 UserCard），避免与原生 HTML 标签冲突。",
       },
       {
         type: "quiz",
@@ -586,29 +554,19 @@ import CounterCard from './CounterCard.vue'
       {
         type: "text",
         title: "单向数据流",
-        body: "父 → 子：用 props 传数据。子 → 父：用 emit 发事件，由父决定如何改自己的状态。子组件不应直接修改 prop（会破坏可预测性）。",
+        body: "父 → 子：props。子 → 父：emit 事件，由父更新状态。子组件不应直接修改 prop。",
       },
       {
         type: "code",
         title: "defineProps / defineEmits",
         lang: "vue",
-        code: `<!-- Child.vue -->
-<script setup lang="ts">
+        code: `<script setup lang="ts">
 const props = defineProps<{ title: string; count: number }>()
-const emit = defineEmits<{
-  (e: 'inc'): void
-  (e: 'set', value: number): void
-}>()
+const emit = defineEmits<{ (e: 'inc'): void }>()
 </script>
 <template>
-  <div>
-    <h3>{{ title }} — {{ count }}</h3>
-    <button @click="emit('inc')">+1</button>
-  </div>
-</template>
-
-<!-- Parent -->
-<Child :title="name" :count="n" @inc="n++" />`,
+  <button @click="emit('inc')">{{ title }} {{ count }}</button>
+</template>`,
       },
       {
         type: "demo",
@@ -646,26 +604,19 @@ const emit = defineEmits<{
       {
         type: "text",
         title: "何时跑哪段逻辑",
-        body: "组件挂载后适合请求数据、绑定非 Vue 管理的监听；卸载前要清理定时器与监听，避免泄漏。组合式 API 用 onMounted、onUpdated、onUnmounted 等。",
+        body: "挂载后适合请求数据、绑定监听；卸载前清理定时器与监听，避免泄漏。",
       },
       {
         type: "code",
         title: "钩子示例",
         lang: "ts",
         code: `import { ref, onMounted, onUnmounted } from 'vue'
-
 const now = ref(Date.now())
 let timer: number
-
 onMounted(() => {
-  timer = window.setInterval(() => {
-    now.value = Date.now()
-  }, 1000)
+  timer = window.setInterval(() => { now.value = Date.now() }, 1000)
 })
-
-onUnmounted(() => {
-  clearInterval(timer)
-})`,
+onUnmounted(() => clearInterval(timer))`,
       },
       {
         type: "demo",
@@ -703,45 +654,29 @@ onUnmounted(() => {
       {
         type: "text",
         title: "composable 是什么",
-        body: "把有内聚的状态 + 方法抽到 useXxx() 函数里，在多个组件复用。命名约定 use 前缀，内部可自由使用 ref、computed、生命周期钩子。",
+        body: "把有内聚的状态 + 方法抽到 useXxx() 函数里，在多个组件复用。命名约定 use 前缀。",
       },
       {
         type: "code",
         title: "useCounter.ts",
         lang: "ts",
         code: `import { ref, computed } from 'vue'
-
 export function useCounter(initial = 0) {
   const count = ref(initial)
   const doubled = computed(() => count.value * 2)
   function inc() { count.value++ }
-  function reset() { count.value = initial }
-  return { count, doubled, inc, reset }
-}
-
-// 组件中
-// const { count, doubled, inc } = useCounter(10)`,
-      },
-      {
-        type: "code",
-        title: "推荐目录习惯",
-        lang: "text",
-        code: `src/
-  components/     # UI 组件
-  composables/    # useXxx 逻辑复用
-  views/          # 页面级组件
-  stores/         # Pinia 全局状态（需要时）
-  assets/`,
+  return { count, doubled, inc }
+}`,
       },
       {
         type: "demo",
         kind: "counter",
         title: "复习：计数器 composable 思路",
-        hint: "把 count / inc 想成 useCounter 的返回值——组件只负责展示。",
+        hint: "把 count / inc 想成 useCounter 的返回值。",
       },
       {
         type: "tip",
-        body: "v2 进阶线继续学：Vue Router、Pinia、常见坑与综合挑战。",
+        body: "进阶线：Router、Pinia、常见坑。全栈准备线（v4）：Slots、异步请求、路由守卫。",
       },
       {
         type: "quiz",
@@ -751,7 +686,7 @@ export function useCounter(initial = 0) {
             question: "composable 函数的常见命名？",
             options: ["getXxx", "useXxx", "makeXxx", "XxxService"],
             answer: 1,
-            explain: "社区约定 use 前缀，类似 React hooks。",
+            explain: "社区约定 use 前缀。",
           },
           {
             id: "co2",
@@ -769,8 +704,6 @@ export function useCounter(initial = 0) {
       },
     ],
   },
-
-  // ——— v2 进阶线 ———
   {
     slug: "router",
     title: "Vue Router 路由",
@@ -782,56 +715,30 @@ export function useCounter(initial = 0) {
       {
         type: "text",
         title: "为什么需要路由",
-        body: "单页应用靠前端路由切换「页面」而不整页刷新。Vue Router 把 URL 映射到组件，并提供编程式导航与守卫（登录拦截等）。",
+        body: "单页应用靠前端路由切换「页面」而不整页刷新。Vue Router 把 URL 映射到组件。",
       },
       {
         type: "code",
         title: "最小路由配置",
         lang: "ts",
         code: `import { createRouter, createWebHistory } from 'vue-router'
-import Home from './views/Home.vue'
-import Lesson from './views/Lesson.vue'
-
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: Home },
     { path: '/lesson/:slug', component: Lesson, props: true },
   ],
-})
-
-// main.ts
-// app.use(router)`,
-      },
-      {
-        type: "code",
-        title: "模板中跳转",
-        lang: "vue",
-        code: `<script setup>
-import { useRouter, useRoute } from 'vue-router'
-const router = useRouter()
-const route = useRoute()
-function go() {
-  router.push({ name: 'lesson', params: { slug: 'intro' } })
-}
-</script>
-
-<template>
-  <RouterLink to="/">首页</RouterLink>
-  <p>当前 path: {{ route.path }}</p>
-  <button @click="go">去 intro</button>
-  <RouterView />
-</template>`,
+})`,
       },
       {
         type: "demo",
         kind: "router",
         title: "动手：迷你路由切换",
-        hint: "点击导航切换「页面」，观察 URL 段与视图变化（模拟 Vue Router）。",
+        hint: "点击导航切换「页面」，观察 URL 段与视图变化。",
       },
       {
         type: "tip",
-        body: "history 模式需要服务器把所有路径回退到 index.html；hash 模式（#/path）不需要服务器配置。",
+        body: "守卫与登录拦截见 v4「路由守卫与鉴权心智」。",
       },
       {
         type: "quiz",
@@ -846,14 +753,14 @@ function go() {
               "不能传 params",
             ],
             answer: 1,
-            explain: "RouterLink 走客户端路由，支持 active class，体验更好。",
+            explain: "RouterLink 走客户端路由，支持 active class。",
           },
           {
             id: "rt2",
             question: "读取当前路由参数常用？",
             options: ["useStore()", "useRoute()", "useAttrs()", "useCssModule()"],
             answer: 1,
-            explain: "useRoute() 返回当前路由对象，含 params / query。",
+            explain: "useRoute() 返回当前路由对象。",
           },
         ],
       },
@@ -870,7 +777,7 @@ function go() {
       {
         type: "text",
         title: "什么时候用 Pinia",
-        body: "组件本地状态用 ref 即可。当多个页面要共享用户信息、购物车、主题等，用 Pinia（Vue 官方推荐）集中管理，可配合持久化插件。",
+        body: "组件本地状态用 ref 即可。多页面共享用户信息、购物车、主题等用 Pinia。",
       },
       {
         type: "code",
@@ -878,24 +785,20 @@ function go() {
         lang: "ts",
         code: `import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-
 export const useCartStore = defineStore('cart', () => {
   const items = ref<{ id: number; name: string }[]>([])
   const count = computed(() => items.value.length)
   function add(name: string) {
     items.value.push({ id: Date.now(), name })
   }
-  function clear() {
-    items.value = []
-  }
-  return { items, count, add, clear }
+  return { items, count, add }
 })`,
       },
       {
         type: "demo",
         kind: "pinia",
         title: "动手：共享购物车 Store",
-        hint: "两个面板共用同一份 store 状态——改一处，处处更新。",
+        hint: "两个面板共用同一份 store 状态。",
       },
       {
         type: "quiz",
@@ -939,31 +842,23 @@ export const useCartStore = defineStore('cart', () => {
       {
         type: "text",
         title: "高频踩坑清单",
-        body: "1) 解构 reactive 丢响应式 → toRefs。2) 在脚本里忘写 ref 的 .value。3) v-for 用 index 当 key 且列表会重排。4) 在 computed 里写副作用。5) 过深的响应式大对象导致性能压力。",
+        body: "1) 解构 reactive 丢响应式。2) 忘写 .value。3) v-for 用 index 当 key 且会重排。4) computed 里写副作用。5) 过深的大对象代理。",
       },
       {
         type: "code",
         title: "浅层与冻结",
         lang: "ts",
         code: `import { shallowRef, triggerRef, markRaw } from 'vue'
-
-// 大体量大对象不想深度代理
 const big = shallowRef({ list: [] as number[] })
 big.value.list.push(1)
-triggerRef(big) // 手动触发更新
-
-// 永不需要响应式的对象（如第三方实例）
+triggerRef(big)
 const chart = markRaw(new HeavyChart())`,
       },
       {
         type: "demo",
         kind: "challenge",
         title: "挑战：找出响应式问题",
-        hint: "按提示修复「计数不更新」的代码逻辑，直到测试通过。",
-      },
-      {
-        type: "tip",
-        body: "性能口诀：能 computed 不 watch；列表虚拟化处理超长数据；按需拆组件减少无关渲染。",
+        hint: "用 ref 并使用 .value 更新，直到检查通过。",
       },
       {
         type: "quiz",
@@ -978,7 +873,7 @@ const chart = markRaw(new HeavyChart())`,
               "等同于 reactive",
             ],
             answer: 1,
-            explain: "浅层 ref 适合大对象，内部变更需 triggerRef 或替换整个 .value。",
+            explain: "浅层 ref 适合大对象。",
           },
           {
             id: "pf2",
@@ -990,7 +885,7 @@ const chart = markRaw(new HeavyChart())`,
               "会自动缓存请求结果到 localStorage",
             ],
             answer: 1,
-            explain: "computed 应纯计算；请求等副作用用 watch 或 onMounted。",
+            explain: "computed 应纯计算。",
           },
         ],
       },
@@ -1007,39 +902,25 @@ const chart = markRaw(new HeavyChart())`,
       {
         type: "text",
         title: "推荐起步",
-        body: "官方脚手架：npm create vue@latest。勾选 Router、Pinia、TS 按需。开发用 npm run dev，构建 npm run build，预览 npm run preview。",
+        body: "官方脚手架：npm create vue@latest。勾选 Router、Pinia、TS 按需。",
       },
       {
         type: "code",
         title: "环境变量",
         lang: "text",
-        code: `# .env.development
-VITE_API_BASE=http://localhost:3000
-
-# 代码中
+        code: `VITE_API_BASE=http://localhost:3000
 // import.meta.env.VITE_API_BASE
 # 只有 VITE_ 前缀会暴露给客户端`,
-      },
-      {
-        type: "code",
-        title: "上线前检查清单",
-        lang: "text",
-        code: `[ ] 路由 history 回退配置
-[ ] 生产 API 地址与 CORS
-[ ] 错误边界 / 空状态
-[ ] 图片与字体体积
-[ ] 无 console 敏感信息
-[ ] Lighthouse 基础分可接受`,
       },
       {
         type: "demo",
         kind: "todo",
         title: "综合练习：任务清单小应用",
-        hint: "用你已学的列表、表单、组件思路完成一个可用的 Todo。",
+        hint: "用列表、表单、组件思路完成 Todo。",
       },
       {
         type: "tip",
-        body: "学完本课可去「练习场」做综合挑战，并在「学习中心」查看进度；全部完成后可领取结业证明。",
+        body: "v4 全栈准备线继续：Slots、异步请求、路由守卫、表单校验——这是接 API 与鉴权前的最后一块前端拼图。",
       },
       {
         type: "quiz",
@@ -1049,7 +930,7 @@ VITE_API_BASE=http://localhost:3000
             question: "Vite 暴露给前端的环境变量前缀？",
             options: ["REACT_APP_", "VITE_", "NEXT_PUBLIC_", "PUBLIC_"],
             answer: 1,
-            explain: "Vite 约定 VITE_ 前缀才会注入到 import.meta.env。",
+            explain: "Vite 约定 VITE_ 前缀。",
           },
           {
             id: "pj2",
@@ -1067,9 +948,386 @@ VITE_API_BASE=http://localhost:3000
       },
     ],
   },
+
+  // ——— v4 全栈准备 ———
+  {
+    slug: "slots",
+    title: "插槽 Slots",
+    summary: "默认插槽、具名插槽与作用域插槽：组件组合的关键。",
+    level: "进阶",
+    track: "全栈准备",
+    minutes: 12,
+    blocks: [
+      {
+        type: "text",
+        title: "为什么需要插槽",
+        body: "Props 适合传数据；插槽适合「父级决定一块 UI 怎么画」。卡片壳、布局、表格列、弹层内容几乎都靠插槽。",
+      },
+      {
+        type: "code",
+        title: "默认 / 具名 / 作用域插槽",
+        lang: "vue",
+        code: `<!-- Card.vue -->
+<script setup lang="ts">
+defineProps<{ title: string }>()
+</script>
+<template>
+  <section class="card">
+    <header><slot name="header">{{ title }}</slot></header>
+    <div class="body"><slot /></div>
+    <footer><slot name="footer" :year="2026" /></footer>
+  </section>
+</template>
+
+<!-- 使用 -->
+<Card title="默认标题">
+  <template #header>自定义头</template>
+  <p>默认插槽内容</p>
+  <template #footer="{ year }">© {{ year }}</template>
+</Card>`,
+      },
+      {
+        type: "demo",
+        kind: "slots",
+        title: "动手：卡片插槽组合",
+        hint: "切换是否自定义 header / footer，理解插槽替换默认内容。",
+      },
+      {
+        type: "tip",
+        body: "作用域插槽 = 子组件把内部数据「借」给父模板用，常见于表格列、列表项渲染。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "sl1",
+            question: "v-slot:header 的简写？",
+            options: ["@header", "#header", ":header", ".header"],
+            answer: 1,
+            explain: "具名插槽简写为 #name。",
+          },
+          {
+            id: "sl2",
+            question: "作用域插槽主要解决？",
+            options: [
+              "样式穿透",
+              "父模板能用到子组件内部数据来渲染",
+              "替代 props",
+              "服务端渲染",
+            ],
+            answer: 1,
+            explain: "子通过 slot props 把数据暴露给父级插槽内容。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "provide-inject",
+    title: "Provide / Inject",
+    summary: "跨层级依赖注入：主题、当前用户、配置，避免 props 逐层传递。",
+    level: "进阶",
+    track: "全栈准备",
+    minutes: 11,
+    blocks: [
+      {
+        type: "text",
+        title: "何时用 provide/inject",
+        body: "深层组件树不想把 props 一层层钻（prop drilling）时，祖先 provide，后代 inject。适合主题、locale、当前用户上下文。全局业务状态仍优先 Pinia。",
+      },
+      {
+        type: "code",
+        title: "InjectionKey 与只读约定",
+        lang: "ts",
+        code: `// keys.ts
+import type { InjectionKey, Ref } from 'vue'
+export const themeKey: InjectionKey<Ref<'dark' | 'light'>> = Symbol('theme')
+
+// 祖先
+import { provide, ref } from 'vue'
+import { themeKey } from './keys'
+const theme = ref<'dark' | 'light'>('dark')
+provide(themeKey, theme)
+
+// 后代
+import { inject } from 'vue'
+const theme = inject(themeKey)
+// 约定：后代尽量不直接改，提供 toggleTheme 方法一起 inject`,
+      },
+      {
+        type: "demo",
+        kind: "provide",
+        title: "动手：主题从祖先注入",
+        hint: "祖先切换主题，深层子组件无需 props 链路即可响应。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "pr1",
+            question: "provide/inject 相对 Pinia？",
+            options: [
+              "完全替代 Pinia",
+              "适合树内上下文；跨页面全局业务状态更适合 Pinia",
+              "只能传字符串",
+              "只能在 Options API 用",
+            ],
+            answer: 1,
+            explain: "注入适合组件树上下文；全局业务状态用 store 更清晰。",
+          },
+          {
+            id: "pr2",
+            question: "推荐用 Symbol + InjectionKey 的原因？",
+            options: [
+              "更快",
+              "避免字符串 key 冲突并获得 TS 类型",
+              "必须才能运行",
+              "减少打包体积",
+            ],
+            answer: 1,
+            explain: "Symbol key 唯一，InjectionKey 提供类型安全。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "async-data",
+    title: "异步数据与请求态",
+    summary: "loading / error / empty、取消请求、把 fetch 放进 composable。",
+    level: "实战",
+    track: "全栈准备",
+    minutes: 14,
+    blocks: [
+      {
+        type: "text",
+        title: "全栈第一步：会「要数据」",
+        body: "真实应用的数据在服务端。前端必须处理：加载中、失败重试、空列表、竞态（后发先至）。这是接 REST/GraphQL 前的基本功。",
+      },
+      {
+        type: "code",
+        title: "useFetch 风格 composable",
+        lang: "ts",
+        code: `import { ref, onMounted, onUnmounted } from 'vue'
+
+export function useTodos(url: string) {
+  const data = ref<{ id: number; title: string }[] | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  let ctrl: AbortController | null = null
+
+  async function load() {
+    ctrl?.abort()
+    ctrl = new AbortController()
+    loading.value = true
+    error.value = null
+    try {
+      const res = await fetch(url, { signal: ctrl.signal })
+      if (!res.ok) throw new Error(\`HTTP \${res.status}\`)
+      data.value = await res.json()
+    } catch (e) {
+      if ((e as Error).name === 'AbortError') return
+      error.value = (e as Error).message
+    } finally {
+      loading.value = false
+    }
+  }
+
+  onMounted(load)
+  onUnmounted(() => ctrl?.abort())
+  return { data, loading, error, reload: load }
+}`,
+      },
+      {
+        type: "demo",
+        kind: "async",
+        title: "动手：模拟请求三态",
+        hint: "触发加载 / 失败 / 成功，观察 loading · error · 列表 UI。",
+      },
+      {
+        type: "tip",
+        body: "生产可考虑 ofetch、TanStack Query / VueQuery、或 Nuxt 的 useFetch。核心仍是：显式状态 + 取消竞态 + 错误可恢复。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "as1",
+            question: "请求过程中用户快速切换页面，应？",
+            options: [
+              "忽略",
+              "用 AbortController 取消未完成请求",
+              "只靠 loading 锁按钮",
+              "把结果写到 window",
+            ],
+            answer: 1,
+            explain: "取消可避免卸载后 setState 与竞态覆盖。",
+          },
+          {
+            id: "as2",
+            question: "UI 最少应覆盖哪些请求态？",
+            options: [
+              "只有成功",
+              "loading / error / 成功（及 empty）",
+              "只有 error",
+              "只有 skeleton",
+            ],
+            answer: 1,
+            explain: "完整体验需要加载、失败、成功与空数据。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "route-guards",
+    title: "路由守卫与鉴权心智",
+    summary: "beforeEach、meta.requiresAuth、登录跳转与回跳地址。",
+    level: "实战",
+    track: "全栈准备",
+    minutes: 13,
+    blocks: [
+      {
+        type: "text",
+        title: "鉴权在前端的边界",
+        body: "前端守卫只是体验层：没登录就跳登录页。真正安全必须在服务端校验 token/session。前后端要约定：401 → 清登录态并跳转。",
+      },
+      {
+        type: "code",
+        title: "全局前置守卫",
+        lang: "ts",
+        code: `// router.ts
+router.beforeEach((to) => {
+  const authed = Boolean(localStorage.getItem('token'))
+  if (to.meta.requiresAuth && !authed) {
+    return {
+      path: '/login',
+      query: { redirect: to.fullPath },
+    }
+  }
+  if (to.path === '/login' && authed) return '/'
+})
+
+// routes
+{ path: '/dashboard', component: Dash, meta: { requiresAuth: true } }
+{ path: '/login', component: Login }`,
+      },
+      {
+        type: "demo",
+        kind: "guard",
+        title: "动手：登录门禁模拟",
+        hint: "未登录访问受保护页会跳登录；登录后可进入，并支持退出。",
+      },
+      {
+        type: "tip",
+        body: "token 放 localStorage 有 XSS 风险；更稳妥是 HttpOnly Cookie + 服务端 session（Nuxt/BFF 常见）。此处先建立心智模型。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "gd1",
+            question: "前端 beforeEach 能替代服务端鉴权吗？",
+            options: [
+              "能，足够安全",
+              "不能，前端可被绕过，服务端必须校验",
+              "只能替代 CSRF",
+              "只能替代 CORS",
+            ],
+            answer: 1,
+            explain: "前端守卫可被禁用/伪造；API 必须鉴权。",
+          },
+          {
+            id: "gd2",
+            question: "登录后跳回原页面常用？",
+            options: [
+              "写死 /home",
+              "login?redirect=原路径，成功后 router.replace(redirect)",
+              "location.reload",
+              "只用 history.back",
+            ],
+            answer: 1,
+            explain: "redirect 查询参数是常见模式。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "form-validate",
+    title: "表单校验",
+    summary: "同步规则、失焦校验、提交拦截——接注册/登录接口前必备。",
+    level: "实战",
+    track: "全栈准备",
+    minutes: 12,
+    blocks: [
+      {
+        type: "text",
+        title: "校验分层",
+        body: "前端校验提升体验（即时反馈）；后端校验保证正确与安全。永远不要只信前端。",
+      },
+      {
+        type: "code",
+        title: "轻量规则示例",
+        lang: "ts",
+        code: `type Errors = Partial<Record<'email' | 'password', string>>
+
+function validate(email: string, password: string): Errors {
+  const e: Errors = {}
+  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) e.email = '邮箱格式不正确'
+  if (password.length < 8) e.password = '密码至少 8 位'
+  return e
+}
+
+// 提交
+const errors = validate(email.value, password.value)
+if (Object.keys(errors).length) { /* 展示错误，不请求 */ return }
+await api.login({ email, password })`,
+      },
+      {
+        type: "demo",
+        kind: "validate",
+        title: "动手：登录表单校验",
+        hint: "试错误邮箱与短密码，看字段级错误；合法后才「提交成功」。",
+      },
+      {
+        type: "tip",
+        body: "复杂表单可上 VeeValidate + Zod/Yup。先掌握「规则函数 + 错误对象 + 提交门禁」。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "fv1",
+            question: "前端校验通过是否等于数据安全？",
+            options: [
+              "是",
+              "否，后端仍必须校验",
+              "仅 HTTPS 时等于",
+              "仅用 Zod 时等于",
+            ],
+            answer: 1,
+            explain: "客户端可被篡改，服务端是最后防线。",
+          },
+          {
+            id: "fv2",
+            question: "字段级错误相对 toast 一次提示的优势？",
+            options: [
+              "更酷",
+              "用户知道哪个字段错、如何改",
+              "更少代码",
+              "不需要 label",
+            ],
+            answer: 1,
+            explain: "字段错误提升可访问性与可修正性。",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
-export const TRACKS = ["基础", "进阶"] as const;
+export const TRACKS = ["基础", "进阶", "全栈准备"] as const;
 
 export function getLesson(slug: string): Lesson | undefined {
   return LESSONS.find((l) => l.slug === slug);

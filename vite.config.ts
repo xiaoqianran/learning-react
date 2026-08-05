@@ -28,6 +28,11 @@ const lessonSlugs = [
   "pinia",
   "pitfalls",
   "project",
+  "slots",
+  "provide-inject",
+  "async-data",
+  "route-guards",
+  "form-validate",
 ];
 
 const lessonPaths = lessonSlugs.map((slug) => ({ path: `/lesson/${slug}` }));
@@ -154,7 +159,6 @@ export default defineConfig(({ command }) => ({
     include: ["vue"],
   },
   ssr: {
-    // Keep REPL client-only; don't bundle it into SSR graph aggressively
     external: ["@vue/repl"],
     noExternal: [],
   },

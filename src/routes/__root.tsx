@@ -29,12 +29,12 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
-        title: "Vue 3 实战学习 v3 · SFC 在线编辑器",
+        title: "Vue 3 实战学习 v4 · 全栈准备",
       },
       {
         name: "description",
         content:
-          "Vue 3 中文交互式教程 v3：真实 SFC 在线编辑器、进阶课、练习场与结业证明。",
+          "Vue 3 中文交互式教程 v4：全栈准备线——Slots、异步请求、路由守卫、表单校验与 SFC 编辑器。",
       },
     ],
     links: [
@@ -116,7 +116,7 @@ function AppShell({ children }: { children: ReactNode }) {
               Vue 3 实战学习
             </span>
             <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">
-              v3
+              v4
             </span>
           </Link>
 
@@ -213,6 +213,9 @@ function AppShell({ children }: { children: ReactNode }) {
                         <span className="block">{lesson.title}</span>
                         {lesson.track === "进阶" ? (
                           <span className="text-[10px] text-primary">进阶</span>
+                        ) : null}
+                        {lesson.track === "全栈准备" ? (
+                          <span className="text-[10px] text-muted">全栈准备</span>
                         ) : null}
                       </span>
                     </Link>
