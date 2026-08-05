@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { TRACKS, getLessonsByTrack, LESSONS } from "@/data/lessons";
 import { useProgress } from "@/store/progress";
 import { Button } from "@/components/ui/button";
-import { Map, Check, Circle, ArrowRight } from "lucide-react";
+import { Map as MapIcon, Check, Circle, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/roadmap")({
@@ -19,7 +19,7 @@ function RoadmapPage() {
     <div className="mx-auto max-w-3xl pb-16">
       <header className="mb-6">
         <p className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-primary">
-          <Map className="h-3.5 w-3.5" />
+          <MapIcon className="h-3.5 w-3.5" />
           v4 · 路线图
         </p>
         <h1 className="mt-1 font-display text-2xl font-semibold text-fg">

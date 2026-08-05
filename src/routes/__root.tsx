@@ -6,22 +6,7 @@ import {
   Scripts,
   Link,
 } from "@tanstack/react-router";
-import {
-  BookOpen,
-  Check,
-  Menu,
-  X,
-  FlaskConical,
-  LayoutDashboard,
-  BookX,
-  Award,
-  Code2,
-  Server,
-  BookMarked,
-  Map,
-  Sun,
-  Moon,
-} from "lucide-react";
+import { BookOpen, Check, Menu, X, FlaskConical, LayoutDashboard, BookX, Award, Code2, Server, BookMarked, Map as MapIcon, Sun, Moon, } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useProgress } from "@/store/progress";
@@ -80,7 +65,7 @@ const NAV_EXTRA = [
   { to: "/studio" as const, label: "全栈工坊", icon: Server },
   { to: "/cheatsheet" as const, label: "速查表", icon: BookMarked },
   { to: "/playground" as const, label: "沙箱", icon: Code2 },
-  { to: "/roadmap" as const, label: "路线图", icon: Map },
+  { to: "/roadmap" as const, label: "路线图", icon: MapIcon },
   { to: "/hub" as const, label: "学习中心", icon: LayoutDashboard },
   { to: "/lab" as const, label: "练习场", icon: FlaskConical },
   { to: "/mistakes" as const, label: "错题本", icon: BookX },

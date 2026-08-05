@@ -2,25 +2,14 @@ import { useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { useNavigate } from "@tanstack/react-router";
 import { LESSONS } from "@/data/lessons";
-import {
-  BookOpen,
-  Code2,
-  FlaskConical,
-  LayoutDashboard,
-  Server,
-  BookMarked,
-  Award,
-  BookX,
-  Home,
-  Map,
-} from "lucide-react";
+import { BookOpen, Code2, FlaskConical, LayoutDashboard, Server, BookMarked, Award, BookX, Home, Map as MapIcon, } from "lucide-react";
 
 const PAGES = [
   { to: "/", label: "首页", icon: Home },
   { to: "/studio", label: "全栈工坊", icon: Server },
   { to: "/cheatsheet", label: "速查表", icon: BookMarked },
   { to: "/playground", label: "沙箱", icon: Code2 },
-  { to: "/roadmap", label: "路线图", icon: Map },
+  { to: "/roadmap", label: "路线图", icon: MapIcon },
   { to: "/hub", label: "学习中心", icon: LayoutDashboard },
   { to: "/lab", label: "练习场", icon: FlaskConical },
   { to: "/mistakes", label: "错题本", icon: BookX },
