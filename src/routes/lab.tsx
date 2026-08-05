@@ -32,6 +32,7 @@ function LabPage() {
   const [done, setDone] = useState(false);
   const checkInToday = useProgress((s) => s.checkInToday);
   const addWrong = useProgress((s) => s.addWrong);
+  const unlockAchievement = useProgress((s) => s.unlockAchievement);
 
   const current = pack[idx];
 
@@ -64,6 +65,8 @@ function LabPage() {
 
   function next() {
     if (idx >= pack.length - 1) {
+      const final = score; // already includes last answer
+      if (final === pack.length) unlockAchievement("lab-perfect");
       setDone(true);
       checkInToday();
       return;

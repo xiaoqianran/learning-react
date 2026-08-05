@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { AchievementId } from "@/data/achievements";
+import { LESSONS } from "@/data/lessons";
 
 export type WrongItem = {
   id: string;
@@ -18,9 +20,10 @@ type ProgressState = {
   bookmarks: string[];
   notes: Record<string, string>;
   wrongBook: WrongItem[];
-  /** YYYY-MM-DD check-in dates */
   checkIns: string[];
   streak: number;
+  achievements: AchievementId[];
+  theme: "dark" | "light";
   markComplete: (slug: string) => void;
   setQuizScore: (slug: string, score: number) => void;
   toggleBookmark: (slug: string) => void;
@@ -29,6 +32,9 @@ type ProgressState = {
   clearWrong: (id: string) => void;
   clearAllWrong: () => void;
   checkInToday: () => void;
+  unlockAchievement: (id: AchievementId) => void;
+  syncAchievements: () => void;
+  setTheme: (t: "dark" | "light") => void;
   reset: () => void;
 };
 
@@ -40,21 +46,11 @@ function todayKey() {
   return `${y}-${m}-${day}`;
 }
 
-function yesterdayKey() {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
 function computeStreak(checkIns: string[]): number {
   if (checkIns.length === 0) return 0;
   const set = new Set(checkIns);
   let streak = 0;
   const cursor = new Date();
-  // If not checked in today, start from yesterday (streak still valid until end of day)
   if (!set.has(todayKey())) {
     cursor.setDate(cursor.getDate() - 1);
   }
@@ -70,6 +66,27 @@ function computeStreak(checkIns: string[]): number {
   return streak;
 }
 
+function deriveAchievements(s: {
+  completed: string[];
+  bookmarks: string[];
+  notes: Record<string, string>;
+  streak: number;
+  achievements: AchievementId[];
+}): AchievementId[] {
+  const set = new Set(s.achievements);
+  const n = s.completed.length;
+  if (n >= 1) set.add("first-lesson");
+  if (n >= 5) set.add("five-lessons");
+  if (n >= Math.ceil(LESSONS.length / 2)) set.add("half-course");
+  if (n >= LESSONS.length) set.add("all-course");
+  if (s.bookmarks.length >= 3) set.add("bookmark-3");
+  if (Object.values(s.notes).filter((t) => t.trim()).length >= 3) {
+    set.add("notes-3");
+  }
+  if (s.streak >= 3) set.add("streak-3");
+  return [...set];
+}
+
 export const useProgress = create<ProgressState>()(
   persist(
     (set, get) => ({
@@ -80,26 +97,44 @@ export const useProgress = create<ProgressState>()(
       wrongBook: [],
       checkIns: [],
       streak: 0,
-      markComplete: (slug) =>
-        set((s) =>
-          s.completed.includes(slug)
-            ? s
-            : { completed: [...s.completed, slug] },
-        ),
+      achievements: [],
+      theme: "dark",
+      markComplete: (slug) => {
+        set((s) => {
+          const completed = s.completed.includes(slug)
+            ? s.completed
+            : [...s.completed, slug];
+          const next = { ...s, completed };
+          return {
+            completed,
+            achievements: deriveAchievements(next),
+          };
+        });
+      },
       setQuizScore: (slug, score) =>
         set((s) => ({
           quizScores: { ...s.quizScores, [slug]: score },
         })),
       toggleBookmark: (slug) =>
-        set((s) => ({
-          bookmarks: s.bookmarks.includes(slug)
+        set((s) => {
+          const bookmarks = s.bookmarks.includes(slug)
             ? s.bookmarks.filter((b) => b !== slug)
-            : [...s.bookmarks, slug],
-        })),
+            : [...s.bookmarks, slug];
+          const next = { ...s, bookmarks };
+          return {
+            bookmarks,
+            achievements: deriveAchievements(next),
+          };
+        }),
       setNote: (slug, text) =>
-        set((s) => ({
-          notes: { ...s.notes, [slug]: text },
-        })),
+        set((s) => {
+          const notes = { ...s.notes, [slug]: text };
+          const next = { ...s, notes };
+          return {
+            notes,
+            achievements: deriveAchievements(next),
+          };
+        }),
       addWrong: (item) =>
         set((s) => {
           const filtered = s.wrongBook.filter((w) => w.id !== item.id);
@@ -115,14 +150,26 @@ export const useProgress = create<ProgressState>()(
       checkInToday: () => {
         const key = todayKey();
         const { checkIns } = get();
-        if (checkIns.includes(key)) {
-          set({ streak: computeStreak(checkIns) });
-          return;
-        }
-        const next = [...checkIns, key];
-        set({ checkIns: next, streak: computeStreak(next) });
-        void yesterdayKey;
+        const next = checkIns.includes(key) ? checkIns : [...checkIns, key];
+        const streak = computeStreak(next);
+        set((s) => {
+          const state = { ...s, checkIns: next, streak };
+          return {
+            checkIns: next,
+            streak,
+            achievements: deriveAchievements(state),
+          };
+        });
       },
+      unlockAchievement: (id) =>
+        set((s) =>
+          s.achievements.includes(id)
+            ? s
+            : { achievements: [...s.achievements, id] },
+        ),
+      syncAchievements: () =>
+        set((s) => ({ achievements: deriveAchievements(s) })),
+      setTheme: (theme) => set({ theme }),
       reset: () =>
         set({
           completed: [],
@@ -132,11 +179,13 @@ export const useProgress = create<ProgressState>()(
           wrongBook: [],
           checkIns: [],
           streak: 0,
+          achievements: [],
+          theme: "dark",
         }),
     }),
     {
-      name: "learning-react-progress-v1",
-      version: 2,
+      name: "learning-react-progress-v2",
+      version: 3,
       migrate: (persisted) => {
         const p = (persisted ?? {}) as Partial<ProgressState>;
         return {
@@ -147,6 +196,8 @@ export const useProgress = create<ProgressState>()(
           wrongBook: p.wrongBook ?? [],
           checkIns: p.checkIns ?? [],
           streak: p.streak ?? 0,
+          achievements: p.achievements ?? [],
+          theme: p.theme === "light" ? "light" : "dark",
         };
       },
     },

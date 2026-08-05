@@ -34,6 +34,11 @@ const lessonSlugs = [
   "typescript-react",
   "testing-react",
   "deploy",
+  "use-reducer",
+  "use-ref",
+  "portal",
+  "error-boundary",
+  "interview-react",
 ];
 
 const lessonPaths = lessonSlugs.map((slug) => ({ path: `/lesson/${slug}` }));

@@ -18,6 +18,8 @@ import {
   Code2,
   Server,
   BookMarked,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -30,11 +32,11 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "React 实战学习 · learning-react" },
+      { title: "React 实战学习 v2 · learning-react" },
       {
         name: "description",
         content:
-          "React 中文交互式教程：Hooks、组件、路由、状态、全栈工坊与测验进度。",
+          "React 中文交互式教程 v2：进阶模式、成就、主题切换、工坊与测验进度。",
       },
     ],
     links: [
@@ -87,11 +89,19 @@ function AppShell({ children }: { children: ReactNode }) {
   const completed = useProgress((s) => s.completed);
   const streak = useProgress((s) => s.streak);
   const checkInToday = useProgress((s) => s.checkInToday);
+  const theme = useProgress((s) => s.theme);
+  const setTheme = useProgress((s) => s.setTheme);
+  const syncAchievements = useProgress((s) => s.syncAchievements);
   const progress = Math.round((completed.length / LESSONS.length) * 100);
 
   useEffect(() => {
     checkInToday();
-  }, [checkInToday]);
+    syncAchievements();
+  }, [checkInToday, syncAchievements]);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("theme-light", theme === "light");
+  }, [theme]);
 
   return (
     <div className="min-h-dvh bg-bg text-fg">
@@ -118,7 +128,7 @@ function AppShell({ children }: { children: ReactNode }) {
               React 实战学习
             </span>
             <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">
-              v1
+              v2
             </span>
           </Link>
 
@@ -141,6 +151,14 @@ function AppShell({ children }: { children: ReactNode }) {
                 连续 {streak} 天
               </span>
             ) : null}
+            <button
+              type="button"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-muted hover:text-fg"
+              aria-label="切换主题"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
             <div className="hidden items-center gap-2 sm:flex">
               <div className="h-1.5 w-24 overflow-hidden rounded-full bg-surface-3">
                 <div

@@ -21,7 +21,10 @@ export type DemoKind =
   | "zustand"
   | "guard"
   | "validate"
-  | "challenge";
+  | "challenge"
+  | "reducer"
+  | "ref"
+  | "portal";
 
 export type LessonBlock =
   | { type: "text"; title?: string; body: string }
@@ -35,7 +38,7 @@ export type Lesson = {
   title: string;
   summary: string;
   level: "入门" | "进阶" | "实战";
-  track: "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化";
+  track: "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式";
   minutes: number;
   blocks: LessonBlock[];
 };
@@ -957,6 +960,226 @@ it('increments', async () => {
       },
     ],
   },
+  {
+    slug: "use-reducer",
+    title: "useReducer",
+    summary: "复杂状态迁移：action → next state。",
+    level: "进阶",
+    track: "进阶模式",
+    minutes: 12,
+    blocks: [
+      {
+        type: "text",
+        title: "何时用",
+        body: "多字段联动、下一步依赖上一步规则时，useReducer 比多个 useState 更清晰：dispatch(action) 描述「发生了什么」。",
+      },
+      {
+        type: "code",
+        title: "计数器",
+        lang: "tsx",
+        code: `type Action = { type: 'inc' } | { type: 'dec' } | { type: 'set'; n: number }
+function reducer(state: number, action: Action) {
+  switch (action.type) {
+    case 'inc': return state + 1
+    case 'dec': return state - 1
+    case 'set': return action.n
+  }
+}
+const [n, dispatch] = useReducer(reducer, 0)`,
+      },
+      { type: "demo", kind: "reducer", title: "动手：dispatch" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "ur1",
+            question: "useReducer 适合？",
+            options: ["仅字符串", "规则清晰的复杂状态", "替代 CSS", "禁止 TypeScript"],
+            answer: 1,
+            explain: "action 驱动状态机式更新。",
+          },
+          {
+            id: "ur2",
+            question: "更新方式？",
+            options: ["直接 mutate state", "dispatch(action)", "仅 setState 对象", "document.write"],
+            answer: 1,
+            explain: "dispatch。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "use-ref",
+    title: "useRef 与 DOM",
+    summary: "可变盒子：DOM 句柄与不触发重渲的值。",
+    level: "进阶",
+    track: "进阶模式",
+    minutes: 11,
+    blocks: [
+      {
+        type: "code",
+        title: "聚焦输入",
+        lang: "tsx",
+        code: `const inputRef = useRef<HTMLInputElement>(null)
+function focus() {
+  inputRef.current?.focus()
+}
+return <input ref={inputRef} />`,
+      },
+      { type: "demo", kind: "ref", title: "动手：ref 聚焦" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "rf1",
+            question: "改 ref.current？",
+            options: ["一定重渲", "不触发重渲", "卸载组件", "发请求"],
+            answer: 1,
+            explain: "可变但不调度渲染。",
+          },
+          {
+            id: "rf2",
+            question: "ref 常见用途？",
+            options: ["全局 CSS", "DOM/保存上次值", "替代 Router", "仅服务端"],
+            answer: 1,
+            explain: "DOM 与持久值。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "portal",
+    title: "Portal 传送门",
+    summary: "createPortal 把弹层挂到 body。",
+    level: "进阶",
+    track: "进阶模式",
+    minutes: 10,
+    blocks: [
+      {
+        type: "code",
+        title: "Modal",
+        lang: "tsx",
+        code: `import { createPortal } from 'react-dom'
+{open && createPortal(
+  <div className="mask"><dialog>…</dialog></div>,
+  document.body,
+)}`,
+      },
+      { type: "demo", kind: "portal", title: "动手：遮罩弹层" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "pt1",
+            question: "Portal 解决？",
+            options: ["鉴权", "DOM 挂载位置与组件树解耦", "替代 useState", "CSS Modules"],
+            answer: 1,
+            explain: "弹层挂 body。",
+          },
+          {
+            id: "pt2",
+            question: "事件冒泡？",
+            options: ["不冒泡", "仍按 React 树冒泡", "仅 window", "被禁用"],
+            answer: 1,
+            explain: "React 事件按组件树。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "error-boundary",
+    title: "错误边界心智",
+    summary: "子树渲染错误兜底（class 边界 / 库）。",
+    level: "实战",
+    track: "进阶模式",
+    minutes: 10,
+    blocks: [
+      {
+        type: "text",
+        title: "为什么需要",
+        body: "子组件 throw 时，没有边界会导致整页白屏。Error Boundary 捕获渲染期错误并展示降级 UI。事件处理器里的错误要用 try/catch。",
+      },
+      {
+        type: "code",
+        title: "概念",
+        lang: "tsx",
+        code: `// 经典为 class：getDerivedStateFromError / componentDidCatch
+// 或使用 react-error-boundary 等库
+<ErrorBoundary fallback={<p>出错了</p>}>
+  <RiskyWidget />
+</ErrorBoundary>`,
+      },
+      { type: "demo", kind: "async", title: "类比：失败态 UI" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "eb1",
+            question: "Error Boundary 捕获？",
+            options: ["所有 Promise", "子树渲染错误", "仅 CSS", "网络层全部"],
+            answer: 1,
+            explain: "渲染期错误。",
+          },
+          {
+            id: "eb2",
+            question: "onClick 里 throw？",
+            options: ["边界一定抓住", "需 try/catch 或自己处理", "自动 retry", "忽略"],
+            answer: 1,
+            explain: "事件不在渲染路径。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "interview-react",
+    title: "面试高频串讲",
+    summary: "渲染、Hooks 规则、key、协调一句话答法。",
+    level: "实战",
+    track: "进阶模式",
+    minutes: 14,
+    blocks: [
+      {
+        type: "text",
+        title: "渲染流程",
+        body: "state/props 变 → 函数组件再执行 → 产出新 React 元素树 → 协调对比 → 提交 DOM。默认批处理更新。",
+      },
+      {
+        type: "text",
+        title: "Hooks 规则",
+        body: "只在顶层调用，保证每次渲染顺序一致；自定义 Hook 以 use 开头复用逻辑。",
+      },
+      {
+        type: "text",
+        title: "key",
+        body: "列表协调用 key 识别身份；稳定业务 id 优于 index。",
+      },
+      { type: "demo", kind: "state", title: "口述时配合此 Demo" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "iv1",
+            question: "Hooks 不能？",
+            options: ["在顶层", "在条件分支里随意调用", "在自定义 Hook", "在函数组件"],
+            answer: 1,
+            explain: "保持调用顺序。",
+          },
+          {
+            id: "iv2",
+            question: "列表 key？",
+            options: ["每次随机", "稳定 id", "永远 index", "不要"],
+            answer: 1,
+            explain: "稳定身份。",
+          },
+        ],
+      },
+    ],
+  },
+
 ];
 
 export const TRACKS = [
@@ -965,6 +1188,7 @@ export const TRACKS = [
   "全栈准备",
   "全栈实训",
   "工程化",
+  "进阶模式",
 ] as const;
 
 export function getLesson(slug: string): Lesson | undefined {

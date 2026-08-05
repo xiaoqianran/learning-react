@@ -68,6 +68,12 @@ function DemoBody({ kind }: { kind: DemoKind }) {
       return <ValidateDemo />;
     case "challenge":
       return <ChallengeDemo />;
+    case "reducer":
+      return <ReducerDemo />;
+    case "ref":
+      return <RefDemo />;
+    case "portal":
+      return <PortalDemo />;
     default:
       return null;
   }
@@ -659,5 +665,94 @@ function ChallengeDemo() {
         <p className="mt-2 text-sm text-warn">用 setItems + 新数组，不要 push 原数组</p>
       ) : null}
     </Panel>
+  );
+}
+
+
+function ReducerDemo() {
+  type Action = { type: "inc" } | { type: "dec" } | { type: "reset" };
+  const [n, setN] = useState(0);
+  function reduce(action: Action) {
+    if (action.type === "inc") setN((x) => x + 1);
+    if (action.type === "dec") setN((x) => x - 1);
+    if (action.type === "reset") setN(0);
+  }
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="state">
+        <p className="font-mono text-3xl text-primary tabular-nums">{n}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button size="sm" onClick={() => reduce({ type: "inc" })}>
+            dispatch(inc)
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => reduce({ type: "dec" })}>
+            dispatch(dec)
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => reduce({ type: "reset" })}>
+            reset
+          </Button>
+        </div>
+      </Panel>
+      <Panel label="心智">
+        <p className="text-sm text-muted">
+          描述「发生了什么」，由 reducer 算出下一状态。
+        </p>
+        <pre className="mt-2 font-mono text-xs text-primary">
+{`// useReducer(reducer, 0)
+dispatch({ type: 'inc' })`}
+        </pre>
+      </Panel>
+    </div>
+  );
+}
+
+function RefDemo() {
+  const [key, setKey] = useState(0);
+  return (
+    <div className="space-y-3">
+      <Panel label="inputRef.current?.focus()">
+        <input
+          key={key}
+          autoFocus
+          className="h-10 w-full max-w-xs rounded-md border border-border bg-bg px-3 text-sm"
+          placeholder="点击按钮重新挂载并聚焦"
+        />
+        <Button className="mt-3" size="sm" onClick={() => setKey((k) => k + 1)}>
+          模拟 ref 聚焦
+        </Button>
+      </Panel>
+      <p className="text-xs text-muted">
+        useRef 改 .current 不会触发重渲；适合 DOM 与「上次值」。
+      </p>
+    </div>
+  );
+}
+
+function PortalDemo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)}>打开 Portal 弹层</Button>
+      {open ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-bg/70 p-4 backdrop-blur-[2px]"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-xl border border-border bg-surface p-5 shadow-soft"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+          >
+            <h4 className="font-display font-semibold">createPortal(…, body)</h4>
+            <p className="mt-2 text-sm text-muted">
+              逻辑仍在当前组件，DOM 挂在高层。
+            </p>
+            <Button className="mt-4" size="sm" onClick={() => setOpen(false)}>
+              关闭
+            </Button>
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }

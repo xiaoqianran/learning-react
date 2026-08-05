@@ -244,7 +244,7 @@ function StudioPage() {
       <header className="mb-6">
         <p className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-primary">
           <Server className="h-3.5 w-3.5" />
-          v1 · React 全栈工坊
+          v2 · React 全栈工坊
         </p>
         <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
           模拟后端工作室

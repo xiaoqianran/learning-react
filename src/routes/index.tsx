@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化";
+type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式";
 
 function HomePage() {
   const completed = useProgress((s) => s.completed);
@@ -65,7 +65,7 @@ function HomePage() {
           <div className="flex flex-wrap items-center gap-2">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg/60 px-2.5 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              learning-react · v1
+              learning-react · v2
             </p>
             {streak > 0 ? (
               <span className="rounded-full bg-surface-3 px-2.5 py-1 font-mono text-xs text-muted">
@@ -77,8 +77,7 @@ function HomePage() {
             带你系统学 React
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">
-            参考 learning-vue3 的路径设计：{LESSONS.length}{" "}
-            节课、交互 Demo、测验、进度、SFC 式沙箱、模拟全栈工坊。
+            v2：进阶模式、成就徽章、明暗主题；含交互 Demo、测验、工坊与进度。
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
@@ -183,6 +182,7 @@ function HomePage() {
                 "全栈准备",
                 "全栈实训",
                 "工程化",
+                "进阶模式",
               ] as const
             ).map((t) => (
               <button
