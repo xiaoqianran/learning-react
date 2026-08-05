@@ -44,6 +44,10 @@ const lessonSlugs = [
   "a11y-react",
   "nextjs-map",
   "rhf-forms",
+  "tanstack-query",
+  "mutations",
+  "query-keys",
+  "composition-patterns",
 ];
 
 const lessonPaths = lessonSlugs.map((slug) => ({ path: `/lesson/${slug}` }));
@@ -57,6 +61,7 @@ const staticPages = [
   { path: "/playground" },
   { path: "/studio" },
   { path: "/cheatsheet" },
+  { path: "/roadmap" },
   ...lessonPaths,
 ];
 

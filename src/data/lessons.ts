@@ -24,7 +24,8 @@ export type DemoKind =
   | "challenge"
   | "reducer"
   | "ref"
-  | "portal";
+  | "portal"
+  | "query";
 
 export type LessonBlock =
   | { type: "text"; title?: string; body: string }
@@ -38,7 +39,7 @@ export type Lesson = {
   title: string;
   summary: string;
   level: "入门" | "进阶" | "实战";
-  track: "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式" | "现代 React";
+  track: "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式" | "现代 React" | "数据层";
   minutes: number;
   blocks: LessonBlock[];
 };
@@ -1421,6 +1422,183 @@ export async function GET() {
         ],
       },
     ],
+  }, {
+    slug: "tanstack-query",
+    title: "TanStack Query 心智",
+    summary: "服务端状态：缓存、stale、refetch。",
+    level: "实战",
+    track: "数据层",
+    minutes: 13,
+    blocks: [
+      {
+        type: "text",
+        title: "客户端 state vs 服务端 state",
+        body: "表单输入、弹层开关是客户端状态（useState）。列表/用户资料来自 API，适合 Query：queryKey + queryFn，自动缓存与后台刷新。",
+      },
+      {
+        type: "code",
+        title: "useQuery",
+        lang: "tsx",
+        code: `const { data, isPending, isError, error, refetch, isFetching } = useQuery({
+  queryKey: ['notes'],
+  queryFn: () => fetch('/api/notes').then(r => r.json()),
+})`,
+      },
+      { type: "demo", kind: "query", title: "动手：缓存与刷新" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "tq1",
+            question: "queryKey 作用？",
+            options: ["CSS 类名", "标识缓存条目", "路由 path 必须", "仅调试"],
+            answer: 1,
+            explain: "缓存与失效的钥匙。",
+          },
+          {
+            id: "tq2",
+            question: "适合放 Query 的？",
+            options: ["input 瞬时值", "API 列表/详情", "仅动画 frame", "window 尺寸永远不用 state"],
+            answer: 1,
+            explain: "服务端状态。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "mutations",
+    title: "Mutation 与乐观更新",
+    summary: "写操作、invalidate、乐观 UI。",
+    level: "实战",
+    track: "数据层",
+    minutes: 12,
+    blocks: [
+      {
+        type: "text",
+        title: "流程",
+        body: "useMutation 发 POST/PUT/DELETE；成功后 invalidateQueries 让列表重新拉。乐观更新：先改缓存，失败再回滚。",
+      },
+      {
+        type: "code",
+        title: "骨架",
+        lang: "tsx",
+        code: `const qc = useQueryClient()
+const mut = useMutation({
+  mutationFn: (body) => api.createNote(body),
+  onSuccess: () => qc.invalidateQueries({ queryKey: ['notes'] }),
+})`,
+      },
+      { type: "demo", kind: "query", title: "结合工坊理解写路径" },
+      {
+        type: "tip",
+        body: "全栈工坊的创建/编辑/删除就是 mutation；真实项目里用 Query 接管缓存。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "mu1",
+            question: "invalidateQueries？",
+            options: ["删数据库", "标记查询过期并重拉", "清 localStorage", "登出"],
+            answer: 1,
+            explain: "刷新缓存。",
+          },
+          {
+            id: "mu2",
+            question: "乐观更新风险？",
+            options: ["无", "失败需回滚，注意一致性", "只能 GET", "禁止 loading"],
+            answer: 1,
+            explain: "要处理失败回滚。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "query-keys",
+    title: "Query Key 设计",
+    summary: "层级 key、过滤参数与失效范围。",
+    level: "实战",
+    track: "数据层",
+    minutes: 10,
+    blocks: [
+      {
+        type: "code",
+        title: "约定",
+        lang: "ts",
+        code: `['notes'] // 全部
+['notes', { status: 'open' }] // 过滤
+['notes', id] // 详情
+// 失效全部 notes：
+invalidateQueries({ queryKey: ['notes'] })`,
+      },
+      { type: "demo", kind: "async", title: "不同参数 = 不同缓存" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "qk1",
+            question: "详情 key 常见？",
+            options: ["['notes'] 仅", "['notes', id]", "随机数", "仅 URL"],
+            answer: 1,
+            explain: "含 id 区分。",
+          },
+          {
+            id: "qk2",
+            question: "过滤列表？",
+            options: ["忽略 filter", "key 中带 filter 对象", "禁止过滤", "只用 index"],
+            answer: 1,
+            explain: "参数进 key。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "composition-patterns",
+    title: "组合模式复盘",
+    summary: "children、render props 思维、复合组件。",
+    level: "进阶",
+    track: "数据层",
+    minutes: 11,
+    blocks: [
+      {
+        type: "text",
+        title: "为什么放这里",
+        body: "数据层组件常要拆：List + Item + Empty + Error。用组合而不是巨型 if，便于复用与测试。",
+      },
+      {
+        type: "code",
+        title: "复合组件",
+        lang: "tsx",
+        code: `<Notes>
+  <Notes.Toolbar />
+  <Notes.List />
+  <Notes.Empty />
+</Notes>`,
+      },
+      { type: "demo", kind: "props", title: "props/children 组合" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "cp1",
+            question: "组合优于巨型组件？",
+            options: ["否", "职责清晰、易测易换", "更慢必须", "仅 class"],
+            answer: 1,
+            explain: "可维护性。",
+          },
+          {
+            id: "cp2",
+            question: "children？",
+            options: ["非法", "插槽式组合", "仅字符串", "生命周期"],
+            answer: 1,
+            explain: "组合点。",
+          },
+        ],
+      },
+    ],
   },
 
 ];
@@ -1433,6 +1611,7 @@ export const TRACKS = [
   "工程化",
   "进阶模式",
   "现代 React",
+  "数据层",
 ] as const;
 
 export function getLesson(slug: string): Lesson | undefined {

@@ -12,6 +12,7 @@ import {
   Award,
   BookX,
   Home,
+  Map,
 } from "lucide-react";
 
 const PAGES = [
@@ -19,6 +20,7 @@ const PAGES = [
   { to: "/studio", label: "全栈工坊", icon: Server },
   { to: "/cheatsheet", label: "速查表", icon: BookMarked },
   { to: "/playground", label: "沙箱", icon: Code2 },
+  { to: "/roadmap", label: "路线图", icon: Map },
   { to: "/hub", label: "学习中心", icon: LayoutDashboard },
   { to: "/lab", label: "练习场", icon: FlaskConical },
   { to: "/mistakes", label: "错题本", icon: BookX },

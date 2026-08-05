@@ -74,6 +74,8 @@ function DemoBody({ kind }: { kind: DemoKind }) {
       return <RefDemo />;
     case "portal":
       return <PortalDemo />;
+    case "query":
+      return <QueryDemo />;
     default:
       return null;
   }
@@ -753,6 +755,86 @@ function PortalDemo() {
           </div>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+
+function QueryDemo() {
+  const [cache, setCache] = useState<string[] | null>(null);
+  const [status, setStatus] = useState<"idle" | "pending" | "success" | "error">("idle");
+  const [fetching, setFetching] = useState(false);
+  const [stale, setStale] = useState(false);
+
+  function load(force: boolean) {
+    if (cache && !force && !stale) {
+      setStatus("success");
+      return;
+    }
+    setFetching(true);
+    if (!cache) setStatus("pending");
+    window.setTimeout(() => {
+      setCache(["缓存 notes #1", "缓存 notes #2", `ts ${Date.now() % 100000}`]);
+      setStatus("success");
+      setFetching(false);
+      setStale(false);
+    }, 600);
+  }
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="query 操作">
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" onClick={() => load(false)} disabled={fetching}>
+            useQuery / 读取
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => load(true)} disabled={fetching}>
+            refetch
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setStale(true);
+            }}
+          >
+            标为 stale
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setCache(null);
+              setStatus("idle");
+              setStale(false);
+            }}
+          >
+            清缓存
+          </Button>
+        </div>
+        <p className="mt-2 font-mono text-xs text-muted">
+          status={status} · fetching={String(fetching)} · stale={String(stale)}
+        </p>
+      </Panel>
+      <Panel label="UI">
+        {status === "idle" && <p className="text-sm text-muted">尚未请求</p>}
+        {status === "pending" && <p className="text-sm text-primary">isPending…</p>}
+        {status === "success" && cache && (
+          <ul className="space-y-1 text-sm">
+            {cache.map((x) => (
+              <li key={x} className="rounded-md bg-bg px-2 py-1">
+                {x}
+              </li>
+            ))}
+            {fetching ? (
+              <li className="text-xs text-primary">isFetching 后台刷新…</li>
+            ) : null}
+            {stale ? (
+              <li className="text-xs text-warn">数据可能过期，下次读会 refetch</li>
+            ) : null}
+          </ul>
+        )}
+      </Panel>
     </div>
   );
 }

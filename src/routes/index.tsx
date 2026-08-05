@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式" | "现代 React";
+type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式" | "现代 React" | "数据层";
 
 function HomePage() {
   const completed = useProgress((s) => s.completed);
@@ -65,7 +65,7 @@ function HomePage() {
           <div className="flex flex-wrap items-center gap-2">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg/60 px-2.5 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              learning-react · v3
+              learning-react · v4
             </p>
             {streak > 0 ? (
               <span className="rounded-full bg-surface-3 px-2.5 py-1 font-mono text-xs text-muted">
@@ -77,7 +77,7 @@ function HomePage() {
             带你系统学 React
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">
-            v3：现代 React 路径、Ctrl/⌘K 命令面板、学习中心导入导出进度。
+            v4：数据层路径、学习路线图、练习场闪卡模式。
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
@@ -88,6 +88,11 @@ function HomePage() {
               <Button size="lg">
                 {completed.length > 0 ? "继续学习" : "开始学习"}
                 <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/roadmap" className="no-underline">
+              <Button size="lg" variant="secondary">
+                路线图
               </Button>
             </Link>
             <Link to="/studio" className="no-underline">
