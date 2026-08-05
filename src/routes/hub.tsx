@@ -25,6 +25,7 @@ function HubPage() {
   const streak = useProgress((s) => s.streak);
   const checkIns = useProgress((s) => s.checkIns);
   const checkInToday = useProgress((s) => s.checkInToday);
+  const achievements = useProgress((s) => s.achievements);
 
   const noteEntries = Object.entries(notes).filter(([, v]) => v.trim());
   const avgScore =
@@ -49,6 +50,33 @@ function HubPage() {
           进度、打卡、收藏与笔记一览
         </p>
       </header>
+
+
+      <section className="mt-6 rounded-xl border border-border bg-surface p-5">
+        <h2 className="font-display text-base font-semibold">成就</h2>
+        <p className="mt-1 text-xs text-muted">
+          已解锁 {achievements.length}/{ACHIEVEMENTS.length}
+        </p>
+        <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+          {ACHIEVEMENTS.map((a) => {
+            const on = achievements.includes(a.id);
+            return (
+              <li
+                key={a.id}
+                className={
+                  "rounded-lg border px-3 py-2 text-sm " +
+                  (on
+                    ? "border-primary/30 bg-primary-soft text-primary"
+                    : "border-border bg-surface-2 text-muted")
+                }
+              >
+                <span className="font-medium">{a.title}</span>
+                <span className="mt-0.5 block text-xs opacity-80">{a.desc}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Stat
