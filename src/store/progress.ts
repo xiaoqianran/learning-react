@@ -35,6 +35,8 @@ type ProgressState = {
   unlockAchievement: (id: AchievementId) => void;
   syncAchievements: () => void;
   setTheme: (t: "dark" | "light") => void;
+  exportSnapshot: () => object;
+  importSnapshot: (data: unknown) => boolean;
   reset: () => void;
 };
 
@@ -170,6 +172,40 @@ export const useProgress = create<ProgressState>()(
       syncAchievements: () =>
         set((s) => ({ achievements: deriveAchievements(s) })),
       setTheme: (theme) => set({ theme }),
+      exportSnapshot: () => {
+        const s = get();
+        return {
+          version: 3,
+          exportedAt: new Date().toISOString(),
+          completed: s.completed,
+          quizScores: s.quizScores,
+          bookmarks: s.bookmarks,
+          notes: s.notes,
+          wrongBook: s.wrongBook,
+          checkIns: s.checkIns,
+          streak: s.streak,
+          achievements: s.achievements,
+          theme: s.theme,
+        };
+      },
+      importSnapshot: (data) => {
+        if (!data || typeof data !== "object") return false;
+        const p = data as Partial<ProgressState>;
+        if (!Array.isArray(p.completed)) return false;
+        set({
+          completed: p.completed ?? [],
+          quizScores: p.quizScores ?? {},
+          bookmarks: p.bookmarks ?? [],
+          notes: p.notes ?? {},
+          wrongBook: p.wrongBook ?? [],
+          checkIns: p.checkIns ?? [],
+          streak: typeof p.streak === "number" ? p.streak : 0,
+          achievements: p.achievements ?? [],
+          theme: p.theme === "light" ? "light" : "dark",
+        });
+        get().syncAchievements();
+        return true;
+      },
       reset: () =>
         set({
           completed: [],

@@ -38,7 +38,7 @@ export type Lesson = {
   title: string;
   summary: string;
   level: "入门" | "进阶" | "实战";
-  track: "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式";
+  track: "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式" | "现代 React";
   minutes: number;
   blocks: LessonBlock[];
 };
@@ -1178,6 +1178,249 @@ return <input ref={inputRef} />`,
         ],
       },
     ],
+  }, {
+    slug: "suspense",
+    title: "Suspense 与懒加载",
+    summary: "按需拆包与 loading 边界。",
+    level: "进阶",
+    track: "现代 React",
+    minutes: 12,
+    blocks: [
+      {
+        type: "text",
+        title: "做什么",
+        body: "React.lazy + Suspense 在加载代码时显示 fallback。数据 Suspense 需框架或库配合；先掌握「拆代码 + 占位 UI」。",
+      },
+      {
+        type: "code",
+        title: "lazy",
+        lang: "tsx",
+        code: `const Admin = lazy(() => import('./Admin'))
+function App() {
+  return (
+    <Suspense fallback={<p>加载中…</p>}>
+      <Admin />
+    </Suspense>
+  )
+}`,
+      },
+      { type: "demo", kind: "async", title: "类比：loading 边界" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "su1",
+            question: "React.lazy 用于？",
+            options: ["CSS", "动态 import 组件代码拆包", "替代 useState", "服务端鉴权"],
+            answer: 1,
+            explain: "代码分割。",
+          },
+          {
+            id: "su2",
+            question: "Suspense fallback？",
+            options: ["错误页", "子内容未就绪时的占位", "路由守卫", "Pinia"],
+            answer: 1,
+            explain: "加载占位。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "use-transition",
+    title: "useTransition 并发更新",
+    summary: "把非紧急更新标为可中断。",
+    level: "进阶",
+    track: "现代 React",
+    minutes: 11,
+    blocks: [
+      {
+        type: "text",
+        title: "紧急 vs 过渡",
+        body: "输入框应立即响应；过滤大列表可标为 transition，避免卡顿。isPending 可显示「更新中」。",
+      },
+      {
+        type: "code",
+        title: "示例",
+        lang: "tsx",
+        code: `const [isPending, startTransition] = useTransition()
+const [q, setQ] = useState('')
+const [list, setList] = useState(items)
+function onChange(e) {
+  const v = e.target.value
+  setQ(v) // 紧急
+  startTransition(() => {
+    setList(filterHuge(v)) // 可延迟
+  })
+}`,
+      },
+      { type: "demo", kind: "memo", title: "感受：重渲染与响应" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "ut1",
+            question: "startTransition 适合？",
+            options: ["密码输入每个字符加密到服务器", "非紧急 UI 更新（大列表过滤）", "替代 fetch", "仅 class"],
+            answer: 1,
+            explain: "保持输入流畅。",
+          },
+          {
+            id: "ut2",
+            question: "isPending？",
+            options: ["错误码", "过渡更新进行中", "路由参数", "CSS 变量"],
+            answer: 1,
+            explain: "pending 标志。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "a11y-react",
+    title: "无障碍基础",
+    summary: "语义、键盘、焦点与 ARIA。",
+    level: "实战",
+    track: "现代 React",
+    minutes: 11,
+    blocks: [
+      {
+        type: "text",
+        title: "清单",
+        body: "用 button/a 别用 div 冒充；可聚焦控件；图标按钮要 aria-label；对话框管焦点与 Esc；对比度达标。",
+      },
+      {
+        type: "code",
+        title: "示例",
+        lang: "tsx",
+        code: `<button type="button" aria-label="关闭" onClick={onClose}>
+  <X aria-hidden />
+</button>
+<dialog open={open} aria-labelledby="t">
+  <h2 id="t">标题</h2>
+</dialog>`,
+      },
+      { type: "demo", kind: "portal", title: "弹层也要可键盘关闭" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "a11",
+            question: "图标按钮？",
+            options: ["不用文字即可", "需要可访问名称（aria-label 等）", "禁止 button", "仅 title 足够永远"],
+            answer: 1,
+            explain: "屏幕阅读器要名称。",
+          },
+          {
+            id: "a12",
+            question: "交互首选？",
+            options: ["div+onClick", "语义化 button/a", "span", "canvas"],
+            answer: 1,
+            explain: "原生语义。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "nextjs-map",
+    title: "Next.js 全栈地图",
+    summary: "App Router、Server Components、Route Handlers。",
+    level: "实战",
+    track: "现代 React",
+    minutes: 14,
+    blocks: [
+      {
+        type: "text",
+        title: "对应工坊",
+        body: "工坊的 mock API 在 Next 里常是 app/api/notes/route.ts；页面可用 Server Component 直接 await 数据，交互岛用 'use client'。",
+      },
+      {
+        type: "code",
+        title: "结构",
+        lang: "text",
+        code: `app/
+  page.tsx              # Server Component
+  notes/page.tsx
+  api/notes/route.ts    # GET/POST
+  components/NoteForm.tsx  # 'use client'`,
+      },
+      {
+        type: "code",
+        title: "Route Handler",
+        lang: "ts",
+        code: `// app/api/notes/route.ts
+export async function GET() {
+  const notes = await db.note.findMany()
+  return Response.json(notes)
+}`,
+      },
+      { type: "demo", kind: "async", title: "复习：请求态（客户端岛）" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "nx1",
+            question: "默认 Server Component？",
+            options: ["App Router 页面默认可在服务端", "全部必须 use client", "仅 Pages Router", "禁止 async"],
+            answer: 0,
+            explain: "App Router 默认服务端。",
+          },
+          {
+            id: "nx2",
+            question: "useState 组件？",
+            options: ["随便放服务端", "标 'use client'", "只能写 CSS", "禁止"],
+            answer: 1,
+            explain: "客户端组件。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "rhf-forms",
+    title: "表单库心智（RHF）",
+    summary: "非受控性能、校验与提交。",
+    level: "实战",
+    track: "现代 React",
+    minutes: 11,
+    blocks: [
+      {
+        type: "text",
+        title: "为什么",
+        body: "大表单全受控会频繁重渲。react-hook-form 用 ref 收集字段，校验可接 Zod，提交时一次拿到 values。",
+      },
+      {
+        type: "code",
+        title: "骨架",
+        lang: "tsx",
+        code: `const { register, handleSubmit, formState: { errors } } = useForm()
+<form onSubmit={handleSubmit(onSubmit)}>
+  <input {...register('email', { required: true })} />
+  {errors.email && <span>必填</span>}
+</form>`,
+      },
+      { type: "demo", kind: "validate", title: "校验 UI 仍重要" },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "rh1",
+            question: "RHF 优势之一？",
+            options: ["必须 class", "减少大表单重渲、统一校验", "替代路由", "仅 Vue"],
+            answer: 1,
+            explain: "性能与 DX。",
+          },
+          {
+            id: "rh2",
+            question: "register？",
+            options: ["路由注册", "注册字段到表单", "Service Worker", "CSS"],
+            answer: 1,
+            explain: "字段注册。",
+          },
+        ],
+      },
+    ],
   },
 
 ];
@@ -1189,6 +1432,7 @@ export const TRACKS = [
   "全栈实训",
   "工程化",
   "进阶模式",
+  "现代 React",
 ] as const;
 
 export function getLesson(slug: string): Lesson | undefined {

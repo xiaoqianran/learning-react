@@ -39,6 +39,11 @@ const lessonSlugs = [
   "portal",
   "error-boundary",
   "interview-react",
+  "suspense",
+  "use-transition",
+  "a11y-react",
+  "nextjs-map",
+  "rhf-forms",
 ];
 
 const lessonPaths = lessonSlugs.map((slug) => ({ path: `/lesson/${slug}` }));

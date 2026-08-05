@@ -26,17 +26,18 @@ import { cn } from "@/lib/utils";
 import { useProgress } from "@/store/progress";
 import { LESSONS } from "@/data/lessons";
 import appCss from "@/styles.css?url";
+import { CommandPalette } from "@/components/CommandPalette";
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "React 实战学习 v2 · learning-react" },
+      { title: "React 实战学习 v3 · learning-react" },
       {
         name: "description",
         content:
-          "React 中文交互式教程 v2：进阶模式、成就、主题切换、工坊与测验进度。",
+          "React 中文交互式教程 v3：现代 React、命令面板（Ctrl/⌘K）、进度导入导出。",
       },
     ],
     links: [
@@ -128,7 +129,7 @@ function AppShell({ children }: { children: ReactNode }) {
               React 实战学习
             </span>
             <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">
-              v2
+              v3
             </span>
           </Link>
 
@@ -151,6 +152,7 @@ function AppShell({ children }: { children: ReactNode }) {
                 连续 {streak} 天
               </span>
             ) : null}
+            <span className="hidden font-mono text-[10px] text-subtle lg:inline">Ctrl/⌘ K</span>
             <button
               type="button"
               className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-muted hover:text-fg"
@@ -258,6 +260,7 @@ function AppShell({ children }: { children: ReactNode }) {
           {children}
         </main>
       </div>
+      <CommandPalette />
     </div>
   );
 }

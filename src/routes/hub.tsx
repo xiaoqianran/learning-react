@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { LESSONS, TRACKS, getLessonsByTrack } from "@/data/lessons";
 import { ACHIEVEMENTS } from "@/data/achievements";
 import { useProgress, todayKey } from "@/store/progress";
@@ -26,6 +27,9 @@ function HubPage() {
   const checkIns = useProgress((s) => s.checkIns);
   const checkInToday = useProgress((s) => s.checkInToday);
   const achievements = useProgress((s) => s.achievements);
+  const exportSnapshot = useProgress((s) => s.exportSnapshot);
+  const importSnapshot = useProgress((s) => s.importSnapshot);
+  const [importMsg, setImportMsg] = useState<string | null>(null);
 
   const noteEntries = Object.entries(notes).filter(([, v]) => v.trim());
   const avgScore =
@@ -41,7 +45,7 @@ function HubPage() {
     <div className="mx-auto max-w-3xl pb-16">
       <header className="mb-6">
         <p className="text-xs font-medium uppercase tracking-wider text-primary">
-          v2
+          v3
         </p>
         <h1 className="mt-1 font-display text-2xl font-semibold text-fg">
           学习中心
@@ -51,6 +55,57 @@ function HubPage() {
         </p>
       </header>
 
+
+
+      <section className="mt-6 rounded-xl border border-border bg-surface p-5">
+        <h2 className="font-display text-base font-semibold">进度备份</h2>
+        <p className="mt-1 text-xs text-muted">
+          导出 JSON 到本机，或导入恢复（覆盖当前进度）
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => {
+              const blob = new Blob(
+                [JSON.stringify(exportSnapshot(), null, 2)],
+                { type: "application/json" },
+              );
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `learning-react-progress-${new Date().toISOString().slice(0, 10)}.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+          >
+            导出进度
+          </Button>
+          <label className="inline-flex h-9 cursor-pointer items-center rounded-md border border-border bg-surface-2 px-3 text-sm text-fg hover:bg-surface-3">
+            导入进度
+            <input
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (!file) return;
+                try {
+                  const text = await file.text();
+                  const ok = importSnapshot(JSON.parse(text));
+                  setImportMsg(ok ? "导入成功" : "文件格式不正确");
+                } catch {
+                  setImportMsg("解析失败");
+                }
+              }}
+            />
+          </label>
+        </div>
+        {importMsg ? (
+          <p className="mt-2 text-xs text-primary">{importMsg}</p>
+        ) : null}
+      </section>
 
       <section className="mt-6 rounded-xl border border-border bg-surface p-5">
         <h2 className="font-display text-base font-semibold">成就</h2>
