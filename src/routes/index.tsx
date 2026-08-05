@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化";
+type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式";
 
 function HomePage() {
   const completed = useProgress((s) => s.completed);
@@ -66,7 +66,7 @@ function HomePage() {
           <div className="flex flex-wrap items-center gap-2">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg/60 px-2.5 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              v6 · 工程化
+              v7 · 进阶模式
             </p>
             {streak > 0 ? (
               <span className="rounded-full bg-surface-3 px-2.5 py-1 font-mono text-xs text-muted">
@@ -78,7 +78,7 @@ function HomePage() {
             带你系统学 Vue 3
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">
-            v6：工坊闯关任务 + 工程化线（TypeScript、API 客户端、测试、部署）。
+            v7：Teleport / KeepAlive / 自定义指令 / 性能 / 面试串讲，并新增速查表。
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link to="/studio" className="no-underline">
@@ -89,11 +89,16 @@ function HomePage() {
             </Link>
             <Link
               to="/lesson/$slug"
-              params={{ slug: "vue-ts" }}
+              params={{ slug: "teleport" }}
               className="no-underline"
             >
               <Button size="lg" variant="secondary">
-                工程化课程
+                进阶模式
+              </Button>
+            </Link>
+            <Link to="/cheatsheet" className="no-underline">
+              <Button size="lg" variant="secondary">
+                速查表
               </Button>
             </Link>
             <Link to="/playground" className="no-underline">
@@ -183,7 +188,7 @@ function HomePage() {
             <p className="mt-1 text-sm text-muted">搜索与路径筛选</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {(["全部", "基础", "进阶", "全栈准备", "全栈实训", "工程化"] as const).map((t) => (
+            {(["全部", "基础", "进阶", "全栈准备", "全栈实训", "工程化", "进阶模式"] as const).map((t) => (
               <button
                 key={t}
                 type="button"

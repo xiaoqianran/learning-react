@@ -74,6 +74,12 @@ function DemoBody({ kind }: { kind: DemoKind }) {
       return <GuardDemo />;
     case "validate":
       return <ValidateDemo />;
+    case "teleport":
+      return <TeleportDemo />;
+    case "keepalive":
+      return <KeepAliveDemo />;
+    case "directive":
+      return <DirectiveDemo />;
     default:
       return null;
   }
@@ -1057,6 +1063,111 @@ function ValidateDemo() {
       {ok ? (
         <p className="text-sm text-primary">校验通过，可以请求 /api/login</p>
       ) : null}
+    </div>
+  );
+}
+
+
+function TeleportDemo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)}>打开弹层</Button>
+      <p className="mt-2 text-xs text-muted">
+        模拟 Teleport to body：遮罩盖住整页，不受父级 overflow 限制。
+      </p>
+      {open ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-bg/70 p-4 backdrop-blur-[2px]"
+          role="presentation"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="w-full max-w-sm rounded-xl border border-border bg-surface p-5 shadow-soft"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h4 className="font-display text-base font-semibold text-fg">对话框</h4>
+            <p className="mt-2 text-sm text-muted">
+              内容仍由当前组件状态控制，DOM 挂在高层。
+            </p>
+            <Button className="mt-4" size="sm" onClick={() => setOpen(false)}>
+              关闭
+            </Button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function KeepAliveDemo() {
+  const [tab, setTab] = useState<"a" | "b">("a");
+  const [textA, setTextA] = useState("");
+  const [textB, setTextB] = useState("");
+  return (
+    <div>
+      <div className="flex gap-2">
+        <Button size="sm" variant={tab === "a" ? "default" : "secondary"} onClick={() => setTab("a")}>
+          Tab A
+        </Button>
+        <Button size="sm" variant={tab === "b" ? "default" : "secondary"} onClick={() => setTab("b")}>
+          Tab B
+        </Button>
+      </div>
+      <p className="mt-2 text-xs text-muted">模拟 KeepAlive：切换 tab 保留输入。</p>
+      <div className="mt-3 rounded-lg border border-border bg-surface-2 p-3">
+        {tab === "a" ? (
+          <label className="block text-sm">
+            <span className="text-xs text-muted">A 的草稿</span>
+            <input
+              value={textA}
+              onChange={(e) => setTextA(e.target.value)}
+              className="mt-1 h-10 w-full rounded-md border border-border bg-bg px-3 text-sm"
+              placeholder="在 A 输入…"
+            />
+          </label>
+        ) : (
+          <label className="block text-sm">
+            <span className="text-xs text-muted">B 的草稿</span>
+            <input
+              value={textB}
+              onChange={(e) => setTextB(e.target.value)}
+              className="mt-1 h-10 w-full rounded-md border border-border bg-bg px-3 text-sm"
+              placeholder="在 B 输入…"
+            />
+          </label>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function DirectiveDemo() {
+  const [show, setShow] = useState(true);
+  const [key, setKey] = useState(0);
+  return (
+    <div>
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" onClick={() => { setShow(true); setKey((k) => k + 1); }}>
+          挂载并聚焦
+        </Button>
+        <Button size="sm" variant="secondary" onClick={() => setShow(false)}>
+          卸载
+        </Button>
+      </div>
+      <p className="mt-2 text-xs text-muted">模拟 v-focus：mounted 时 el.focus()</p>
+      {show ? (
+        <input
+          key={key}
+          autoFocus
+          className="mt-3 h-10 w-full max-w-xs rounded-md border border-border bg-bg px-3 text-sm"
+          placeholder="应自动获得焦点"
+        />
+      ) : (
+        <p className="mt-3 text-sm text-muted">输入框已卸载</p>
+      )}
     </div>
   );
 }

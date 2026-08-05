@@ -24,7 +24,10 @@ export type DemoKind =
   | "provide"
   | "async"
   | "guard"
-  | "validate";
+  | "validate"
+  | "teleport"
+  | "keepalive"
+  | "directive";
 
 export type LessonBlock =
   | { type: "text"; title?: string; body: string }
@@ -38,7 +41,7 @@ export type Lesson = {
   title: string;
   summary: string;
   level: "入门" | "进阶" | "实战";
-  track: "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化";
+  track: "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式";
   minutes: number;
   blocks: LessonBlock[];
 };
@@ -47,30 +50,21 @@ export const LESSONS: Lesson[] = [
   {
     slug: "intro",
     title: "Vue 3 是什么",
-    summary: "认识渐进式框架与组合式 API。",
+    summary: "渐进式框架与组合式 API。",
     level: "入门",
     track: "基础",
     minutes: 6,
     blocks: [
-      {
-        type: "text",
-        title: "一句话",
-        body: "Vue：声明式 UI + 响应式数据驱动视图。",
-      },
-      {
-        type: "demo",
-        kind: "counter",
-        title: "动手：计数器",
-      },
+      { type: "demo", kind: "counter", title: "动手：计数器" },
       {
         type: "quiz",
         questions: [
           {
             id: "i1",
-            question: "Vue 核心思路？",
-            options: ["手写 DOM", "声明式 + 数据驱动", "仅类组件", "必须 jQuery"],
+            question: "Vue 核心？",
+            options: ["手写 DOM", "声明式 + 数据驱动", "仅类组件", "jQuery"],
             answer: 1,
-            explain: "声明式模板与响应式。",
+            explain: "声明式与响应式。",
           },
           {
             id: "i2",
@@ -86,32 +80,28 @@ export const LESSONS: Lesson[] = [
   {
     slug: "template",
     title: "模板语法",
-    summary: "插值、指令与 v-html 安全。",
+    summary: "插值与指令。",
     level: "入门",
     track: "基础",
     minutes: 8,
     blocks: [
-      {
-        type: "demo",
-        kind: "template",
-        title: "动手：模板绑定",
-      },
+      { type: "demo", kind: "template", title: "动手：模板" },
       {
         type: "quiz",
         questions: [
           {
             id: "t1",
             question: "v-bind 简写？",
-            options: [":", "@", "#", "v-"],
+            options: [":", "@", "#", "."],
             answer: 0,
             explain: ":title",
           },
           {
             id: "t2",
             question: "v-html 风险？",
-            options: ["慢", "XSS", "已移除", "仅数字"],
+            options: ["慢", "XSS", "移除", "仅数字"],
             answer: 1,
-            explain: "原始 HTML 注入。",
+            explain: "XSS。",
           },
         ],
       },
@@ -120,23 +110,19 @@ export const LESSONS: Lesson[] = [
   {
     slug: "reactivity",
     title: "响应式：ref 与 reactive",
-    summary: ".value 与解构陷阱。",
+    summary: ".value 与解构。",
     level: "入门",
     track: "基础",
     minutes: 10,
     blocks: [
-      {
-        type: "demo",
-        kind: "ref-vs-reactive",
-        title: "动手：ref / reactive",
-      },
+      { type: "demo", kind: "ref-vs-reactive", title: "动手：响应式" },
       {
         type: "quiz",
         questions: [
           {
             id: "r1",
             question: "脚本读 ref？",
-            options: ["count", "count.value", "count()", "count.val"],
+            options: ["count", "count.value", "count()", "val"],
             answer: 1,
             explain: ".value",
           },
@@ -145,7 +131,7 @@ export const LESSONS: Lesson[] = [
             question: "解构 reactive？",
             options: ["更快", "丢响应式", "变 ref", "报错"],
             answer: 1,
-            explain: "用 toRefs。",
+            explain: "toRefs。",
           },
         ],
       },
@@ -154,30 +140,26 @@ export const LESSONS: Lesson[] = [
   {
     slug: "computed",
     title: "计算属性与侦听器",
-    summary: "computed 缓存与 watch 副作用。",
+    summary: "computed / watch。",
     level: "入门",
     track: "基础",
     minutes: 10,
     blocks: [
-      {
-        type: "demo",
-        kind: "computed",
-        title: "动手：computed + watch",
-      },
+      { type: "demo", kind: "computed", title: "动手：computed" },
       {
         type: "quiz",
         questions: [
           {
             id: "c1",
-            question: "computed 优势？",
-            options: ["async", "缓存", "仅 Options", "无返回"],
+            question: "computed？",
+            options: ["无缓存", "有缓存", "仅 Options", "无返回"],
             answer: 1,
             explain: "依赖缓存。",
           },
           {
             id: "c2",
             question: "watchEffect？",
-            options: ["必须指定源", "自动追踪", "只一次", "不能清理"],
+            options: ["指定源", "自动追踪", "一次", "不能清"],
             answer: 1,
             explain: "自动依赖。",
           },
@@ -188,25 +170,21 @@ export const LESSONS: Lesson[] = [
   {
     slug: "list-render",
     title: "条件与列表渲染",
-    summary: "v-if / v-for / key。",
+    summary: "v-if / v-for。",
     level: "入门",
     track: "基础",
     minutes: 9,
     blocks: [
-      {
-        type: "demo",
-        kind: "list",
-        title: "动手：列表",
-      },
+      { type: "demo", kind: "list", title: "动手：列表" },
       {
         type: "quiz",
         questions: [
           {
             id: "l1",
-            question: "key 作用？",
-            options: ["可省略", "复用 DOM", "CSS", "请求"],
+            question: "key？",
+            options: ["可省", "识别节点", "CSS", "请求"],
             answer: 1,
-            explain: "diff 身份。",
+            explain: "diff。",
           },
           {
             id: "l2",
@@ -222,16 +200,12 @@ export const LESSONS: Lesson[] = [
   {
     slug: "events",
     title: "事件处理",
-    summary: "v-on 与修饰符。",
+    summary: "v-on 修饰符。",
     level: "入门",
     track: "基础",
     minutes: 7,
     blocks: [
-      {
-        type: "demo",
-        kind: "events",
-        title: "动手：事件",
-      },
+      { type: "demo", kind: "events", title: "动手：事件" },
       {
         type: "quiz",
         questions: [
@@ -254,11 +228,7 @@ export const LESSONS: Lesson[] = [
     track: "基础",
     minutes: 9,
     blocks: [
-      {
-        type: "demo",
-        kind: "form",
-        title: "动手：表单",
-      },
+      { type: "demo", kind: "form", title: "动手：表单" },
       {
         type: "quiz",
         questions: [
@@ -267,7 +237,7 @@ export const LESSONS: Lesson[] = [
             question: ".number？",
             options: ["限长", "转数字", "整数", "禁用"],
             answer: 1,
-            explain: "数字转换。",
+            explain: "数字。",
           },
         ],
       },
@@ -276,16 +246,12 @@ export const LESSONS: Lesson[] = [
   {
     slug: "components",
     title: "组件基础",
-    summary: "SFC 积木。",
+    summary: "SFC。",
     level: "进阶",
     track: "基础",
     minutes: 10,
     blocks: [
-      {
-        type: "demo",
-        kind: "component",
-        title: "动手：子组件",
-      },
+      { type: "demo", kind: "component", title: "动手：组件" },
       {
         type: "quiz",
         questions: [
@@ -294,7 +260,7 @@ export const LESSONS: Lesson[] = [
             question: "SFC？",
             options: ["服务", "单文件组件", "函数", "样式"],
             answer: 1,
-            explain: ".vue 文件。",
+            explain: ".vue",
           },
         ],
       },
@@ -308,11 +274,7 @@ export const LESSONS: Lesson[] = [
     track: "基础",
     minutes: 11,
     blocks: [
-      {
-        type: "demo",
-        kind: "todo",
-        title: "动手：Todo",
-      },
+      { type: "demo", kind: "todo", title: "动手：Todo" },
       {
         type: "quiz",
         questions: [
@@ -321,7 +283,7 @@ export const LESSONS: Lesson[] = [
             question: "子改父？",
             options: ["改 props", "emit", "window", "v-html"],
             answer: 1,
-            explain: "事件上抛。",
+            explain: "事件。",
           },
         ],
       },
@@ -330,16 +292,12 @@ export const LESSONS: Lesson[] = [
   {
     slug: "lifecycle",
     title: "生命周期",
-    summary: "挂载与清理。",
+    summary: "挂载清理。",
     level: "进阶",
     track: "基础",
     minutes: 8,
     blocks: [
-      {
-        type: "demo",
-        kind: "lifecycle",
-        title: "动手：生命周期",
-      },
+      { type: "demo", kind: "lifecycle", title: "动手：生命周期" },
       {
         type: "quiz",
         questions: [
@@ -348,7 +306,7 @@ export const LESSONS: Lesson[] = [
             question: "onMounted？",
             options: ["定义 ref", "DOM/请求", "改 props", "CSS"],
             answer: 1,
-            explain: "挂载后副作用。",
+            explain: "副作用。",
           },
         ],
       },
@@ -357,32 +315,28 @@ export const LESSONS: Lesson[] = [
   {
     slug: "composition",
     title: "组合式 API 实践",
-    summary: "useXxx composable。",
+    summary: "composable。",
     level: "实战",
     track: "基础",
     minutes: 12,
     blocks: [
-      {
-        type: "demo",
-        kind: "counter",
-        title: "composable 思路",
-      },
+      { type: "demo", kind: "counter", title: "useXxx 思路" },
       {
         type: "quiz",
         questions: [
           {
             id: "co1",
             question: "命名？",
-            options: ["get", "useXxx", "make", "Service"],
+            options: ["get", "useXxx", "make", "Svc"],
             answer: 1,
-            explain: "use 前缀。",
+            explain: "use。",
           },
           {
             id: "co2",
             question: "收益？",
             options: ["无 TS", "逻辑复用", "无构建", "无组件"],
             answer: 1,
-            explain: "聚合复用。",
+            explain: "复用。",
           },
         ],
       },
@@ -396,20 +350,16 @@ export const LESSONS: Lesson[] = [
     track: "进阶",
     minutes: 14,
     blocks: [
-      {
-        type: "demo",
-        kind: "router",
-        title: "动手：路由",
-      },
+      { type: "demo", kind: "router", title: "动手：路由" },
       {
         type: "quiz",
         questions: [
           {
             id: "rt1",
             question: "RouterLink？",
-            options: ["仅相对", "SPA 无刷新", "强制刷新", "无 params"],
+            options: ["仅相对", "SPA 无刷新", "刷新", "无参"],
             answer: 1,
-            explain: "客户端导航。",
+            explain: "客户端。",
           },
           {
             id: "rt2",
@@ -430,25 +380,21 @@ export const LESSONS: Lesson[] = [
     track: "进阶",
     minutes: 12,
     blocks: [
-      {
-        type: "demo",
-        kind: "pinia",
-        title: "动手：Pinia",
-      },
+      { type: "demo", kind: "pinia", title: "动手：Pinia" },
       {
         type: "quiz",
         questions: [
           {
             id: "pi1",
             question: "Pinia？",
-            options: ["必须 mutations", "轻量 TS", "仅 Options", "单 store"],
+            options: ["mutations", "轻量 TS", "仅 Options", "单 store"],
             answer: 1,
             explain: "官方推荐。",
           },
           {
             id: "pi2",
             question: "改状态？",
-            options: ["commit", "直接改/调函数", "dispatch", "仅外"],
+            options: ["commit", "直接改", "dispatch", "仅外"],
             answer: 1,
             explain: "setup store。",
           },
@@ -459,30 +405,26 @@ export const LESSONS: Lesson[] = [
   {
     slug: "pitfalls",
     title: "常见坑与性能",
-    summary: "响应式与浅层。",
+    summary: "响应式陷阱。",
     level: "实战",
     track: "进阶",
     minutes: 11,
     blocks: [
-      {
-        type: "demo",
-        kind: "challenge",
-        title: "挑战：修响应式",
-      },
+      { type: "demo", kind: "challenge", title: "挑战：修响应式" },
       {
         type: "quiz",
         questions: [
           {
             id: "pf1",
             question: "shallowRef？",
-            options: ["深度", "只替换 .value", "不能对象", "reactive"],
+            options: ["深度", "只替换 value", "不能对象", "reactive"],
             answer: 1,
             explain: "浅层。",
           },
           {
             id: "pf2",
             question: "computed 请求？",
-            options: ["好", "不好", "仅 Vue2", "缓存到 LS"],
+            options: ["好", "不好", "Vue2", "LS"],
             answer: 1,
             explain: "副作用用 watch。",
           },
@@ -493,19 +435,15 @@ export const LESSONS: Lesson[] = [
   {
     slug: "project",
     title: "从零搭一个小项目",
-    summary: "Vite 与环境变量。",
+    summary: "Vite 起步。",
     level: "实战",
     track: "进阶",
     minutes: 13,
     blocks: [
-      {
-        type: "demo",
-        kind: "todo",
-        title: "综合 Todo",
-      },
+      { type: "demo", kind: "todo", title: "综合 Todo" },
       {
         type: "tip",
-        body: "v5/v6：全栈工坊闯关 + 工程化课。",
+        body: "v7：进阶模式 + 速查表。完成工坊闯关与全部路径可解锁结业证明。",
       },
       {
         type: "quiz",
@@ -522,7 +460,7 @@ export const LESSONS: Lesson[] = [
             question: "脚手架？",
             options: ["create vue@latest", "vue create", "CRA", "next"],
             answer: 0,
-            explain: "官方 create vue。",
+            explain: "官方。",
           },
         ],
       },
@@ -531,16 +469,12 @@ export const LESSONS: Lesson[] = [
   {
     slug: "slots",
     title: "插槽 Slots",
-    summary: "默认/具名/作用域。",
+    summary: "组合 UI。",
     level: "进阶",
     track: "全栈准备",
     minutes: 12,
     blocks: [
-      {
-        type: "demo",
-        kind: "slots",
-        title: "动手：插槽",
-      },
+      { type: "demo", kind: "slots", title: "动手：插槽" },
       {
         type: "quiz",
         questions: [
@@ -549,7 +483,7 @@ export const LESSONS: Lesson[] = [
             question: "具名简写？",
             options: ["@", "#", ":", "."],
             answer: 1,
-            explain: "#header",
+            explain: "#",
           },
           {
             id: "sl2",
@@ -570,18 +504,14 @@ export const LESSONS: Lesson[] = [
     track: "全栈准备",
     minutes: 11,
     blocks: [
-      {
-        type: "demo",
-        kind: "provide",
-        title: "动手：注入",
-      },
+      { type: "demo", kind: "provide", title: "动手：注入" },
       {
         type: "quiz",
         questions: [
           {
             id: "pr1",
             question: "vs Pinia？",
-            options: ["替代", "树内 vs 全局", "仅字符串", "仅 Options"],
+            options: ["替代", "树内 vs 全局", "字符串", "Options"],
             answer: 1,
             explain: "职责不同。",
           },
@@ -590,7 +520,7 @@ export const LESSONS: Lesson[] = [
             question: "InjectionKey？",
             options: ["快", "类型+唯一", "必须", "体积"],
             answer: 1,
-            explain: "TS 安全。",
+            explain: "TS。",
           },
         ],
       },
@@ -599,22 +529,18 @@ export const LESSONS: Lesson[] = [
   {
     slug: "async-data",
     title: "异步数据与请求态",
-    summary: "loading / error / Abort。",
+    summary: "loading / error。",
     level: "实战",
     track: "全栈准备",
     minutes: 14,
     blocks: [
-      {
-        type: "demo",
-        kind: "async",
-        title: "动手：三态",
-      },
+      { type: "demo", kind: "async", title: "动手：三态" },
       {
         type: "quiz",
         questions: [
           {
             id: "as1",
-            question: "离开页请求？",
+            question: "离开页？",
             options: ["忽略", "Abort", "锁按钮", "window"],
             answer: 1,
             explain: "取消。",
@@ -622,7 +548,7 @@ export const LESSONS: Lesson[] = [
           {
             id: "as2",
             question: "最少状态？",
-            options: ["仅成功", "loading/error/成功", "仅 error", "skeleton"],
+            options: ["成功", "loading/error/成功", "error", "skeleton"],
             answer: 1,
             explain: "三态。",
           },
@@ -633,32 +559,28 @@ export const LESSONS: Lesson[] = [
   {
     slug: "route-guards",
     title: "路由守卫与鉴权心智",
-    summary: "beforeEach 与 redirect。",
+    summary: "beforeEach。",
     level: "实战",
     track: "全栈准备",
     minutes: 13,
     blocks: [
-      {
-        type: "demo",
-        kind: "guard",
-        title: "动手：门禁",
-      },
+      { type: "demo", kind: "guard", title: "动手：门禁" },
       {
         type: "quiz",
         questions: [
           {
             id: "gd1",
             question: "前端守卫=安全？",
-            options: ["是", "否", "仅 CSRF", "仅 CORS"],
+            options: ["是", "否", "CSRF", "CORS"],
             answer: 1,
-            explain: "服务端必校验。",
+            explain: "服务端必验。",
           },
           {
             id: "gd2",
             question: "回跳？",
-            options: ["写死", "redirect 参数", "reload", "back"],
+            options: ["写死", "redirect", "reload", "back"],
             answer: 1,
-            explain: "query.redirect。",
+            explain: "query。",
           },
         ],
       },
@@ -667,16 +589,12 @@ export const LESSONS: Lesson[] = [
   {
     slug: "form-validate",
     title: "表单校验",
-    summary: "字段错误与门禁。",
+    summary: "字段错误。",
     level: "实战",
     track: "全栈准备",
     minutes: 12,
     blocks: [
-      {
-        type: "demo",
-        kind: "validate",
-        title: "动手：校验",
-      },
+      { type: "demo", kind: "validate", title: "动手：校验" },
       {
         type: "quiz",
         questions: [
@@ -701,39 +619,22 @@ export const LESSONS: Lesson[] = [
   {
     slug: "rest-api",
     title: "REST API 与 CRUD",
-    summary: "资源、方法、状态码。",
+    summary: "资源与状态码。",
     level: "实战",
     track: "全栈实训",
     minutes: 14,
     blocks: [
       {
-        type: "text",
-        title: "约定",
-        body: "GET 读、POST 建、PUT 改、DELETE 删。200/201 成功，400 参数，401 未登录，404 不存在，500 服务器。",
-      },
-      {
-        type: "code",
-        title: "路径",
-        lang: "text",
-        code: `GET/POST /api/notes
-PUT/DELETE /api/notes/:id
-Authorization: Bearer <token>`,
-      },
-      {
         type: "tip",
-        body: "去全栈工坊完成闯关，对照右侧请求日志。",
+        body: "去全栈工坊完成 6 关闯关，对照请求日志。",
       },
-      {
-        type: "demo",
-        kind: "async",
-        title: "复习：请求态",
-      },
+      { type: "demo", kind: "async", title: "复习：请求态" },
       {
         type: "quiz",
         questions: [
           {
             id: "rs1",
-            question: "创建用？",
+            question: "创建？",
             options: ["GET", "POST", "DELETE", "HEAD"],
             answer: 1,
             explain: "POST。",
@@ -752,37 +653,28 @@ Authorization: Bearer <token>`,
   {
     slug: "auth-token",
     title: "Token 登录与会话",
-    summary: "Bearer 与 401 清会话。",
+    summary: "Bearer 与 401。",
     level: "实战",
     track: "全栈实训",
     minutes: 13,
     blocks: [
-      {
-        type: "text",
-        title: "流程",
-        body: "login → 存 token → 请求带 Authorization → 401 则清态跳登录。生产更推荐 HttpOnly Cookie。",
-      },
-      {
-        type: "demo",
-        kind: "guard",
-        title: "复习：门禁",
-      },
+      { type: "demo", kind: "guard", title: "复习：门禁" },
       {
         type: "quiz",
         questions: [
           {
             id: "at1",
-            question: "Bearer 放哪？",
-            options: ["URL", "Authorization 头", "CSS", "从不发"],
+            question: "Bearer？",
+            options: ["URL", "Authorization", "CSS", "不发"],
             answer: 1,
             explain: "请求头。",
           },
           {
             id: "at2",
             question: "HttpOnly？",
-            options: ["更快", "JS 难偷 token", "免 HTTPS", "免 CSRF"],
+            options: ["快", "防 JS 偷 token", "免 HTTPS", "免 CSRF"],
             answer: 1,
-            explain: "防 XSS 读 cookie。",
+            explain: "XSS 防护。",
           },
         ],
       },
@@ -791,7 +683,7 @@ Authorization: Bearer <token>`,
   {
     slug: "nuxt-map",
     title: "Nuxt 全栈地图",
-    summary: "pages 与 server/api。",
+    summary: "pages + server/api。",
     level: "实战",
     track: "全栈实训",
     minutes: 15,
@@ -800,16 +692,7 @@ Authorization: Bearer <token>`,
         type: "code",
         title: "结构",
         lang: "text",
-        code: `pages/
-server/api/notes.get.ts
-composables/
-nuxt.config.ts`,
-      },
-      {
-        type: "code",
-        title: "useFetch",
-        lang: "ts",
-        code: `const { data, pending, error, refresh } = await useFetch('/api/notes')`,
+        code: `pages/\nserver/api/notes.get.ts\ncomposables/`,
       },
       {
         type: "quiz",
@@ -819,14 +702,14 @@ nuxt.config.ts`,
             question: "notes.get.ts？",
             options: ["静态", "GET /api/notes", "仅客户端", "Pinia"],
             answer: 1,
-            explain: "Nitro 路由。",
+            explain: "Nitro。",
           },
           {
             id: "nx2",
             question: "useFetch？",
             options: ["无差", "SSR 友好", "无 TS", "仅 POST"],
             answer: 1,
-            explain: "数据获取集成。",
+            explain: "集成数据获取。",
           },
         ],
       },
@@ -835,7 +718,7 @@ nuxt.config.ts`,
   {
     slug: "capstone",
     title: "毕业作品清单",
-    summary: "可演示的全栈小产品。",
+    summary: "可演示产品。",
     level: "实战",
     track: "全栈实训",
     minutes: 10,
@@ -844,130 +727,61 @@ nuxt.config.ts`,
         type: "code",
         title: "验收",
         lang: "text",
-        code: `[ ] 登录退出
-[ ] 401 回登录
-[ ] CRUD + 空状态
-[ ] 校验前后端
-[ ] loading/error
-[ ] README 演示账号
-[ ] 部署链接`,
+        code: `[ ] 登录退出\n[ ] CRUD\n[ ] 校验\n[ ] 部署`,
       },
-      {
-        type: "demo",
-        kind: "todo",
-        title: "热身 Todo",
-      },
+      { type: "demo", kind: "todo", title: "热身" },
       {
         type: "quiz",
         questions: [
           {
             id: "cap1",
             question: "作品最少？",
-            options: ["静态", "鉴权+CRUD", "仅 CSS", "仅动画"],
+            options: ["静态", "鉴权+CRUD", "CSS", "动画"],
             answer: 1,
-            explain: "前后端协作。",
+            explain: "全栈协作。",
           },
           {
             id: "cap2",
             question: "演示账号？",
             options: ["不写", "README", "口口", "CSS"],
             answer: 1,
-            explain: "方便评审。",
+            explain: "可评审。",
           },
         ],
       },
     ],
   },
-
-  // ——— v6 工程化 ———
   {
     slug: "vue-ts",
     title: "Vue 与 TypeScript",
-    summary: "类型化 props、emits、ref 与组件实例。",
+    summary: "类型化 props/API。",
     level: "实战",
     track: "工程化",
     minutes: 14,
     blocks: [
       {
-        type: "text",
-        title: "为什么要 TS",
-        body: "全栈项目接口字段多、重构频繁。TS 在编译期抓住 props 写错、漏处理 null、API 响应形状不对等问题。",
-      },
-      {
         type: "code",
-        title: "script setup + 类型",
-        lang: "vue",
-        code: `<script setup lang="ts">
-import { ref, computed } from 'vue'
-
-const props = defineProps<{
-  noteId: string
-  readonly?: boolean
-}>()
-
-const emit = defineEmits<{
-  save: [payload: { title: string; body: string }]
-  cancel: []
-}>()
-
-const title = ref('')
-const charCount = computed(() => title.value.length)
-
-function onSave() {
-  emit('save', { title: title.value, body: '' })
-}
-</script>`,
-      },
-      {
-        type: "code",
-        title: "API 响应类型",
+        title: "defineProps",
         lang: "ts",
-        code: `type Note = { id: string; title: string; body: string }
-
-async function listNotes(token: string): Promise<Note[]> {
-  const res = await fetch('/api/notes', {
-    headers: { Authorization: \`Bearer \${token}\` },
-  })
-  if (!res.ok) throw new Error(String(res.status))
-  return res.json() as Promise<Note[]>
-}`,
+        code: `defineProps<{ title: string; count?: number }>()\ndefineEmits<{ save: [id: string] }>()`,
       },
-      {
-        type: "tip",
-        body: "工坊的 mock-api 返回形状就是你该在真实项目里定义的 type/interface。",
-      },
-      {
-        type: "demo",
-        kind: "form",
-        title: "表单数据也要有类型",
-        hint: "想象 email/password 是 typed form state。",
-      },
+      { type: "demo", kind: "form", title: "表单也要类型" },
       {
         type: "quiz",
         questions: [
           {
             id: "ts1",
-            question: "defineProps 泛型写法？",
-            options: [
-              "defineProps()",
-              "defineProps<{ title: string }>()",
-              "props: Object",
-              "PropTypes",
-            ],
+            question: "props 类型？",
+            options: ["无", "defineProps<{}>()", "PropTypes", "any"],
             answer: 1,
-            explain: "Vue 3 + TS 推荐泛型 props。",
+            explain: "泛型 props。",
           },
           {
             id: "ts2",
-            question: "API JSON 建议？",
-            options: [
-              "any 到底",
-              "定义 response 类型并校验失败分支",
-              "忽略错误",
-              "只用 string",
-            ],
+            question: "API JSON？",
+            options: ["any", "定义类型+错误", "忽略", "string"],
             answer: 1,
-            explain: "类型 + 错误处理。",
+            explain: "类型与分支。",
           },
         ],
       },
@@ -976,109 +790,32 @@ async function listNotes(token: string): Promise<Note[]> {
   {
     slug: "api-client",
     title: "封装 API 客户端",
-    summary: "统一 baseURL、token、错误与 composable。",
+    summary: "统一 token 与错误。",
     level: "实战",
     track: "工程化",
     minutes: 13,
     blocks: [
       {
-        type: "text",
-        title: "不要满天飞 fetch",
-        body: "每个页面自己写 fetch 会重复处理 token、401、JSON 解析。抽一层 apiClient + 领域函数（listNotes / createNote），组件只关心业务。",
-      },
-      {
-        type: "code",
-        title: "轻量 client",
-        lang: "ts",
-        code: `const BASE = import.meta.env.VITE_API_BASE ?? ''
-
-export class ApiError extends Error {
-  constructor(public status: number, message: string) {
-    super(message)
-  }
-}
-
-export async function api<T>(
-  path: string,
-  opts: RequestInit & { token?: string | null } = {},
-): Promise<T> {
-  const headers = new Headers(opts.headers)
-  headers.set('Content-Type', 'application/json')
-  if (opts.token) headers.set('Authorization', \`Bearer \${opts.token}\`)
-
-  const res = await fetch(BASE + path, { ...opts, headers })
-  if (res.status === 401) throw new ApiError(401, '未登录')
-  if (!res.ok) throw new ApiError(res.status, await res.text())
-  if (res.status === 204) return undefined as T
-  return res.json() as Promise<T>
-}
-
-export const notesApi = {
-  list: (token: string) => api<Note[]>('/api/notes', { token }),
-  create: (token: string, body: unknown) =>
-    api<Note>('/api/notes', { method: 'POST', token, body: JSON.stringify(body) }),
-}`,
-      },
-      {
-        type: "code",
-        title: "composable",
-        lang: "ts",
-        code: `export function useNotes(token: Ref<string | null>) {
-  const data = ref<Note[]>([])
-  const loading = ref(false)
-  const error = ref<string | null>(null)
-
-  async function refresh() {
-    if (!token.value) return
-    loading.value = true
-    error.value = null
-    try {
-      data.value = await notesApi.list(token.value)
-    } catch (e) {
-      error.value = (e as Error).message
-    } finally {
-      loading.value = false
-    }
-  }
-
-  return { data, loading, error, refresh }
-}`,
-      },
-      {
         type: "tip",
-        body: "本站 mock-api.ts 就是教学版 client。真实项目换成 VITE_API_BASE 指向后端即可。",
+        body: "组件不直接 fetch；走 notesApi.list(token)。",
       },
-      {
-        type: "demo",
-        kind: "async",
-        title: "client 之上仍是三态 UI",
-      },
+      { type: "demo", kind: "async", title: "client 与三态" },
       {
         type: "quiz",
         questions: [
           {
             id: "ac1",
-            question: "封装 API 客户端主要为了？",
-            options: [
-              "让代码变长",
-              "统一鉴权、错误与路径，减少重复",
-              "替代组件",
-              "去掉 TypeScript",
-            ],
+            question: "封装目的？",
+            options: ["变长", "统一鉴权错误", "替代组件", "去 TS"],
             answer: 1,
-            explain: "横切关注点集中。",
+            explain: "横切关注点。",
           },
           {
             id: "ac2",
-            question: "401 在 client 层？",
-            options: [
-              "忽略",
-              "抛出可识别错误，由路由/store 清会话",
-              "只 console.log",
-              "自动 POST 删除库",
-            ],
+            question: "401？",
+            options: ["忽略", "抛错由上层清会话", "log", "删库"],
             answer: 1,
-            explain: "统一抛错 + 上层处理跳转。",
+            explain: "统一处理。",
           },
         ],
       },
@@ -1087,71 +824,31 @@ export const notesApi = {
   {
     slug: "testing-vue",
     title: "测试入门",
-    summary: "Vitest 测逻辑，Vue Test Utils 测组件。",
+    summary: "Vitest / VTU / E2E。",
     level: "实战",
     track: "工程化",
     minutes: 12,
     blocks: [
       {
-        type: "text",
-        title: "测什么",
-        body: "优先测：纯函数校验、composable、关键组件交互。E2E（Playwright）覆盖登录→CRUD 主路径。不要追求 100% 覆盖率装饰。",
-      },
-      {
-        type: "code",
-        title: "Vitest 测校验",
-        lang: "ts",
-        code: `import { describe, it, expect } from 'vitest'
-import { validateLogin } from './validate'
-
-describe('validateLogin', () => {
-  it('rejects short password', () => {
-    const e = validateLogin('a@b.com', '123')
-    expect(e.password).toBeTruthy()
-  })
-  it('accepts ok form', () => {
-    expect(validateLogin('a@b.com', 'password123')).toEqual({})
-  })
-})`,
-      },
-      {
-        type: "code",
-        title: "组件冒烟",
-        lang: "ts",
-        code: `import { mount } from '@vue/test-utils'
-import Counter from './Counter.vue'
-
-it('increments', async () => {
-  const w = mount(Counter)
-  await w.get('button').trigger('click')
-  expect(w.text()).toContain('1')
-})`,
-      },
-      {
         type: "tip",
-        body: "工坊闯关清单 ≈ 手写 E2E 用例：login / 401 / create / edit / delete / logout。",
+        body: "工坊 6 关 ≈ E2E 用例清单。",
       },
       {
         type: "quiz",
         questions: [
           {
             id: "te1",
-            question: "Vue 单测常用？",
-            options: ["JUnit only", "Vitest + Vue Test Utils", "仅 Photoshop", "仅 ESLint"],
+            question: "单测栈？",
+            options: ["JUnit", "Vitest + VTU", "PS", "ESLint"],
             answer: 1,
             explain: "社区主流。",
           },
           {
             id: "te2",
-            question: "E2E 更适合？",
-            options: [
-              "每个私有函数",
-              "用户主路径（登录到 CRUD）",
-              "替代单元测试",
-              "测 CSS 像素",
-            ],
+            question: "E2E？",
+            options: ["每个私有函数", "主路径", "替代单测", "像素"],
             answer: 1,
-            explain: "关键路径回归。",
+            explain: "用户路径。",
           },
         ],
       },
@@ -1160,58 +857,347 @@ it('increments', async () => {
   {
     slug: "deploy-prod",
     title: "生产部署清单",
-    summary: "环境变量、CORS、路由 fallback、监控。",
+    summary: "环境、CORS、fallback。",
     level: "实战",
     track: "工程化",
     minutes: 11,
     blocks: [
       {
-        type: "text",
-        title: "上线不等于 build 成功",
-        body: "还要：API 地址正确、HTTPS、CORS、SPA 刷新 404 回退、密钥不进仓库、错误可观测。",
-      },
-      {
         type: "code",
-        title: "检查表",
+        title: "检查",
         lang: "text",
-        code: `[ ] VITE_API_BASE 指向生产 API
-[ ] 后端 CORS 允许你的前端源
-[ ] history 模式：nginx try_files / 平台 SPA fallback
-[ ] 无 token 打进前端包
-[ ] 401/500 有用户可读提示
-[ ] 基础日志 / 错误上报
-[ ] README 含演示账号与架构图`,
-      },
-      {
-        type: "tip",
-        body: "本学习站用 GitHub Pages 静态部署；你的全栈作品通常是「前端静态 + API 服务」或 Nuxt 一体部署。",
+        code: `[ ] VITE_API_BASE\n[ ] CORS\n[ ] SPA fallback\n[ ] 密钥不进仓库`,
       },
       {
         type: "quiz",
         questions: [
           {
             id: "dp1",
-            question: "SPA 直接打开 /dashboard 404？",
-            options: [
-              "Vue 坏了",
-              "服务器未 fallback 到 index.html",
-              "必须用 hash 模式",
-              "Pinia 问题",
-            ],
+            question: "刷新 404？",
+            options: ["Vue 坏", "无 fallback", "必须 hash", "Pinia"],
             answer: 1,
-            explain: "history 路由需服务器配合。",
+            explain: "history 需服务器。",
           },
           {
             id: "dp2",
-            question: "密钥放哪？",
+            question: "密钥？",
+            options: ["git", "服务端 env", "前端常量", "CSS"],
+            answer: 1,
+            explain: "服务端。",
+          },
+        ],
+      },
+    ],
+  },
+
+  // ——— v7 进阶模式 ———
+  {
+    slug: "teleport",
+    title: "Teleport 传送门",
+    summary: "把弹层挂到 body，摆脱父级 overflow。",
+    level: "进阶",
+    track: "进阶模式",
+    minutes: 11,
+    blocks: [
+      {
+        type: "text",
+        title: "为什么需要 Teleport",
+        body: "Modal、Toast、全屏遮罩若渲染在深层组件内，容易被 overflow:hidden 或 stacking context 裁切。Teleport 把 DOM 挂到 body（或指定节点），逻辑仍在当前组件。",
+      },
+      {
+        type: "code",
+        title: "Modal 示例",
+        lang: "vue",
+        code: `<script setup lang="ts">
+import { ref } from 'vue'
+const open = ref(false)
+</script>
+<template>
+  <button @click="open = true">打开</button>
+  <Teleport to="body">
+    <div v-if="open" class="modal-mask" @click.self="open = false">
+      <div class="modal" role="dialog" aria-modal="true">
+        <p>内容</p>
+        <button @click="open = false">关闭</button>
+      </div>
+    </div>
+  </Teleport>
+</template>`,
+      },
+      {
+        type: "demo",
+        kind: "teleport",
+        title: "动手：遮罩弹层",
+        hint: "打开弹层，理解「UI 逻辑在组件内，DOM 可挂到外层」。",
+      },
+      {
+        type: "tip",
+        body: "配合 transition + focus trap 才是生产级 Dialog。可参考速查表「弹层」。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "tp1",
+            question: "Teleport 主要解决？",
             options: [
-              "提交到 git",
-              "服务端环境变量 / 密钥管理",
-              "写在前端常量",
-              "写在 CSS",
+              "替代路由",
+              "DOM 挂载位置与组件逻辑解耦",
+              "替代 Pinia",
+              "服务端鉴权",
             ],
             answer: 1,
-            explain: "永远别把私钥放前端。",
+            explain: "挂到 body 等目标。",
+          },
+          {
+            id: "tp2",
+            question: "to 属性？",
+            options: ["只能 #app", "CSS 选择器或元素，如 body", "只能 string 数字", "仅 iframe"],
+            answer: 1,
+            explain: "常见 to=\"body\"。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "keep-alive",
+    title: "KeepAlive 缓存",
+    summary: "缓存动态组件状态，避免反复销毁。",
+    level: "进阶",
+    track: "进阶模式",
+    minutes: 12,
+    blocks: [
+      {
+        type: "text",
+        title: "何时用",
+        body: "Tab 切换、多步表单、列表↔详情返回时希望保留输入与滚动。KeepAlive 缓存组件实例；配合 include/exclude 与 onActivated / onDeactivated。",
+      },
+      {
+        type: "code",
+        title: "动态组件",
+        lang: "vue",
+        code: `<script setup lang="ts">
+import { ref, shallowRef } from 'vue'
+import TabA from './TabA.vue'
+import TabB from './TabB.vue'
+const tabs = { A: TabA, B: TabB }
+const current = ref<'A' | 'B'>('A')
+</script>
+<template>
+  <button @click="current = 'A'">A</button>
+  <button @click="current = 'B'">B</button>
+  <KeepAlive>
+    <component :is="tabs[current]" />
+  </KeepAlive>
+</template>`,
+      },
+      {
+        type: "demo",
+        kind: "keepalive",
+        title: "动手：Tab 缓存",
+        hint: "在 A 输入文字，切到 B 再回 A，看是否保留。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "ka1",
+            question: "KeepAlive 作用？",
+            options: [
+              "永久内存泄漏",
+              "缓存组件实例避免反复销毁",
+              "替代 v-if",
+              "只缓存 CSS",
+            ],
+            answer: 1,
+            explain: "缓存实例。",
+          },
+          {
+            id: "ka2",
+            question: "再次显示时钩子？",
+            options: ["onMounted only", "onActivated", "onServerPrefetch", "onErrorCaptured"],
+            answer: 1,
+            explain: "onActivated / onDeactivated。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "custom-directive",
+    title: "自定义指令",
+    summary: "v-focus 等 DOM 级复用。",
+    level: "进阶",
+    track: "进阶模式",
+    minutes: 10,
+    blocks: [
+      {
+        type: "text",
+        title: "指令 vs 组件",
+        body: "组件管结构与状态；指令适合「给已有元素加一点 DOM 行为」：自动聚焦、点击外关闭、懒加载图。能组件就别滥用指令。",
+      },
+      {
+        type: "code",
+        title: "v-focus",
+        lang: "ts",
+        code: `// directives/focus.ts
+import type { Directive } from 'vue'
+export const vFocus: Directive<HTMLElement> = {
+  mounted(el) {
+    el.focus()
+  },
+}
+
+// main.ts
+app.directive('focus', vFocus)
+
+// 模板
+<input v-focus />`,
+      },
+      {
+        type: "demo",
+        kind: "directive",
+        title: "动手：自动聚焦",
+        hint: "切换面板时输入框自动 focus（模拟 v-focus）。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "cd1",
+            question: "自定义指令更适合？",
+            options: [
+              "整页业务状态",
+              "底层 DOM 行为复用",
+              "替代 Router",
+              "替代数据库",
+            ],
+            answer: 1,
+            explain: "DOM 级横切。",
+          },
+          {
+            id: "cd2",
+            question: "mounted 钩子时机？",
+            options: ["创建前", "元素挂载到文档后", "卸载后", "仅 SSR"],
+            answer: 1,
+            explain: "可安全操作 DOM。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "perf-patterns",
+    title: "性能模式",
+    summary: "shallowRef、列表优化、异步组件。",
+    level: "实战",
+    track: "进阶模式",
+    minutes: 12,
+    blocks: [
+      {
+        type: "text",
+        title: "先量再优",
+        body: "瓶颈多在：过大响应式对象、错误 key、无虚拟化的超长列表、同步大计算。Vue 提供 shallowRef、v-once、v-memo、defineAsyncComponent。",
+      },
+      {
+        type: "code",
+        title: "常用手段",
+        lang: "ts",
+        code: `import { shallowRef, defineAsyncComponent } from 'vue'
+
+// 大表格数据：只关心替换整表
+const rows = shallowRef<Row[]>([])
+rows.value = await fetchRows() // 触发更新
+
+// 路由级拆包
+const Admin = defineAsyncComponent(() => import('./Admin.vue'))`,
+      },
+      {
+        type: "demo",
+        kind: "challenge",
+        title: "复习：响应式正确性优先",
+        hint: "正确再谈快。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "pfp1",
+            question: "shallowRef 适合？",
+            options: [
+              "每个字段都要细粒度更新",
+              "大体量数据整表替换",
+              "替代 computed",
+              "仅字符串",
+            ],
+            answer: 1,
+            explain: "减少深度代理成本。",
+          },
+          {
+            id: "pfp2",
+            question: "defineAsyncComponent？",
+            options: [
+              "SSR 禁用一切",
+              "按需加载组件代码拆包",
+              "自动写测试",
+              "替代 props",
+            ],
+            answer: 1,
+            explain: "代码分割。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "interview-vue",
+    title: "面试高频串讲",
+    summary: "用一页把响应式、diff、组合式说清楚。",
+    level: "实战",
+    track: "进阶模式",
+    minutes: 14,
+    blocks: [
+      {
+        type: "text",
+        title: "怎么答「Vue 响应式原理」",
+        body: "Vue 3 用 Proxy 拦截对象读写：get 时 track 依赖，set 时 trigger 副作用。ref 对基本类型包一层 .value 对象。组件更新默认异步批量，nextTick 等 DOM 更新后。",
+      },
+      {
+        type: "text",
+        title: "怎么答「key 的作用」",
+        body: "diff 时用 key 识别 vnode 身份。稳定业务 id 优于 index；列表会重排/插入删除时 index 当 key 易错位复用。",
+      },
+      {
+        type: "text",
+        title: "怎么答「Composition 好处」",
+        body: "按功能聚合状态与方法，抽 composable 跨组件复用；对 TS 更友好；逻辑不再被 data/methods/watch 拆散。",
+      },
+      {
+        type: "tip",
+        body: "开口顺序：场景 → 原理一句话 → 代码点 → 坑。可配合速查表背骨架。",
+      },
+      {
+        type: "demo",
+        kind: "ref-vs-reactive",
+        title: "口述时配合此 Demo",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "iv1",
+            question: "Vue 3 响应式核心？",
+            options: ["Object.defineProperty only", "Proxy", "脏检查", "setInterval"],
+            answer: 1,
+            explain: "Proxy。",
+          },
+          {
+            id: "iv2",
+            question: "列表 key 优先？",
+            options: ["随机数每次", "稳定业务 id", "永远 index", "不要 key"],
+            answer: 1,
+            explain: "稳定身份。",
           },
         ],
       },
@@ -1225,6 +1211,7 @@ export const TRACKS = [
   "全栈准备",
   "全栈实训",
   "工程化",
+  "进阶模式",
 ] as const;
 
 export function getLesson(slug: string): Lesson | undefined {
@@ -1254,8 +1241,9 @@ export function getLessonsByTrack(track: Lesson["track"]) {
 export function getAllQuizQuestions(): Array<
   QuizQuestion & { lessonSlug: string; lessonTitle: string }
 > {
-  const out: Array<QuizQuestion & { lessonSlug: string; lessonTitle: string }> =
-    [];
+  const out: Array<
+    QuizQuestion & { lessonSlug: string; lessonTitle: string }
+  > = [];
   for (const lesson of LESSONS) {
     for (const block of lesson.blocks) {
       if (block.type === "quiz") {

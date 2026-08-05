@@ -17,6 +17,7 @@ import {
   Award,
   Code2,
   Server,
+  BookMarked,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -30,12 +31,12 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
-        title: "Vue 3 实战学习 v6 · 工程化",
+        title: "Vue 3 实战学习 v7 · 进阶模式",
       },
       {
         name: "description",
         content:
-          "Vue 3 中文交互式教程 v6：工程化——TS、API 客户端、测试、部署与工坊闯关。",
+          "Vue 3 中文交互式教程 v7：进阶模式、速查表、Teleport/KeepAlive/指令/性能与面试串讲。",
       },
     ],
     links: [
@@ -75,6 +76,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 
 const NAV_EXTRA = [
   { to: "/studio" as const, label: "全栈工坊", icon: Server },
+  { to: "/cheatsheet" as const, label: "速查表", icon: BookMarked },
   { to: "/playground" as const, label: "SFC 编辑器", icon: Code2 },
   { to: "/hub" as const, label: "学习中心", icon: LayoutDashboard },
   { to: "/lab" as const, label: "练习场", icon: FlaskConical },
@@ -117,7 +119,7 @@ function AppShell({ children }: { children: ReactNode }) {
             <span className="truncate font-display text-sm font-semibold tracking-tight text-fg">
               Vue 3 实战学习
             </span>
-            <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">v6</span>
+            <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">v7</span>
           </Link>
 
           <nav className="ml-2 hidden items-center gap-0.5 xl:flex">

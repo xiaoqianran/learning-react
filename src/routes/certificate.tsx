@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { LESSONS } from "@/data/lessons";
+import { LESSONS, TRACKS, getLessonsByTrack } from "@/data/lessons";
 import { useProgress } from "@/store/progress";
 import { Button } from "@/components/ui/button";
 import { Award, Lock } from "lucide-react";
@@ -36,9 +36,38 @@ function CertificatePage() {
           学习证明
         </h1>
         <p className="mt-1 text-sm text-muted">
-          完成全部 {LESSONS.length} 节课程后解锁
+          完成全部 {LESSONS.length} 节课程后解锁（含进阶模式）
         </p>
       </header>
+
+      <section className="mb-4 rounded-xl border border-border bg-surface p-4">
+        <h2 className="text-sm font-medium text-fg">各路径进度</h2>
+        <ul className="mt-3 space-y-2">
+          {TRACKS.map((t) => {
+            const list = getLessonsByTrack(t);
+            const done = list.filter((l) => completed.includes(l.slug)).length;
+            const pct = list.length
+              ? Math.round((done / list.length) * 100)
+              : 0;
+            return (
+              <li key={t}>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted">{t}</span>
+                  <span className="font-mono text-subtle">
+                    {done}/{list.length}
+                  </span>
+                </div>
+                <div className="mt-1 h-1 overflow-hidden rounded-full bg-surface-3">
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
 
       {!unlocked ? (
         <section className="rounded-xl border border-border bg-surface p-8 text-center">
@@ -73,10 +102,10 @@ function CertificatePage() {
               Certificate of Completion
             </p>
             <h2 className="mt-3 font-display text-2xl font-semibold text-fg sm:text-3xl">
-              Vue 3 实战学习 · v2
+              Vue 3 实战学习 · v7
             </h2>
             <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
-              兹证明持有人已完成本站全部课程（基础 + 进阶），覆盖响应式、组件、路由、状态管理与工程实践。
+              兹证明持有人已完成本站全部课程：基础、进阶、全栈准备、全栈实训、工程化与进阶模式（含 SFC 编辑器与模拟 API 工坊）。
             </p>
             <dl className="mx-auto mt-6 grid max-w-sm grid-cols-2 gap-3 text-sm">
               <div className="rounded-lg bg-surface-2 px-3 py-2">

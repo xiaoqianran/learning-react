@@ -38,6 +38,11 @@ const lessonSlugs = [
   "nuxt-map",
   "capstone",
   "deploy-prod",
+  "interview-vue",
+  "perf-patterns",
+  "custom-directive",
+  "keep-alive",
+  "teleport",
   "testing-vue",
   "api-client",
   "vue-ts",
@@ -53,6 +58,7 @@ const staticPages = [
   { path: "/certificate" },
   { path: "/playground" },
   { path: "/studio" },
+  { path: "/cheatsheet" },
   ...lessonPaths,
 ];
 
