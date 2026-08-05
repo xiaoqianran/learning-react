@@ -29,9 +29,7 @@ export function InteractiveDemo({
         </span>
       </div>
       <div className="p-4 sm:p-5">
-        {hint ? (
-          <p className="mb-4 text-sm text-muted">{hint}</p>
-        ) : null}
+        {hint ? <p className="mb-4 text-sm text-muted">{hint}</p> : null}
         <DemoBody kind={kind} />
       </div>
     </section>
@@ -60,6 +58,12 @@ function DemoBody({ kind }: { kind: DemoKind }) {
       return <LifecycleDemo />;
     case "todo":
       return <TodoDemo />;
+    case "router":
+      return <RouterDemo />;
+    case "pinia":
+      return <PiniaDemo />;
+    case "challenge":
+      return <ChallengeDemo />;
     default:
       return null;
   }
@@ -136,7 +140,8 @@ function TemplateDemo() {
         </label>
       </Panel>
       <Panel label="渲染结果">
-        <p className="text-sm">{"{{ msg }} → "}
+        <p className="text-sm">
+          {"{{ msg }} → "}
           <span className="text-primary">{msg}</span>
         </p>
         <p
@@ -337,7 +342,12 @@ function EventsDemo() {
             variant="outline"
             onClick={(e) => {
               e.preventDefault();
-              setLog((xs) => [`submit.prevent @ ${new Date().toLocaleTimeString()}`, ...xs].slice(0, 4));
+              setLog((xs) =>
+                [
+                  `submit.prevent @ ${new Date().toLocaleTimeString()}`,
+                  ...xs,
+                ].slice(0, 4),
+              );
             }}
           >
             @submit.prevent
@@ -596,6 +606,163 @@ function TodoDemo() {
         <RotateCcw className="h-3.5 w-3.5" />
         重置示例
       </Button>
+    </div>
+  );
+}
+
+function RouterDemo() {
+  const pages = [
+    { path: "/", title: "Home", body: "欢迎页 · RouterView 渲染 Home" },
+    {
+      path: "/lesson/intro",
+      title: "Lesson",
+      body: "动态路由 /lesson/:slug → intro",
+    },
+    { path: "/about", title: "About", body: "关于页 · 嵌套路由也可放这里" },
+  ] as const;
+  const [path, setPath] = useState<(typeof pages)[number]["path"]>("/");
+  const current = pages.find((p) => p.path === path) ?? pages[0];
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-[11rem_1fr]">
+      <Panel label="RouterLink">
+        <nav className="flex flex-col gap-1">
+          {pages.map((p) => (
+            <button
+              key={p.path}
+              type="button"
+              onClick={() => setPath(p.path)}
+              className={cn(
+                "rounded-md px-2.5 py-2 text-left text-sm transition-colors",
+                path === p.path
+                  ? "bg-primary-soft text-primary"
+                  : "text-muted hover:bg-surface-3 hover:text-fg",
+              )}
+            >
+              {p.path === "/" ? "/" : p.path}
+            </button>
+          ))}
+        </nav>
+      </Panel>
+      <Panel label="RouterView">
+        <p className="font-mono text-xs text-subtle">route.path = {path}</p>
+        <h4 className="mt-2 font-display text-lg font-semibold text-fg">
+          {current.title}
+        </h4>
+        <p className="mt-1 text-sm text-muted">{current.body}</p>
+      </Panel>
+    </div>
+  );
+}
+
+function PiniaDemo() {
+  const [items, setItems] = useState<string[]>(["学 Pinia"]);
+  const [draft, setDraft] = useState("");
+  const count = items.length;
+
+  function add() {
+    const t = draft.trim();
+    if (!t) return;
+    setItems((xs) => [...xs, t]);
+    setDraft("");
+  }
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="组件 A · useCartStore()">
+        <p className="text-sm text-muted">
+          count:{" "}
+          <span className="font-mono text-primary tabular-nums">{count}</span>
+        </p>
+        <div className="mt-2 flex gap-2">
+          <input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && add()}
+            className="h-9 min-w-0 flex-1 rounded-md border border-border bg-bg px-2 text-sm"
+            placeholder="商品名"
+          />
+          <Button size="sm" onClick={add}>
+            add()
+          </Button>
+        </div>
+      </Panel>
+      <Panel label="组件 B · 同一 store">
+        <ul className="space-y-1 text-sm">
+          {items.map((it, i) => (
+            <li key={i} className="rounded-md bg-bg px-2 py-1.5">
+              {it}
+            </li>
+          ))}
+        </ul>
+        <Button
+          size="sm"
+          variant="secondary"
+          className="mt-2"
+          onClick={() => setItems([])}
+        >
+          clear()
+        </Button>
+      </Panel>
+    </div>
+  );
+}
+
+function ChallengeDemo() {
+  const [code, setCode] = useState(
+    `let count = 0\nfunction inc() { count++ }\n// 视图不更新？`,
+  );
+  const [status, setStatus] = useState<"idle" | "pass" | "fail">("idle");
+
+  function check() {
+    const ok =
+      /ref\s*\(/.test(code) &&
+      /\.value/.test(code) &&
+      !/let count = 0/.test(code);
+    setStatus(ok ? "pass" : "fail");
+  }
+
+  return (
+    <div className="grid gap-3">
+      <Panel label="有问题的脚本">
+        <textarea
+          value={code}
+          onChange={(e) => {
+            setCode(e.target.value);
+            setStatus("idle");
+          }}
+          rows={5}
+          className="w-full rounded-md border border-border bg-bg p-3 font-mono text-xs text-code-fg"
+        />
+        <p className="mt-2 text-xs text-muted">
+          目标：用 ref 声明 count，并在 inc 里修改 count.value。
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button size="sm" onClick={check}>
+            运行检查
+          </Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => {
+              setCode(
+                `import { ref } from 'vue'\nconst count = ref(0)\nfunction inc() { count.value++ }`,
+              );
+              setStatus("idle");
+            }}
+          >
+            查看参考答案
+          </Button>
+        </div>
+        {status === "pass" ? (
+          <p className="mt-2 text-sm text-primary">通过：响应式写法正确</p>
+        ) : null}
+        {status === "fail" ? (
+          <p className="mt-2 text-sm text-warn">
+            未通过：需要 ref(...) 且使用 .value 更新
+          </p>
+        ) : null}
+      </Panel>
     </div>
   );
 }

@@ -18,6 +18,8 @@ export function Quiz({
   const [submitted, setSubmitted] = useState(false);
   const setQuizScore = useProgress((s) => s.setQuizScore);
   const markComplete = useProgress((s) => s.markComplete);
+  const addWrong = useProgress((s) => s.addWrong);
+  const checkInToday = useProgress((s) => s.checkInToday);
 
   const score = useMemo(
     () =>
@@ -36,6 +38,24 @@ export function Quiz({
     const realPct = Math.round((real / questions.length) * 100);
     setSubmitted(true);
     setQuizScore(slug, realPct);
+    checkInToday();
+
+    for (const q of questions) {
+      const chosen = answers[q.id];
+      if (chosen === null || chosen === undefined) continue;
+      if (chosen !== q.answer) {
+        addWrong({
+          id: `${slug}:${q.id}`,
+          lessonSlug: slug,
+          question: q.question,
+          options: q.options,
+          answer: q.answer,
+          explain: q.explain,
+          wrongChoice: chosen,
+        });
+      }
+    }
+
     if (real === questions.length) markComplete(slug);
   }
 
@@ -141,7 +161,11 @@ export function Quiz({
               <span className="inline-flex items-center text-sm text-primary">
                 全部正确，本节已标记完成
               </span>
-            ) : null}
+            ) : (
+              <span className="inline-flex items-center text-sm text-muted">
+                错题已收入错题本
+              </span>
+            )}
           </>
         )}
       </div>

@@ -12,7 +12,7 @@ const isGitHubPages =
 /** Project Pages site: https://xiaoqianran.github.io/learning-vue3/ */
 const base = isGitHubPages ? "/learning-vue3/" : "/";
 
-const lessonPaths = [
+const lessonSlugs = [
   "intro",
   "template",
   "reactivity",
@@ -24,7 +24,22 @@ const lessonPaths = [
   "props-emits",
   "lifecycle",
   "composition",
-].map((slug) => ({ path: `/lesson/${slug}` }));
+  "router",
+  "pinia",
+  "pitfalls",
+  "project",
+];
+
+const lessonPaths = lessonSlugs.map((slug) => ({ path: `/lesson/${slug}` }));
+
+const staticPages = [
+  { path: "/" },
+  { path: "/hub" },
+  { path: "/lab" },
+  { path: "/mistakes" },
+  { path: "/certificate" },
+  ...lessonPaths,
+];
 
 function pgliteBootstrapPlugin(): Plugin {
   return {
@@ -125,10 +140,6 @@ function authPopupPlugin(): Plugin {
   };
 }
 
-/**
- * GitHub Pages: SPA + prerender, no Nitro (static host only).
- * Default / Vercel: keep Nitro vercel preset for platform deploy.
- */
 export default defineConfig(({ command }) => ({
   base,
   server: {
@@ -151,7 +162,7 @@ export default defineConfig(({ command }) => ({
               autoStaticPathsDiscovery: true,
               failOnError: false,
             },
-            pages: [{ path: "/" }, ...lessonPaths],
+            pages: staticPages,
           }
         : undefined,
     ),

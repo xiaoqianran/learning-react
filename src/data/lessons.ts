@@ -16,7 +16,10 @@ export type DemoKind =
   | "form"
   | "component"
   | "lifecycle"
-  | "todo";
+  | "todo"
+  | "router"
+  | "pinia"
+  | "challenge";
 
 export type LessonBlock =
   | { type: "text"; title?: string; body: string }
@@ -30,6 +33,8 @@ export type Lesson = {
   title: string;
   summary: string;
   level: "入门" | "进阶" | "实战";
+  /** Learning path track — v2 */
+  track: "基础" | "进阶";
   minutes: number;
   blocks: LessonBlock[];
 };
@@ -40,6 +45,7 @@ export const LESSONS: Lesson[] = [
     title: "Vue 3 是什么",
     summary: "认识渐进式框架、组合式 API，以及它解决的问题。",
     level: "入门",
+    track: "基础",
     minutes: 6,
     blocks: [
       {
@@ -106,6 +112,7 @@ const count = ref(0)
     title: "模板语法",
     summary: "插值、指令、属性绑定与 v-html 的安全边界。",
     level: "入门",
+    track: "基础",
     minutes: 8,
     blocks: [
       {
@@ -177,6 +184,7 @@ const raw = ref('<b>粗体</b>')
     title: "响应式：ref 与 reactive",
     summary: "理解 Proxy 响应式、.value 与解构陷阱。",
     level: "入门",
+    track: "基础",
     minutes: 10,
     blocks: [
       {
@@ -243,6 +251,7 @@ state.n++              // 不用 .value
     title: "计算属性与侦听器",
     summary: "computed 缓存派生状态，watch / watchEffect 响应副作用。",
     level: "入门",
+    track: "基础",
     minutes: 10,
     blocks: [
       {
@@ -315,6 +324,7 @@ watchEffect(() => {
     title: "条件与列表渲染",
     summary: "v-if / v-show、v-for 与 key 的正确用法。",
     level: "入门",
+    track: "基础",
     minutes: 9,
     blocks: [
       {
@@ -383,6 +393,7 @@ const items = ref([
     title: "事件处理",
     summary: "v-on、修饰符与内联处理器。",
     level: "入门",
+    track: "基础",
     minutes: 7,
     blocks: [
       {
@@ -444,6 +455,7 @@ function onSubmit(e: Event) {
     title: "表单与 v-model",
     summary: "双向绑定、修饰符与多表单控件。",
     level: "入门",
+    track: "基础",
     minutes: 9,
     blocks: [
       {
@@ -503,6 +515,7 @@ const color = ref('green')
     title: "组件基础",
     summary: "单文件组件、父子结构与局部注册。",
     level: "进阶",
+    track: "基础",
     minutes: 10,
     blocks: [
       {
@@ -567,6 +580,7 @@ import CounterCard from './CounterCard.vue'
     title: "Props 与 Emits",
     summary: "向下传数据、向上发事件，保持单向数据流。",
     level: "进阶",
+    track: "基础",
     minutes: 11,
     blocks: [
       {
@@ -626,6 +640,7 @@ const emit = defineEmits<{
     title: "生命周期",
     summary: "onMounted、onUnmounted 等钩子的使用时机。",
     level: "进阶",
+    track: "基础",
     minutes: 8,
     blocks: [
       {
@@ -682,6 +697,7 @@ onUnmounted(() => {
     title: "组合式 API 实践",
     summary: "把逻辑抽成 composable，组织可维护代码。",
     level: "实战",
+    track: "基础",
     minutes: 12,
     blocks: [
       {
@@ -725,7 +741,7 @@ export function useCounter(initial = 0) {
       },
       {
         type: "tip",
-        body: "下一步可学：Vue Router 路由、Pinia 状态、异步组件与 Suspense。官方文档 https://cn.vuejs.org 是第一手资料。",
+        body: "v2 进阶线继续学：Vue Router、Pinia、常见坑与综合挑战。",
       },
       {
         type: "quiz",
@@ -753,7 +769,307 @@ export function useCounter(initial = 0) {
       },
     ],
   },
+
+  // ——— v2 进阶线 ———
+  {
+    slug: "router",
+    title: "Vue Router 路由",
+    summary: "SPA 导航、动态路由、嵌套路由与导航守卫入门。",
+    level: "进阶",
+    track: "进阶",
+    minutes: 14,
+    blocks: [
+      {
+        type: "text",
+        title: "为什么需要路由",
+        body: "单页应用靠前端路由切换「页面」而不整页刷新。Vue Router 把 URL 映射到组件，并提供编程式导航与守卫（登录拦截等）。",
+      },
+      {
+        type: "code",
+        title: "最小路由配置",
+        lang: "ts",
+        code: `import { createRouter, createWebHistory } from 'vue-router'
+import Home from './views/Home.vue'
+import Lesson from './views/Lesson.vue'
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', component: Home },
+    { path: '/lesson/:slug', component: Lesson, props: true },
+  ],
+})
+
+// main.ts
+// app.use(router)`,
+      },
+      {
+        type: "code",
+        title: "模板中跳转",
+        lang: "vue",
+        code: `<script setup>
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
+function go() {
+  router.push({ name: 'lesson', params: { slug: 'intro' } })
+}
+</script>
+
+<template>
+  <RouterLink to="/">首页</RouterLink>
+  <p>当前 path: {{ route.path }}</p>
+  <button @click="go">去 intro</button>
+  <RouterView />
+</template>`,
+      },
+      {
+        type: "demo",
+        kind: "router",
+        title: "动手：迷你路由切换",
+        hint: "点击导航切换「页面」，观察 URL 段与视图变化（模拟 Vue Router）。",
+      },
+      {
+        type: "tip",
+        body: "history 模式需要服务器把所有路径回退到 index.html；hash 模式（#/path）不需要服务器配置。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "rt1",
+            question: "RouterLink 相对 a 标签的优势？",
+            options: [
+              "只能用相对路径",
+              "SPA 内导航、可高亮激活、避免整页刷新",
+              "会强制刷新页面",
+              "不能传 params",
+            ],
+            answer: 1,
+            explain: "RouterLink 走客户端路由，支持 active class，体验更好。",
+          },
+          {
+            id: "rt2",
+            question: "读取当前路由参数常用？",
+            options: ["useStore()", "useRoute()", "useAttrs()", "useCssModule()"],
+            answer: 1,
+            explain: "useRoute() 返回当前路由对象，含 params / query。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "pinia",
+    title: "Pinia 状态管理",
+    summary: "跨组件共享状态：defineStore、state、getters、actions。",
+    level: "进阶",
+    track: "进阶",
+    minutes: 12,
+    blocks: [
+      {
+        type: "text",
+        title: "什么时候用 Pinia",
+        body: "组件本地状态用 ref 即可。当多个页面要共享用户信息、购物车、主题等，用 Pinia（Vue 官方推荐）集中管理，可配合持久化插件。",
+      },
+      {
+        type: "code",
+        title: "defineStore 示例",
+        lang: "ts",
+        code: `import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+
+export const useCartStore = defineStore('cart', () => {
+  const items = ref<{ id: number; name: string }[]>([])
+  const count = computed(() => items.value.length)
+  function add(name: string) {
+    items.value.push({ id: Date.now(), name })
+  }
+  function clear() {
+    items.value = []
+  }
+  return { items, count, add, clear }
+})`,
+      },
+      {
+        type: "demo",
+        kind: "pinia",
+        title: "动手：共享购物车 Store",
+        hint: "两个面板共用同一份 store 状态——改一处，处处更新。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "pi1",
+            question: "Pinia 相对 Vuex 的常见优势？",
+            options: [
+              "必须用 mutations",
+              "更轻量、TS 友好、去掉繁琐 mutations",
+              "只能用 Options 写法",
+              "不能拆多个 store",
+            ],
+            answer: 1,
+            explain: "Pinia 设计更简洁，官方推荐作为 Vuex 继任。",
+          },
+          {
+            id: "pi2",
+            question: "setup 风格 store 里改状态通常？",
+            options: [
+              "只能通过 commit",
+              "直接改 ref / 调 action 函数",
+              "必须 dispatch 字符串",
+              "只能在组件外改",
+            ],
+            answer: 1,
+            explain: "组合式 store 返回 ref 与函数，直接调用即可。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "pitfalls",
+    title: "常见坑与性能",
+    summary: "响应式丢失、滥用 watch、列表 key、大列表优化要点。",
+    level: "实战",
+    track: "进阶",
+    minutes: 11,
+    blocks: [
+      {
+        type: "text",
+        title: "高频踩坑清单",
+        body: "1) 解构 reactive 丢响应式 → toRefs。2) 在脚本里忘写 ref 的 .value。3) v-for 用 index 当 key 且列表会重排。4) 在 computed 里写副作用。5) 过深的响应式大对象导致性能压力。",
+      },
+      {
+        type: "code",
+        title: "浅层与冻结",
+        lang: "ts",
+        code: `import { shallowRef, triggerRef, markRaw } from 'vue'
+
+// 大体量大对象不想深度代理
+const big = shallowRef({ list: [] as number[] })
+big.value.list.push(1)
+triggerRef(big) // 手动触发更新
+
+// 永不需要响应式的对象（如第三方实例）
+const chart = markRaw(new HeavyChart())`,
+      },
+      {
+        type: "demo",
+        kind: "challenge",
+        title: "挑战：找出响应式问题",
+        hint: "按提示修复「计数不更新」的代码逻辑，直到测试通过。",
+      },
+      {
+        type: "tip",
+        body: "性能口诀：能 computed 不 watch；列表虚拟化处理超长数据；按需拆组件减少无关渲染。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "pf1",
+            question: "shallowRef 的特点？",
+            options: [
+              "深度监听所有嵌套",
+              "只追踪 .value 的替换，不深度代理内部",
+              "不能用于对象",
+              "等同于 reactive",
+            ],
+            answer: 1,
+            explain: "浅层 ref 适合大对象，内部变更需 triggerRef 或替换整个 .value。",
+          },
+          {
+            id: "pf2",
+            question: "computed 里发起网络请求？",
+            options: [
+              "推荐做法",
+              "不推荐：副作用应放 watch / 生命周期",
+              "只能在 Vue 2 这样写",
+              "会自动缓存请求结果到 localStorage",
+            ],
+            answer: 1,
+            explain: "computed 应纯计算；请求等副作用用 watch 或 onMounted。",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "project",
+    title: "从零搭一个小项目",
+    summary: "Vite + Vue 3 工程结构、环境变量与发布清单。",
+    level: "实战",
+    track: "进阶",
+    minutes: 13,
+    blocks: [
+      {
+        type: "text",
+        title: "推荐起步",
+        body: "官方脚手架：npm create vue@latest。勾选 Router、Pinia、TS 按需。开发用 npm run dev，构建 npm run build，预览 npm run preview。",
+      },
+      {
+        type: "code",
+        title: "环境变量",
+        lang: "text",
+        code: `# .env.development
+VITE_API_BASE=http://localhost:3000
+
+# 代码中
+// import.meta.env.VITE_API_BASE
+# 只有 VITE_ 前缀会暴露给客户端`,
+      },
+      {
+        type: "code",
+        title: "上线前检查清单",
+        lang: "text",
+        code: `[ ] 路由 history 回退配置
+[ ] 生产 API 地址与 CORS
+[ ] 错误边界 / 空状态
+[ ] 图片与字体体积
+[ ] 无 console 敏感信息
+[ ] Lighthouse 基础分可接受`,
+      },
+      {
+        type: "demo",
+        kind: "todo",
+        title: "综合练习：任务清单小应用",
+        hint: "用你已学的列表、表单、组件思路完成一个可用的 Todo。",
+      },
+      {
+        type: "tip",
+        body: "学完本课可去「练习场」做综合挑战，并在「学习中心」查看进度；全部完成后可领取结业证明。",
+      },
+      {
+        type: "quiz",
+        questions: [
+          {
+            id: "pj1",
+            question: "Vite 暴露给前端的环境变量前缀？",
+            options: ["REACT_APP_", "VITE_", "NEXT_PUBLIC_", "PUBLIC_"],
+            answer: 1,
+            explain: "Vite 约定 VITE_ 前缀才会注入到 import.meta.env。",
+          },
+          {
+            id: "pj2",
+            question: "create vue 官方脚手架命令？",
+            options: [
+              "npm create vue@latest",
+              "npm i -g vue-cli && vue create",
+              "npx create-react-app",
+              "yarn create next-app",
+            ],
+            answer: 0,
+            explain: "现代官方推荐 npm create vue@latest。",
+          },
+        ],
+      },
+    ],
+  },
 ];
+
+export const TRACKS = ["基础", "进阶"] as const;
 
 export function getLesson(slug: string): Lesson | undefined {
   return LESSONS.find((l) => l.slug === slug);
@@ -773,4 +1089,29 @@ export function getAdjacent(slug: string): {
     prev: i > 0 ? LESSONS[i - 1] : undefined,
     next: i < LESSONS.length - 1 ? LESSONS[i + 1] : undefined,
   };
+}
+
+export function getLessonsByTrack(track: Lesson["track"]) {
+  return LESSONS.filter((l) => l.track === track);
+}
+
+export function getAllQuizQuestions(): Array<
+  QuizQuestion & { lessonSlug: string; lessonTitle: string }
+> {
+  const out: Array<QuizQuestion & { lessonSlug: string; lessonTitle: string }> =
+    [];
+  for (const lesson of LESSONS) {
+    for (const block of lesson.blocks) {
+      if (block.type === "quiz") {
+        for (const q of block.questions) {
+          out.push({
+            ...q,
+            lessonSlug: lesson.slug,
+            lessonTitle: lesson.title,
+          });
+        }
+      }
+    }
+  }
+  return out;
 }

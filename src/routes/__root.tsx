@@ -6,8 +6,17 @@ import {
   Scripts,
   Link,
 } from "@tanstack/react-router";
-import { BookOpen, Check, Menu, X } from "lucide-react";
-import { useState } from "react";
+import {
+  BookOpen,
+  Check,
+  Menu,
+  X,
+  FlaskConical,
+  LayoutDashboard,
+  BookX,
+  Award,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useProgress } from "@/store/progress";
 import { LESSONS } from "@/data/lessons";
@@ -19,11 +28,12 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
-        title: "Vue 3 实战学习 · 交互式教程",
+        title: "Vue 3 实战学习 v2 · 交互式教程",
       },
       {
         name: "description",
-        content: "从零上手 Vue 3：组合式 API、响应式、组件与表单，边学边练。",
+        content:
+          "Vue 3 中文交互式教程 v2：进阶课、错题本、练习场、打卡与结业证明。",
       },
     ],
     links: [
@@ -61,10 +71,23 @@ function RootDocument({ children }: { children: ReactNode }) {
   );
 }
 
+const NAV_EXTRA = [
+  { to: "/hub" as const, label: "学习中心", icon: LayoutDashboard },
+  { to: "/lab" as const, label: "练习场", icon: FlaskConical },
+  { to: "/mistakes" as const, label: "错题本", icon: BookX },
+  { to: "/certificate" as const, label: "结业", icon: Award },
+];
+
 function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const completed = useProgress((s) => s.completed);
+  const streak = useProgress((s) => s.streak);
+  const checkInToday = useProgress((s) => s.checkInToday);
   const progress = Math.round((completed.length / LESSONS.length) * 100);
+
+  useEffect(() => {
+    checkInToday();
+  }, [checkInToday]);
 
   return (
     <div className="min-h-dvh bg-bg text-fg">
@@ -90,11 +113,32 @@ function AppShell({ children }: { children: ReactNode }) {
             <span className="truncate font-display text-sm font-semibold tracking-tight text-fg">
               Vue 3 实战学习
             </span>
+            <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">
+              v2
+            </span>
           </Link>
 
+          <nav className="ml-2 hidden items-center gap-0.5 md:flex">
+            {NAV_EXTRA.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="rounded-md px-2.5 py-1.5 text-xs text-muted no-underline transition-colors hover:bg-surface-2 hover:text-fg [&.active]:bg-primary-soft [&.active]:text-primary"
+                activeProps={{ className: "active" }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
           <div className="ml-auto flex items-center gap-3">
+            {streak > 0 ? (
+              <span className="hidden font-mono text-xs tabular-nums text-muted sm:inline">
+                连续 {streak} 天
+              </span>
+            ) : null}
             <div className="hidden items-center gap-2 sm:flex">
-              <div className="h-1.5 w-28 overflow-hidden rounded-full bg-surface-3">
+              <div className="h-1.5 w-24 overflow-hidden rounded-full bg-surface-3">
                 <div
                   className="h-full rounded-full bg-primary transition-[width] duration-300 ease-out"
                   style={{ width: `${progress}%` }}
@@ -116,6 +160,28 @@ function AppShell({ children }: { children: ReactNode }) {
           )}
         >
           <nav className="scrollbar-thin h-[calc(100dvh-3.5rem)] overflow-y-auto p-3 lg:sticky lg:top-14 lg:h-[calc(100dvh-3.5rem)] lg:py-6">
+            <p className="mb-2 px-2 text-xs font-medium uppercase tracking-wider text-subtle">
+              快捷入口
+            </p>
+            <ul className="mb-4 flex flex-col gap-0.5">
+              {NAV_EXTRA.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.to}>
+                    <Link
+                      to={item.to}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-fg no-underline transition-colors hover:bg-surface-2 [&.active]:bg-primary-soft [&.active]:text-primary"
+                      activeProps={{ className: "active" }}
+                    >
+                      <Icon className="h-4 w-4 shrink-0 opacity-70" />
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+
             <p className="mb-2 px-2 text-xs font-medium uppercase tracking-wider text-subtle">
               课程目录
             </p>
@@ -141,7 +207,12 @@ function AppShell({ children }: { children: ReactNode }) {
                       >
                         {done ? <Check className="h-3 w-3" /> : i + 1}
                       </span>
-                      <span className="min-w-0 leading-snug">{lesson.title}</span>
+                      <span className="min-w-0 leading-snug">
+                        <span className="block">{lesson.title}</span>
+                        {lesson.track === "进阶" ? (
+                          <span className="text-[10px] text-primary">进阶</span>
+                        ) : null}
+                      </span>
                     </Link>
                   </li>
                 );
@@ -159,7 +230,9 @@ function AppShell({ children }: { children: ReactNode }) {
           />
         ) : null}
 
-        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:py-8">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:py-8">
+          {children}
+        </main>
       </div>
     </div>
   );

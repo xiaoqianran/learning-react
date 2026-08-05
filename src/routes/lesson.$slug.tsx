@@ -13,11 +13,14 @@ import { useProgress } from "@/store/progress";
 import {
   ArrowLeft,
   ArrowRight,
+  Bookmark,
+  BookmarkCheck,
   Check,
   Clock,
   Lightbulb,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/lesson/$slug")({
   component: LessonPage,
@@ -34,11 +37,19 @@ function LessonPage() {
   const { prev, next } = getAdjacent(slug);
   const completed = useProgress((s) => s.completed);
   const markComplete = useProgress((s) => s.markComplete);
+  const bookmarks = useProgress((s) => s.bookmarks);
+  const toggleBookmark = useProgress((s) => s.toggleBookmark);
+  const notes = useProgress((s) => s.notes);
+  const setNote = useProgress((s) => s.setNote);
+  const checkInToday = useProgress((s) => s.checkInToday);
   const done = completed.includes(slug);
+  const bookmarked = bookmarks.includes(slug);
+  const [note, setNoteLocal] = useState(notes[slug] ?? "");
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
-  }, [slug]);
+    setNoteLocal(notes[slug] ?? "");
+  }, [slug, notes]);
 
   return (
     <article className="mx-auto max-w-3xl pb-20">
@@ -49,6 +60,9 @@ function LessonPage() {
         <span className="text-subtle">/</span>
         <span className="text-fg">
           第 {idx + 1}/{LESSONS.length} 节
+        </span>
+        <span className="rounded-full bg-surface-3 px-2 py-0.5 text-[10px]">
+          {lesson.track}路径
         </span>
       </div>
 
@@ -68,9 +82,28 @@ function LessonPage() {
             </span>
           ) : null}
         </div>
-        <h1 className="mt-3 font-display text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
-          {lesson.title}
-        </h1>
+        <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
+            {lesson.title}
+          </h1>
+          <button
+            type="button"
+            onClick={() => toggleBookmark(slug)}
+            className={cn(
+              "inline-flex h-10 items-center gap-1.5 rounded-md border px-3 text-sm transition-colors",
+              bookmarked
+                ? "border-primary/40 bg-primary-soft text-primary"
+                : "border-border bg-surface text-muted hover:text-fg",
+            )}
+          >
+            {bookmarked ? (
+              <BookmarkCheck className="h-4 w-4" />
+            ) : (
+              <Bookmark className="h-4 w-4" />
+            )}
+            {bookmarked ? "已收藏" : "收藏"}
+          </button>
+        </div>
         <p className="mt-2 text-base text-muted">{lesson.summary}</p>
       </header>
 
@@ -128,9 +161,30 @@ function LessonPage() {
         })}
       </div>
 
-      <div className="mt-10 flex flex-wrap items-center gap-3 border-t border-border pt-6">
+      <section className="mt-10 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <h2 className="font-display text-base font-semibold text-fg">
+          本节笔记
+        </h2>
+        <p className="mt-1 text-xs text-muted">自动保存在本机，仅你可见</p>
+        <textarea
+          value={note}
+          onChange={(e) => setNoteLocal(e.target.value)}
+          onBlur={() => setNote(slug, note)}
+          rows={4}
+          placeholder="记下重点、疑问或代码片段…"
+          className="mt-3 w-full rounded-lg border border-border bg-bg px-3 py-2.5 text-sm text-fg placeholder:text-subtle"
+        />
+      </section>
+
+      <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-6">
         {!done ? (
-          <Button variant="secondary" onClick={() => markComplete(slug)}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              markComplete(slug);
+              checkInToday();
+            }}
+          >
             <Check className="h-4 w-4" />
             标记本节完成
           </Button>
@@ -170,10 +224,10 @@ function LessonPage() {
             </div>
           </Link>
         ) : (
-          <Link to="/" className="no-underline sm:text-right">
+          <Link to="/certificate" className="no-underline sm:text-right">
             <div className="rounded-xl border border-primary/30 bg-primary-soft p-4">
-              <p className="text-xs text-primary">全部学完了</p>
-              <p className="mt-1 font-medium text-fg">返回课程首页</p>
+              <p className="text-xs text-primary">全部学完了？</p>
+              <p className="mt-1 font-medium text-fg">查看结业证明</p>
             </div>
           </Link>
         )}
