@@ -92,7 +92,7 @@
   }
 }
 
-/* Vue SFC REPL host (v3) — make official repl fill the card */
+/* Vue SFC REPL host (v3) */
 .vue-sfc-repl-host {
   --bg: #121614;
   --bg-soft: #1a1f1c;
@@ -113,6 +113,21 @@
 .vue-sfc-repl-host .vue-repl,
 .vue-sfc-repl-host .vue-repl * {
   box-sizing: border-box;
+}
+
+/* Hide stock file selector — we use custom polished chrome */
+.vue-sfc-repl-host--chrome .vue-repl .file-selector {
+  display: none !important;
+}
+
+/* Tighter output toolbar */
+.vue-sfc-repl-host--chrome .vue-repl .tab-buttons {
+  font-size: 12px;
+}
+
+.vue-sfc-repl-host--chrome .vue-repl .left,
+.vue-sfc-repl-host--chrome .vue-repl .right {
+  border-color: var(--color-border);
 }
 
 @media (prefers-reduced-motion: reduce) {

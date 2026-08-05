@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { SFC_PRESETS, getPreset } from "@/data/sfc-presets";
 import { VueSfcPlayground } from "@/components/VueSfcPlayground";
-import { Code2, Sparkles } from "lucide-react";
+import { Code2, Keyboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type PlaygroundSearch = {
@@ -35,15 +35,11 @@ function PlaygroundPage() {
           在线编辑器
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-          基于官方{" "}
+          真实编译运行{" "}
           <code className="rounded-sm bg-surface-3 px-1.5 py-0.5 font-mono text-xs text-primary">
-            @vue/repl
-          </code>{" "}
-          ，在浏览器里编译并运行真正的{" "}
-          <code className="rounded-sm bg-surface-3 px-1.5 py-0.5 font-mono text-xs">
             .vue
           </code>{" "}
-          单文件组件。改代码，右侧即时预览。
+          单文件组件。文件用顶部标签管理——重命名、删除都是应用内弹层，不再弹系统对话框。
         </p>
       </header>
 
@@ -54,7 +50,7 @@ function PlaygroundPage() {
             type="button"
             onClick={() => setActiveId(p.id)}
             className={cn(
-              "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+              "rounded-full px-3 py-1.5 text-xs font-medium transition-colors duration-150",
               activeId === p.id
                 ? "bg-primary text-primary-fg"
                 : "bg-surface-3 text-muted hover:text-fg",
@@ -65,30 +61,42 @@ function PlaygroundPage() {
         ))}
       </div>
 
-      <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
-        <span className="font-medium text-fg">{preset.title}</span>
-        <span className="text-muted">· {preset.summary}</span>
-        <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2 py-0.5 text-[10px] font-medium text-primary">
-          <Sparkles className="h-3 w-3" />
-          实时编译
-        </span>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="text-sm">
+          <span className="font-medium text-fg">{preset.title}</span>
+          <span className="text-muted"> · {preset.summary}</span>
+        </div>
+        <p className="inline-flex items-center gap-1.5 text-[11px] text-subtle">
+          <Keyboard className="h-3 w-3" />
+          Esc 关闭弹层 · 标签上铅笔/垃圾桶管理文件
+        </p>
       </div>
 
       <VueSfcPlayground key={preset.id} preset={preset} />
 
-      <aside className="mt-5 rounded-xl border border-border bg-surface-2 px-4 py-4 text-sm text-muted">
-        <p className="font-medium text-fg">怎么玩</p>
-        <ul className="mt-2 list-disc space-y-1 pl-5">
-          <li>
-            左侧改{" "}
-            <code className="font-mono text-xs text-primary">App.vue</code>
-            （多文件示例还有{" "}
-            <code className="font-mono text-xs">CounterCard.vue</code>）
-          </li>
-          <li>右侧 Preview 是真实 Vue 3 runtime 渲染结果</li>
-          <li>可切换 JS / CSS 编译产物面板，理解 SFC 编译输出</li>
-          <li>建议结合课程：ref、computed、组件 props/emit 对照修改</li>
-        </ul>
+      <aside className="mt-5 grid gap-3 sm:grid-cols-3">
+        {[
+          {
+            t: "编辑代码",
+            d: "左侧是 CodeMirror，改 script / template / style 会即时编译。",
+          },
+          {
+            t: "管理文件",
+            d: "顶部标签切换文件；新建、重命名、删除均使用页面内确认，无浏览器原生弹窗。",
+          },
+          {
+            t: "预览结果",
+            d: "右侧 iframe 跑真实 Vue 3 runtime。可看 JS/CSS 编译产物。",
+          },
+        ].map((item) => (
+          <div
+            key={item.t}
+            className="rounded-lg border border-border bg-surface-2 px-3.5 py-3"
+          >
+            <p className="text-sm font-medium text-fg">{item.t}</p>
+            <p className="mt-1 text-xs leading-relaxed text-muted">{item.d}</p>
+          </div>
+        ))}
       </aside>
     </div>
   );
