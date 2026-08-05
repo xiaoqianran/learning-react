@@ -39,7 +39,7 @@ import {
   Download,
 } from "lucide-react";
 
-const TOKEN_KEY = "vue3-learn-studio-token";
+const TOKEN_KEY = "learning-react-studio-token";
 
 export const Route = createFileRoute("/studio")({
   component: StudioPage,
@@ -244,7 +244,7 @@ function StudioPage() {
       <header className="mb-6">
         <p className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-primary">
           <Server className="h-3.5 w-3.5" />
-          v6 · 全栈工坊 + 闯关
+          v1 · React 全栈工坊
         </p>
         <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
           模拟后端工作室
@@ -252,7 +252,7 @@ function StudioPage() {
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
           完成右侧 6 项闯关：登录、401、创建、编辑、删除、退出。账号{" "}
           <code className="rounded-sm bg-surface-3 px-1 font-mono text-xs">
-            demo@vue.dev
+            demo@react.dev
           </code>{" "}
           /{" "}
           <code className="rounded-sm bg-surface-3 px-1 font-mono text-xs">
@@ -271,15 +271,15 @@ function StudioPage() {
           ·
           <Link
             to="/lesson/$slug"
-            params={{ slug: "vue-ts" }}
+            params={{ slug: "typescript-react" }}
             className="mx-1 text-primary no-underline hover:underline"
           >
-            Vue+TS
+            React+TS
           </Link>
           ·
           <Link
             to="/lesson/$slug"
-            params={{ slug: "api-client" }}
+            params={{ slug: "async-data" }}
             className="mx-1 text-primary no-underline hover:underline"
           >
             API 客户端

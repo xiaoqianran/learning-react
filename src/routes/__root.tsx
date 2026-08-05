@@ -30,13 +30,11 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      {
-        title: "Vue 3 实战学习 v7 · 进阶模式",
-      },
+      { title: "React 实战学习 · learning-react" },
       {
         name: "description",
         content:
-          "Vue 3 中文交互式教程 v7：进阶模式、速查表、Teleport/KeepAlive/指令/性能与面试串讲。",
+          "React 中文交互式教程：Hooks、组件、路由、状态、全栈工坊与测验进度。",
       },
     ],
     links: [
@@ -77,7 +75,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 const NAV_EXTRA = [
   { to: "/studio" as const, label: "全栈工坊", icon: Server },
   { to: "/cheatsheet" as const, label: "速查表", icon: BookMarked },
-  { to: "/playground" as const, label: "SFC 编辑器", icon: Code2 },
+  { to: "/playground" as const, label: "沙箱", icon: Code2 },
   { to: "/hub" as const, label: "学习中心", icon: LayoutDashboard },
   { to: "/lab" as const, label: "练习场", icon: FlaskConical },
   { to: "/mistakes" as const, label: "错题本", icon: BookX },
@@ -117,9 +115,11 @@ function AppShell({ children }: { children: ReactNode }) {
               <BookOpen className="h-4 w-4" />
             </span>
             <span className="truncate font-display text-sm font-semibold tracking-tight text-fg">
-              Vue 3 实战学习
+              React 实战学习
             </span>
-            <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">v7</span>
+            <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">
+              v1
+            </span>
           </Link>
 
           <nav className="ml-2 hidden items-center gap-0.5 xl:flex">
@@ -213,14 +213,10 @@ function AppShell({ children }: { children: ReactNode }) {
                       </span>
                       <span className="min-w-0 leading-snug">
                         <span className="block">{lesson.title}</span>
-                        {lesson.track === "进阶" ? (
-                          <span className="text-[10px] text-primary">进阶</span>
-                        ) : null}
-                        {lesson.track === "全栈准备" ? (
-                          <span className="text-[10px] text-muted">全栈准备</span>
-                        ) : null}
-                        {lesson.track === "全栈实训" ? (
-                          <span className="text-[10px] text-primary">全栈实训</span>
+                        {lesson.track !== "基础" ? (
+                          <span className="text-[10px] text-muted">
+                            {lesson.track}
+                          </span>
                         ) : null}
                       </span>
                     </Link>

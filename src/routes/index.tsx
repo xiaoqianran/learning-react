@@ -13,6 +13,7 @@ import {
   FlaskConical,
   LayoutDashboard,
   Code2,
+  Server,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式";
+type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化";
 
 function HomePage() {
   const completed = useProgress((s) => s.completed);
@@ -35,11 +36,9 @@ function HomePage() {
   const progress = Math.round((completed.length / LESSONS.length) * 100);
   const firstIncomplete =
     LESSONS.find((l) => !completed.includes(l.slug)) ?? LESSONS[0];
-  const fullstackCount = LESSONS.filter((l) => l.track === "全栈准备").length;
 
   const filtered = useMemo(() => {
-    let list =
-      track === "全部" ? LESSONS : getLessonsByTrack(track);
+    let list = track === "全部" ? LESSONS : getLessonsByTrack(track);
     const s = q.trim().toLowerCase();
     if (s) {
       list = list.filter(
@@ -66,7 +65,7 @@ function HomePage() {
           <div className="flex flex-wrap items-center gap-2">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg/60 px-2.5 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              v7 · 进阶模式
+              learning-react · v1
             </p>
             {streak > 0 ? (
               <span className="rounded-full bg-surface-3 px-2.5 py-1 font-mono text-xs text-muted">
@@ -75,45 +74,33 @@ function HomePage() {
             ) : null}
           </div>
           <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight text-balance text-fg sm:text-4xl">
-            带你系统学 Vue 3
+            带你系统学 React
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">
-            v7：Teleport / KeepAlive / 自定义指令 / 性能 / 面试串讲，并新增速查表。
+            参考 learning-vue3 的路径设计：{LESSONS.length}{" "}
+            节课、交互 Demo、测验、进度、SFC 式沙箱、模拟全栈工坊。
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            <Link to="/studio" className="no-underline">
-              <Button size="lg">
-                打开全栈工坊
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link
-              to="/lesson/$slug"
-              params={{ slug: "teleport" }}
-              className="no-underline"
-            >
-              <Button size="lg" variant="secondary">
-                进阶模式
-              </Button>
-            </Link>
-            <Link to="/cheatsheet" className="no-underline">
-              <Button size="lg" variant="secondary">
-                速查表
-              </Button>
-            </Link>
-            <Link to="/playground" className="no-underline">
-              <Button size="lg" variant="secondary">
-                <Code2 className="h-4 w-4" />
-                SFC 编辑器
-              </Button>
-            </Link>
             <Link
               to="/lesson/$slug"
               params={{ slug: firstIncomplete.slug }}
               className="no-underline"
             >
+              <Button size="lg">
+                {completed.length > 0 ? "继续学习" : "开始学习"}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/studio" className="no-underline">
+              <Button size="lg" variant="secondary">
+                <Server className="h-4 w-4" />
+                全栈工坊
+              </Button>
+            </Link>
+            <Link to="/playground" className="no-underline">
               <Button size="lg" variant="ghost">
-                {completed.length > 0 ? "继续学习" : "从第一节"}
+                <Code2 className="h-4 w-4" />
+                沙箱
               </Button>
             </Link>
             <Link to="/lab" className="no-underline">
@@ -188,7 +175,16 @@ function HomePage() {
             <p className="mt-1 text-sm text-muted">搜索与路径筛选</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {(["全部", "基础", "进阶", "全栈准备", "全栈实训", "工程化", "进阶模式"] as const).map((t) => (
+            {(
+              [
+                "全部",
+                "基础",
+                "进阶",
+                "全栈准备",
+                "全栈实训",
+                "工程化",
+              ] as const
+            ).map((t) => (
               <button
                 key={t}
                 type="button"
@@ -211,7 +207,7 @@ function HomePage() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="搜索课程标题或摘要…"
+            placeholder="搜索课程…"
             className="h-11 w-full rounded-lg border border-border bg-surface pl-10 pr-3 text-sm text-fg placeholder:text-subtle"
           />
         </div>
@@ -250,14 +246,9 @@ function HomePage() {
                       <span className="rounded-full bg-surface-3 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted">
                         {lesson.level}
                       </span>
-                      {lesson.track === "进阶" ? (
+                      {lesson.track !== "基础" ? (
                         <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[10px] font-medium text-primary">
-                          进阶线
-                        </span>
-                      ) : null}
-                      {lesson.track === "全栈准备" ? (
-                        <span className="rounded-full bg-accent/30 px-2 py-0.5 text-[10px] font-medium text-fg">
-                          全栈准备
+                          {lesson.track}
                         </span>
                       ) : null}
                     </div>
@@ -280,7 +271,7 @@ function HomePage() {
           })}
           {filtered.length === 0 ? (
             <li className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted">
-              没有匹配的课程，试试其他关键词
+              没有匹配的课程
             </li>
           ) : null}
         </ol>

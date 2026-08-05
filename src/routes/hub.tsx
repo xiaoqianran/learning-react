@@ -39,7 +39,7 @@ function HubPage() {
     <div className="mx-auto max-w-3xl pb-16">
       <header className="mb-6">
         <p className="text-xs font-medium uppercase tracking-wider text-primary">
-          v6
+          v1
         </p>
         <h1 className="mt-1 font-display text-2xl font-semibold text-fg">
           学习中心

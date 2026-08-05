@@ -36,7 +36,7 @@ function CertificatePage() {
           学习证明
         </h1>
         <p className="mt-1 text-sm text-muted">
-          完成全部 {LESSONS.length} 节课程后解锁（含进阶模式）
+          完成全部 {LESSONS.length} 节课程后解锁
         </p>
       </header>
 
@@ -73,7 +73,7 @@ function CertificatePage() {
         <section className="rounded-xl border border-border bg-surface p-8 text-center">
           <Lock className="mx-auto h-8 w-8 text-muted" />
           <p className="mt-4 text-sm text-muted">
-            进度 {completed.length}/{LESSONS.length} · 继续学习即可解锁
+            进度 {completed.length}/{LESSONS.length}
           </p>
           <div className="mx-auto mt-4 h-2 max-w-xs overflow-hidden rounded-full bg-surface-3">
             <div
@@ -89,23 +89,16 @@ function CertificatePage() {
         </section>
       ) : (
         <section className="relative overflow-hidden rounded-xl border border-primary/30 bg-surface p-8 text-center shadow-soft">
-          <div
-            className="pointer-events-none absolute inset-0 opacity-30"
-            style={{
-              background:
-                "radial-gradient(400px 160px at 50% 0%, color-mix(in oklab, var(--color-primary) 25%, transparent), transparent 70%)",
-            }}
-          />
           <div className="relative">
             <Award className="mx-auto h-10 w-10 text-primary" />
             <p className="mt-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">
               Certificate of Completion
             </p>
-            <h2 className="mt-3 font-display text-2xl font-semibold text-fg sm:text-3xl">
-              Vue 3 实战学习 · v7
+            <h2 className="mt-3 font-display text-2xl font-semibold text-fg">
+              React 实战学习 · v1
             </h2>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
-              兹证明持有人已完成本站全部课程：基础、进阶、全栈准备、全栈实训、工程化与进阶模式（含 SFC 编辑器与模拟 API 工坊）。
+            <p className="mx-auto mt-3 max-w-md text-sm text-muted">
+              兹证明持有人已完成本站全部课程：Hooks、组件、路由、状态、全栈准备与工程化实践。
             </p>
             <dl className="mx-auto mt-6 grid max-w-sm grid-cols-2 gap-3 text-sm">
               <div className="rounded-lg bg-surface-2 px-3 py-2">
@@ -126,7 +119,7 @@ function CertificatePage() {
               </div>
             </dl>
             <p className="mt-6 font-mono text-[10px] text-subtle">
-              learning-vue3 · local achievement · not an official certificate
+              learning-react · local achievement · not an official certificate
             </p>
           </div>
         </section>

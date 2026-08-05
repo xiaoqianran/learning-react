@@ -18,7 +18,7 @@ export const QUEST_DEFS: QuestDef[] = [
   {
     id: "login",
     title: "成功登录",
-    hint: "使用 demo@vue.dev / password123",
+    hint: "使用 demo@react.dev / password123",
   },
   {
     id: "fail401",
@@ -47,7 +47,7 @@ export const QUEST_DEFS: QuestDef[] = [
   },
 ];
 
-const KEY = "vue3-learn-studio-quests-v1";
+const KEY = "learning-react-studio-quests-v1";
 
 export function loadQuestDone(): QuestId[] {
   try {

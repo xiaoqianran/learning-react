@@ -135,7 +135,7 @@ export const useProgress = create<ProgressState>()(
         }),
     }),
     {
-      name: "vue3-learn-progress-v2",
+      name: "learning-react-progress-v1",
       version: 2,
       migrate: (persisted) => {
         const p = (persisted ?? {}) as Partial<ProgressState>;

@@ -2,24 +2,24 @@
 @import "tw-animate-css";
 
 @theme {
-  --color-bg: #0b0d0c;
-  --color-surface: #121614;
-  --color-surface-2: #1a1f1c;
-  --color-surface-3: #222924;
-  --color-fg: #e8ebe9;
-  --color-muted: #8b958e;
-  --color-subtle: #5c6660;
-  --color-border: #2a322d;
-  --color-border-strong: #3a4540;
-  --color-primary: #42b883;
-  --color-primary-fg: #062016;
-  --color-primary-dim: #2d8a63;
-  --color-primary-soft: #163528;
-  --color-accent: #35495e;
+  --color-bg: #0a0c10;
+  --color-surface: #11141a;
+  --color-surface-2: #171b22;
+  --color-surface-3: #1e2430;
+  --color-fg: #e8ecf1;
+  --color-muted: #8b93a1;
+  --color-subtle: #5c6573;
+  --color-border: #2a3140;
+  --color-border-strong: #3a4558;
+  --color-primary: #61dafb;
+  --color-primary-fg: #04202a;
+  --color-primary-dim: #3db8d9;
+  --color-primary-soft: #12323c;
+  --color-accent: #282c34;
   --color-warn: #d4a574;
   --color-danger: #e07a6a;
-  --color-code-bg: #0e1210;
-  --color-code-fg: #c8d4cc;
+  --color-code-bg: #0d1016;
+  --color-code-fg: #c8d0dc;
 
   --font-sans: "DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -32,7 +32,7 @@
   --radius-xl: 24px;
 
   --shadow-soft: 0 1px 0 color-mix(in oklab, var(--color-fg) 4%, transparent),
-    0 8px 24px color-mix(in oklab, #000 35%, transparent);
+    0 8px 24px color-mix(in oklab, #000 40%, transparent);
 }
 
 @layer base {
@@ -90,44 +90,6 @@
     scrollbar-width: thin;
     scrollbar-color: var(--color-border-strong) transparent;
   }
-}
-
-/* Vue SFC REPL host (v3) */
-.vue-sfc-repl-host {
-  --bg: #121614;
-  --bg-soft: #1a1f1c;
-  --border: #2a322d;
-  --text-light: #e8ebe9;
-  --color-branding: #42b883;
-}
-
-.vue-sfc-repl-host .vue-repl {
-  height: 100%;
-  border-radius: 0;
-  --bg: #121614;
-  --bg-soft: #1a1f1c;
-  --border: #2a322d;
-  --text-light: #e8ebe9;
-}
-
-.vue-sfc-repl-host .vue-repl,
-.vue-sfc-repl-host .vue-repl * {
-  box-sizing: border-box;
-}
-
-/* Hide stock file selector — we use custom polished chrome */
-.vue-sfc-repl-host--chrome .vue-repl .file-selector {
-  display: none !important;
-}
-
-/* Tighter output toolbar */
-.vue-sfc-repl-host--chrome .vue-repl .tab-buttons {
-  font-size: 12px;
-}
-
-.vue-sfc-repl-host--chrome .vue-repl .left,
-.vue-sfc-repl-host--chrome .vue-repl .right {
-  border-color: var(--color-border);
 }
 
 @media (prefers-reduced-motion: reduce) {

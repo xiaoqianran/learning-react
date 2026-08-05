@@ -9,43 +9,31 @@ const isGitHubPages =
   process.env.GITHUB_PAGES === "true" ||
   process.env.NITRO_PRESET === "github_pages";
 
-/** Project Pages site: https://xiaoqianran.github.io/learning-vue3/ */
-const base = isGitHubPages ? "/learning-vue3/" : "/";
+/** Project Pages site: https://xiaoqianran.github.io/learning-react/ */
+const base = isGitHubPages ? "/learning-react/" : "/";
 
 const lessonSlugs = [
   "intro",
-  "template",
-  "reactivity",
-  "computed",
-  "list-render",
-  "events",
+  "jsx",
+  "components-props",
+  "state",
+  "effects",
+  "lists-keys",
   "forms",
-  "components",
-  "props-emits",
-  "lifecycle",
-  "composition",
+  "hooks-custom",
+  "context",
+  "memo",
   "router",
-  "pinia",
-  "pitfalls",
-  "project",
-  "slots",
-  "provide-inject",
+  "zustand",
   "async-data",
   "route-guards",
   "form-validate",
   "rest-api",
   "auth-token",
-  "nuxt-map",
   "capstone",
-  "deploy-prod",
-  "interview-vue",
-  "perf-patterns",
-  "custom-directive",
-  "keep-alive",
-  "teleport",
-  "testing-vue",
-  "api-client",
-  "vue-ts",
+  "typescript-react",
+  "testing-react",
+  "deploy",
 ];
 
 const lessonPaths = lessonSlugs.map((slug) => ({ path: `/lesson/${slug}` }));

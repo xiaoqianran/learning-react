@@ -31,13 +31,13 @@ type Db = {
   sessions: Record<string, string>; // token -> userId
 };
 
-const DB_KEY = "vue3-learn-mock-api-v1";
-const LOG_KEY = "vue3-learn-mock-api-logs-v1";
+const DB_KEY = "learning-react-mock-api-v1";
+const LOG_KEY = "learning-react-mock-api-logs-v1";
 
 const DEMO_USER = {
   id: "u_demo",
-  email: "demo@vue.dev",
-  name: "Vue 学员",
+  email: "demo@react.dev",
+  name: "React 学员",
   password: "password123",
 };
 
@@ -58,7 +58,7 @@ function loadDb(): Db {
       [DEMO_USER.id]: [
         {
           id: "n1",
-          title: "欢迎来到全栈实训",
+          title: "欢迎来到 React 全栈实训",
           body: "这是模拟后端返回的第一条笔记。试试新增 / 编辑 / 删除。",
           updatedAt: Date.now(),
         },
