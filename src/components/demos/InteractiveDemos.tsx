@@ -1,0 +1,601 @@
+import { useEffect, useId, useState } from "react";
+import type { DemoKind } from "@/data/lessons";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Plus, Trash2, Check, RotateCcw } from "lucide-react";
+
+export function InteractiveDemo({
+  kind,
+  title,
+  hint,
+}: {
+  kind: DemoKind;
+  title: string;
+  hint?: string;
+}) {
+  return (
+    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
+      <div className="flex flex-wrap items-start justify-between gap-2 border-b border-border px-4 py-3">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-primary">
+            交互 Demo
+          </p>
+          <h3 className="mt-0.5 font-display text-base font-semibold text-fg">
+            {title}
+          </h3>
+        </div>
+        <span className="rounded-full bg-primary-soft px-2.5 py-1 font-mono text-[10px] text-primary">
+          live
+        </span>
+      </div>
+      <div className="p-4 sm:p-5">
+        {hint ? (
+          <p className="mb-4 text-sm text-muted">{hint}</p>
+        ) : null}
+        <DemoBody kind={kind} />
+      </div>
+    </section>
+  );
+}
+
+function DemoBody({ kind }: { kind: DemoKind }) {
+  switch (kind) {
+    case "counter":
+      return <CounterDemo />;
+    case "template":
+      return <TemplateDemo />;
+    case "ref-vs-reactive":
+      return <RefReactiveDemo />;
+    case "computed":
+      return <ComputedDemo />;
+    case "list":
+      return <ListDemo />;
+    case "events":
+      return <EventsDemo />;
+    case "form":
+      return <FormDemo />;
+    case "component":
+      return <ComponentDemo />;
+    case "lifecycle":
+      return <LifecycleDemo />;
+    case "todo":
+      return <TodoDemo />;
+    default:
+      return null;
+  }
+}
+
+function Panel({
+  label,
+  children,
+  className,
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-lg border border-border bg-surface-2 p-3 sm:p-4",
+        className,
+      )}
+    >
+      <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-subtle">
+        {label}
+      </p>
+      {children}
+    </div>
+  );
+}
+
+function CounterDemo() {
+  const [count, setCount] = useState(0);
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="template">
+        <p className="font-mono text-sm text-code-fg">
+          点了 <span className="text-primary">{count}</span> 次
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button onClick={() => setCount((c) => c + 1)}>count++</Button>
+          <Button variant="secondary" onClick={() => setCount(0)}>
+            重置
+          </Button>
+        </div>
+      </Panel>
+      <Panel label="script (ref)">
+        <pre className="font-mono text-xs leading-relaxed text-code-fg">
+          {`const count = ref(${count})\n// count.value === ${count}`}
+        </pre>
+      </Panel>
+    </div>
+  );
+}
+
+function TemplateDemo() {
+  const [msg, setMsg] = useState("你好，Vue");
+  const [active, setActive] = useState(true);
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="控制数据">
+        <label className="block text-xs text-muted">msg</label>
+        <input
+          value={msg}
+          onChange={(e) => setMsg(e.target.value)}
+          className="mt-1 h-10 w-full rounded-md border border-border bg-bg px-3 text-sm text-fg"
+        />
+        <label className="mt-3 flex items-center gap-2 text-sm text-fg">
+          <input
+            type="checkbox"
+            checked={active}
+            onChange={(e) => setActive(e.target.checked)}
+            className="h-4 w-4 accent-[var(--color-primary)]"
+          />
+          isActive
+        </label>
+      </Panel>
+      <Panel label="渲染结果">
+        <p className="text-sm">{"{{ msg }} → "}
+          <span className="text-primary">{msg}</span>
+        </p>
+        <p
+          className={cn(
+            "mt-2 rounded-md px-2 py-1 text-sm",
+            active ? "bg-primary-soft text-primary" : "bg-surface-3 text-muted",
+          )}
+        >
+          :class 绑定 → {active ? "active" : "inactive"}
+        </p>
+      </Panel>
+    </div>
+  );
+}
+
+function RefReactiveDemo() {
+  const [count, setCount] = useState(0);
+  const [name, setName] = useState("Vue");
+  const [n, setN] = useState(1);
+  return (
+    <div className="grid gap-3 lg:grid-cols-2">
+      <Panel label="ref(count)">
+        <p className="font-mono text-2xl font-semibold tabular-nums text-primary">
+          {count}
+        </p>
+        <div className="mt-3 flex gap-2">
+          <Button size="sm" onClick={() => setCount((c) => c + 1)}>
+            count.value++
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => setCount(0)}>
+            归零
+          </Button>
+        </div>
+      </Panel>
+      <Panel label="reactive({ name, n })">
+        <p className="text-sm">
+          name: <span className="text-primary">{name}</span>
+        </p>
+        <p className="mt-1 text-sm">
+          n: <span className="font-mono text-primary">{n}</span>
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="h-9 min-w-0 flex-1 rounded-md border border-border bg-bg px-3 text-sm"
+          />
+          <Button size="sm" onClick={() => setN((x) => x + 1)}>
+            state.n++
+          </Button>
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+function ComputedDemo() {
+  const [first, setFirst] = useState("Ada");
+  const [last, setLast] = useState("Lovelace");
+  const full = `${first} ${last}`;
+  const [logs, setLogs] = useState<string[]>([`初始: ${full}`]);
+
+  useEffect(() => {
+    setLogs((prev) => {
+      const line = `watch → "${full}"`;
+      if (prev[prev.length - 1] === line) return prev;
+      return [...prev.slice(-4), line];
+    });
+  }, [full]);
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="输入">
+        <label className="text-xs text-muted">first</label>
+        <input
+          value={first}
+          onChange={(e) => setFirst(e.target.value)}
+          className="mt-1 mb-3 h-10 w-full rounded-md border border-border bg-bg px-3 text-sm"
+        />
+        <label className="text-xs text-muted">last</label>
+        <input
+          value={last}
+          onChange={(e) => setLast(e.target.value)}
+          className="mt-1 h-10 w-full rounded-md border border-border bg-bg px-3 text-sm"
+        />
+      </Panel>
+      <div className="grid gap-3">
+        <Panel label="computed full">
+          <p className="font-display text-xl font-semibold text-primary">{full}</p>
+        </Panel>
+        <Panel label="watch 日志">
+          <ul className="space-y-1 font-mono text-xs text-muted">
+            {logs.map((l, i) => (
+              <li key={i}>{l}</li>
+            ))}
+          </ul>
+        </Panel>
+      </div>
+    </div>
+  );
+}
+
+function ListDemo() {
+  const [show, setShow] = useState(true);
+  const [items, setItems] = useState([
+    { id: 1, text: "学 ref" },
+    { id: 2, text: "学 v-for" },
+  ]);
+  const [nextId, setNextId] = useState(3);
+  const [draft, setDraft] = useState("");
+
+  function add() {
+    const t = draft.trim();
+    if (!t) return;
+    setItems((xs) => [...xs, { id: nextId, text: t }]);
+    setNextId((n) => n + 1);
+    setDraft("");
+  }
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="控制">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={show}
+            onChange={(e) => setShow(e.target.checked)}
+            className="h-4 w-4 accent-[var(--color-primary)]"
+          />
+          v-if = {String(show)}
+        </label>
+        <div className="mt-3 flex gap-2">
+          <input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && add()}
+            placeholder="新项目"
+            className="h-10 min-w-0 flex-1 rounded-md border border-border bg-bg px-3 text-sm"
+          />
+          <Button onClick={add} size="icon" aria-label="添加">
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      </Panel>
+      <Panel label="template 输出">
+        {show ? (
+          <p className="mb-2 text-sm text-primary">v-if：列表可见</p>
+        ) : (
+          <p className="mb-2 text-sm text-muted">v-else：已隐藏</p>
+        )}
+        {show ? (
+          <ul className="space-y-1.5">
+            {items.map((item) => (
+              <li
+                key={item.id}
+                className="flex items-center justify-between rounded-md bg-bg px-2.5 py-2 text-sm"
+              >
+                <span>
+                  <span className="mr-2 font-mono text-xs text-subtle">
+                    #{item.id}
+                  </span>
+                  {item.text}
+                </span>
+                <button
+                  type="button"
+                  className="text-muted hover:text-danger"
+                  onClick={() =>
+                    setItems((xs) => xs.filter((x) => x.id !== item.id))
+                  }
+                  aria-label="删除"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </Panel>
+    </div>
+  );
+}
+
+function EventsDemo() {
+  const [n, setN] = useState(0);
+  const [log, setLog] = useState<string[]>([]);
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="事件">
+        <p className="font-mono text-3xl font-semibold tabular-nums text-primary">
+          {n}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button onClick={() => setN((x) => x + 1)}>@click +1</Button>
+          <Button variant="secondary" onClick={() => setN((x) => x + 5)}>
+            @click="add(5)"
+          </Button>
+          <Button
+            variant="outline"
+            onClick={(e) => {
+              e.preventDefault();
+              setLog((xs) => [`submit.prevent @ ${new Date().toLocaleTimeString()}`, ...xs].slice(0, 4));
+            }}
+          >
+            @submit.prevent
+          </Button>
+        </div>
+      </Panel>
+      <Panel label="事件日志">
+        {log.length === 0 ? (
+          <p className="text-sm text-muted">点击按钮产生日志</p>
+        ) : (
+          <ul className="space-y-1 font-mono text-xs text-muted">
+            {log.map((l, i) => (
+              <li key={i}>{l}</li>
+            ))}
+          </ul>
+        )}
+      </Panel>
+    </div>
+  );
+}
+
+function FormDemo() {
+  const [name, setName] = useState("");
+  const [age, setAge] = useState(18);
+  const [agree, setAgree] = useState(false);
+  const [color, setColor] = useState("green");
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="v-model 表单">
+        <label className="text-xs text-muted">name (.trim)</label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onBlur={() => setName((n) => n.trim())}
+          className="mt-1 mb-3 h-10 w-full rounded-md border border-border bg-bg px-3 text-sm"
+          placeholder="你的名字"
+        />
+        <label className="text-xs text-muted">age (.number)</label>
+        <input
+          type="number"
+          value={age}
+          onChange={(e) => setAge(Number(e.target.value))}
+          className="mt-1 mb-3 h-10 w-full rounded-md border border-border bg-bg px-3 text-sm"
+        />
+        <label className="mb-3 flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={agree}
+            onChange={(e) => setAgree(e.target.checked)}
+            className="h-4 w-4 accent-[var(--color-primary)]"
+          />
+          同意条款
+        </label>
+        <label className="text-xs text-muted">color</label>
+        <select
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+          className="mt-1 h-10 w-full rounded-md border border-border bg-bg px-3 text-sm"
+        >
+          <option value="green">绿</option>
+          <option value="blue">蓝</option>
+        </select>
+      </Panel>
+      <Panel label="实时预览">
+        <dl className="space-y-2 text-sm">
+          <div className="flex justify-between gap-2">
+            <dt className="text-muted">name</dt>
+            <dd className="font-medium text-fg">{name || "—"}</dd>
+          </div>
+          <div className="flex justify-between gap-2">
+            <dt className="text-muted">age</dt>
+            <dd className="font-mono text-primary">{age}</dd>
+          </div>
+          <div className="flex justify-between gap-2">
+            <dt className="text-muted">agree</dt>
+            <dd>{agree ? "true" : "false"}</dd>
+          </div>
+          <div className="flex justify-between gap-2">
+            <dt className="text-muted">color</dt>
+            <dd className="capitalize">{color}</dd>
+          </div>
+        </dl>
+      </Panel>
+    </div>
+  );
+}
+
+function ChildCounter({ label }: { label: string }) {
+  const [n, setN] = useState(0);
+  return (
+    <div className="rounded-md border border-border bg-bg p-3">
+      <p className="text-xs text-muted">{label}</p>
+      <p className="mt-1 font-mono text-xl text-primary">{n}</p>
+      <Button size="sm" className="mt-2" onClick={() => setN((x) => x + 1)}>
+        子组件 +1
+      </Button>
+    </div>
+  );
+}
+
+function ComponentDemo() {
+  return (
+    <div>
+      <p className="mb-3 text-sm text-muted">父组件渲染两个独立的子组件实例：</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <ChildCounter label="<CounterCard /> #1" />
+        <ChildCounter label="<CounterCard /> #2" />
+      </div>
+    </div>
+  );
+}
+
+function LifecycleDemo() {
+  const [mounted, setMounted] = useState(true);
+  const [ticks, setTicks] = useState(0);
+  const [log, setLog] = useState<string[]>(["准备挂载…"]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    setLog((xs) => [...xs, "onMounted → 启动计时器"].slice(-6));
+    setTicks(0);
+    const id = window.setInterval(() => setTicks((t) => t + 1), 1000);
+    return () => {
+      clearInterval(id);
+      setLog((xs) => [...xs, "onUnmounted → clearInterval"].slice(-6));
+    };
+  }, [mounted]);
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Panel label="组件实例">
+        {mounted ? (
+          <div>
+            <p className="font-mono text-3xl tabular-nums text-primary">{ticks}s</p>
+            <p className="mt-1 text-xs text-muted">已挂载，计时中</p>
+            <Button
+              className="mt-3"
+              variant="secondary"
+              onClick={() => setMounted(false)}
+            >
+              卸载组件
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <p className="text-sm text-muted">组件已卸载</p>
+            <Button className="mt-3" onClick={() => setMounted(true)}>
+              重新挂载
+            </Button>
+          </div>
+        )}
+      </Panel>
+      <Panel label="生命周期日志">
+        <ul className="space-y-1 font-mono text-xs text-muted">
+          {log.map((l, i) => (
+            <li key={i}>{l}</li>
+          ))}
+        </ul>
+      </Panel>
+    </div>
+  );
+}
+
+type Todo = { id: number; text: string; done: boolean };
+
+function TodoDemo() {
+  const [items, setItems] = useState<Todo[]>([
+    { id: 1, text: "读完 Props 一节", done: false },
+    { id: 2, text: "完成小测验", done: true },
+  ]);
+  const [draft, setDraft] = useState("");
+  const [nextId, setNextId] = useState(3);
+  const formId = useId();
+
+  function add() {
+    const t = draft.trim();
+    if (!t) return;
+    setItems((xs) => [...xs, { id: nextId, text: t, done: false }]);
+    setNextId((n) => n + 1);
+    setDraft("");
+  }
+
+  return (
+    <div className="mx-auto max-w-md">
+      <div className="flex gap-2">
+        <input
+          id={formId}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && add()}
+          placeholder="新任务…"
+          className="h-10 min-w-0 flex-1 rounded-md border border-border bg-bg px-3 text-sm"
+        />
+        <Button onClick={add}>添加</Button>
+      </div>
+      <ul className="mt-3 space-y-2">
+        {items.map((item) => (
+          <li
+            key={item.id}
+            className="flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-3 py-2"
+          >
+            <button
+              type="button"
+              onClick={() =>
+                setItems((xs) =>
+                  xs.map((x) =>
+                    x.id === item.id ? { ...x, done: !x.done } : x,
+                  ),
+                )
+              }
+              className={cn(
+                "flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border",
+                item.done
+                  ? "border-primary bg-primary text-primary-fg"
+                  : "border-border text-transparent",
+              )}
+              aria-label={item.done ? "标为未完成" : "标为完成"}
+            >
+              <Check className="h-3.5 w-3.5" />
+            </button>
+            <span
+              className={cn(
+                "min-w-0 flex-1 text-sm",
+                item.done && "text-muted line-through",
+              )}
+            >
+              {item.text}
+            </span>
+            <button
+              type="button"
+              className="text-muted hover:text-danger"
+              onClick={() =>
+                setItems((xs) => xs.filter((x) => x.id !== item.id))
+              }
+              aria-label="删除"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 text-xs text-muted">
+        父持有列表状态；子项通过点击「发出」完成/删除意图（此处内联模拟 emit）。
+      </p>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="mt-2"
+        onClick={() =>
+          setItems([
+            { id: 1, text: "读完 Props 一节", done: false },
+            { id: 2, text: "完成小测验", done: true },
+          ])
+        }
+      >
+        <RotateCcw className="h-3.5 w-3.5" />
+        重置示例
+      </Button>
+    </div>
+  );
+}
