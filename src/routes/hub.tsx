@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { LESSONS } from "@/data/lessons";
+import { LESSONS, TRACKS, getLessonsByTrack } from "@/data/lessons";
 import { useProgress, todayKey } from "@/store/progress";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,7 +39,7 @@ function HubPage() {
     <div className="mx-auto max-w-3xl pb-16">
       <header className="mb-6">
         <p className="text-xs font-medium uppercase tracking-wider text-primary">
-          v2
+          v6
         </p>
         <h1 className="mt-1 font-display text-2xl font-semibold text-fg">
           学习中心
@@ -71,6 +71,33 @@ function HubPage() {
           value={String(wrongBook.length)}
         />
       </div>
+
+      <section className="mt-6 rounded-xl border border-border bg-surface p-5">
+        <h2 className="font-display text-base font-semibold">路径进度</h2>
+        <ul className="mt-3 space-y-2">
+          {TRACKS.map((t) => {
+            const list = getLessonsByTrack(t);
+            const done = list.filter((l) => completed.includes(l.slug)).length;
+            const pct = list.length ? Math.round((done / list.length) * 100) : 0;
+            return (
+              <li key={t}>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-fg">{t}</span>
+                  <span className="font-mono text-xs text-muted">
+                    {done}/{list.length}
+                  </span>
+                </div>
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-surface-3">
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: pct + "%" }}
+                  />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
 
       <section className="mt-6 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">

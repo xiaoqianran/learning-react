@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备" | "全栈实训";
+type TrackFilter = "全部" | "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化";
 
 function HomePage() {
   const completed = useProgress((s) => s.completed);
@@ -66,7 +66,7 @@ function HomePage() {
           <div className="flex flex-wrap items-center gap-2">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg/60 px-2.5 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              v5 · 全栈实训
+              v6 · 工程化
             </p>
             {streak > 0 ? (
               <span className="rounded-full bg-surface-3 px-2.5 py-1 font-mono text-xs text-muted">
@@ -78,7 +78,7 @@ function HomePage() {
             带你系统学 Vue 3
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">
-            v5 加入全栈实训：模拟登录 + 笔记 CRUD 工坊，以及 REST / Token / Nuxt 课程。
+            v6：工坊闯关任务 + 工程化线（TypeScript、API 客户端、测试、部署）。
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link to="/studio" className="no-underline">
@@ -89,11 +89,11 @@ function HomePage() {
             </Link>
             <Link
               to="/lesson/$slug"
-              params={{ slug: "rest-api" }}
+              params={{ slug: "vue-ts" }}
               className="no-underline"
             >
               <Button size="lg" variant="secondary">
-                实训课程
+                工程化课程
               </Button>
             </Link>
             <Link to="/playground" className="no-underline">
@@ -183,7 +183,7 @@ function HomePage() {
             <p className="mt-1 text-sm text-muted">搜索与路径筛选</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {(["全部", "基础", "进阶", "全栈准备", "全栈实训"] as const).map((t) => (
+            {(["全部", "基础", "进阶", "全栈准备", "全栈实训", "工程化"] as const).map((t) => (
               <button
                 key={t}
                 type="button"

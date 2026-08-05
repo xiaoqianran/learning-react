@@ -37,6 +37,10 @@ const lessonSlugs = [
   "auth-token",
   "nuxt-map",
   "capstone",
+  "deploy-prod",
+  "testing-vue",
+  "api-client",
+  "vue-ts",
 ];
 
 const lessonPaths = lessonSlugs.map((slug) => ({ path: `/lesson/${slug}` }));

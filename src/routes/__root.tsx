@@ -30,12 +30,12 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
-        title: "Vue 3 实战学习 v5 · 全栈实训",
+        title: "Vue 3 实战学习 v6 · 工程化",
       },
       {
         name: "description",
         content:
-          "Vue 3 中文交互式教程 v5：全栈实训——模拟 API 登录 CRUD、REST、Token、Nuxt 地图。",
+          "Vue 3 中文交互式教程 v6：工程化——TS、API 客户端、测试、部署与工坊闯关。",
       },
     ],
     links: [
@@ -117,9 +117,7 @@ function AppShell({ children }: { children: ReactNode }) {
             <span className="truncate font-display text-sm font-semibold tracking-tight text-fg">
               Vue 3 实战学习
             </span>
-            <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">
-              v5
-            </span>
+            <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">v6</span>
           </Link>
 
           <nav className="ml-2 hidden items-center gap-0.5 xl:flex">
