@@ -16,6 +16,7 @@ import {
   BookX,
   Award,
   Code2,
+  Server,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -29,12 +30,12 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
-        title: "Vue 3 实战学习 v4 · 全栈准备",
+        title: "Vue 3 实战学习 v5 · 全栈实训",
       },
       {
         name: "description",
         content:
-          "Vue 3 中文交互式教程 v4：全栈准备线——Slots、异步请求、路由守卫、表单校验与 SFC 编辑器。",
+          "Vue 3 中文交互式教程 v5：全栈实训——模拟 API 登录 CRUD、REST、Token、Nuxt 地图。",
       },
     ],
     links: [
@@ -73,6 +74,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 }
 
 const NAV_EXTRA = [
+  { to: "/studio" as const, label: "全栈工坊", icon: Server },
   { to: "/playground" as const, label: "SFC 编辑器", icon: Code2 },
   { to: "/hub" as const, label: "学习中心", icon: LayoutDashboard },
   { to: "/lab" as const, label: "练习场", icon: FlaskConical },
@@ -116,16 +118,16 @@ function AppShell({ children }: { children: ReactNode }) {
               Vue 3 实战学习
             </span>
             <span className="hidden rounded-full bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-primary sm:inline">
-              v4
+              v5
             </span>
           </Link>
 
-          <nav className="ml-2 hidden items-center gap-0.5 lg:flex">
+          <nav className="ml-2 hidden items-center gap-0.5 xl:flex">
             {NAV_EXTRA.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
-                className="rounded-md px-2.5 py-1.5 text-xs text-muted no-underline transition-colors hover:bg-surface-2 hover:text-fg [&.active]:bg-primary-soft [&.active]:text-primary"
+                className="rounded-md px-2 py-1.5 text-xs text-muted no-underline transition-colors hover:bg-surface-2 hover:text-fg [&.active]:bg-primary-soft [&.active]:text-primary"
                 activeProps={{ className: "active" }}
               >
                 {item.label}
@@ -216,6 +218,9 @@ function AppShell({ children }: { children: ReactNode }) {
                         ) : null}
                         {lesson.track === "全栈准备" ? (
                           <span className="text-[10px] text-muted">全栈准备</span>
+                        ) : null}
+                        {lesson.track === "全栈实训" ? (
+                          <span className="text-[10px] text-primary">全栈实训</span>
                         ) : null}
                       </span>
                     </Link>

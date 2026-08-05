@@ -33,6 +33,10 @@ const lessonSlugs = [
   "async-data",
   "route-guards",
   "form-validate",
+  "rest-api",
+  "auth-token",
+  "nuxt-map",
+  "capstone",
 ];
 
 const lessonPaths = lessonSlugs.map((slug) => ({ path: `/lesson/${slug}` }));
@@ -44,6 +48,7 @@ const staticPages = [
   { path: "/mistakes" },
   { path: "/certificate" },
   { path: "/playground" },
+  { path: "/studio" },
   ...lessonPaths,
 ];
 
