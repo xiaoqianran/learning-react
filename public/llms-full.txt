@@ -1,0 +1,1693 @@
+# learning-react — full curriculum
+
+生成自本站 37 课。语义以 react.dev 为准。
+
+---
+
+# React 是什么
+
+- slug: `intro`
+- track: 基础
+- level: 入门
+- minutes: 7
+
+### 一句话
+
+React 用组件描述界面，用状态驱动更新。你写「UI 是状态的函数」，库负责高效更新 DOM。
+
+
+### 最小组件
+
+```tsx
+function App() {
+  const [n, setN] = useState(0)
+  return <button onClick={() => setN(n + 1)}>点了 {n} 次</button>
+}
+```
+
+
+**交互 Demo：** 动手：计数器（kind: `counter`）
+
+
+**测验：**
+- Q: React 核心思路？
+  - [ ] 手写 DOM
+  - [✓] UI = f(state)
+  - [ ] 仅 class 组件
+  - [ ] 必须 jQuery
+  - 解析: 声明式：状态决定 UI。
+- Q: 现代 React 默认？
+  - [ ] 仅 Class
+  - [✓] 函数组件 + Hooks
+  - [ ] 仅 Vue SFC
+  - [ ] 仅 jQuery
+  - 解析: 函数组件与 Hooks。
+
+
+---
+
+# JSX 与渲染
+
+- slug: `jsx`
+- track: 基础
+- level: 入门
+- minutes: 9
+
+### JSX 不是 HTML
+
+JSX 是语法糖，编译为 React.createElement / jsx()。用 className、htmlFor；花括号嵌入表达式。
+
+
+### 条件与列表
+
+```tsx
+{ok && <p>显示</p>}
+{items.map((it) => (
+  <li key={it.id}>{it.text}</li>
+))}
+```
+
+
+**交互 Demo：** 动手：改数据看 JSX（kind: `jsx`）
+
+
+**测验：**
+- Q: class 在 JSX 中写？
+  - [ ] class
+  - [✓] className
+  - [ ] class-name
+  - [ ] css
+  - 解析: DOM 属性是 className。
+- Q: 列表需要？
+  - [ ] 可无 key
+  - [✓] 稳定 key
+  - [ ] 只用 index 永远最好
+  - [ ] 禁止 map
+  - 解析: 稳定 key 帮助协调。
+
+
+---
+
+# 组件与 Props
+
+- slug: `components-props`
+- track: 基础
+- level: 入门
+- minutes: 10
+
+### Props
+
+```tsx
+type CardProps = { title: string; children?: React.ReactNode }
+function Card({ title, children }: CardProps) {
+  return (
+    <section>
+      <h2>{title}</h2>
+      {children}
+    </section>
+  )
+}
+```
+
+
+### 组件与 Props
+
+组件是函数，props 是入参。单向数据流：父传子，子通过回调通知父。children 是组合插槽。
+
+
+**交互 Demo：** 动手：传 props（kind: `props`）
+
+
+**测验：**
+- Q: Props 方向？
+  - [ ] 子改父随意
+  - [✓] 父→子单向
+  - [ ] 全局可变
+  - [ ] 仅字符串
+  - 解析: 单向数据流。
+- Q: children？
+  - [ ] 非法
+  - [✓] 嵌套内容插槽
+  - [ ] 仅数组
+  - [ ] 生命周期
+  - 解析: 组合模式。
+
+
+---
+
+# useState 状态
+
+- slug: `state`
+- track: 基础
+- level: 入门
+- minutes: 11
+
+### 不可变
+
+不要直接 mutate 对象/数组。用展开或 map/filter 生成新引用，React 才能发现变化。
+
+
+### 更新模式
+
+```tsx
+setN(n + 1)
+setN((x) => x + 1) // 基于最新值
+setUser({ ...user, name: 'Ada' })
+setItems((xs) => xs.filter((x) => x.id !== id))
+```
+
+
+**交互 Demo：** 动手：状态更新（kind: `state`）
+
+
+**测验：**
+- Q: 对象状态正确更新？
+  - [ ] obj.x=1
+  - [✓] setObj({...obj,x:1})
+  - [ ] mutate 即可
+  - [ ] 只用 props
+  - 解析: 不可变更新。
+- Q: 连续 set 依赖上次？
+  - [ ] setN(n+1) 两次总对
+  - [✓] 函数式 setN(x=>x+1)
+  - [ ] 禁止更新
+  - [ ] 用 var
+  - 解析: 函数式更新。
+
+
+---
+
+# useEffect 副作用
+
+- slug: `effects`
+- track: 基础
+- level: 入门
+- minutes: 12
+
+### 何时用 Effect
+
+订阅、定时器、与非 React 系统同步。派生数据优先用渲染中计算，不必 effect。
+
+
+### 清理
+
+```tsx
+useEffect(() => {
+  const id = setInterval(() => setT(Date.now()), 1000)
+  return () => clearInterval(id)
+}, [])
+```
+
+
+**交互 Demo：** 动手：挂载与清理（kind: `effect`）
+
+
+**测验：**
+- Q: 空依赖 []？
+  - [ ] 每次渲染
+  - [✓] 仅挂载/卸载
+  - [ ] 从不运行
+  - [ ] 仅卸载
+  - 解析: 挂载跑一次。
+- Q: return 函数？
+  - [ ] 渲染 UI
+  - [✓] 清理副作用
+  - [ ] 定义 props
+  - [ ] 路由
+  - 解析: cleanup。
+
+
+---
+
+# 列表与 Key
+
+- slug: `lists-keys`
+- track: 基础
+- level: 入门
+- minutes: 9
+
+### 列表与 Key
+
+map 渲染列表时 key 必须稳定。用 index 当 key 在重排/插入时会导致状态错位。
+
+
+### 对应源码 · 列表 map + 稳定 key
+
+```tsx
+const [items, setItems] = useState([
+  { id: 1, text: '学 useState' },
+  { id: 2, text: '学 key' },
+])
+
+<ul>
+  {items.map((it) => (
+    <li key={it.id}>
+      {it.text}
+      <button onClick={() =>
+        setItems((xs) => xs.filter((x) => x.id !== it.id))
+      }>删</button>
+    </li>
+  ))}
+</ul>
+```
+
+
+**交互 Demo：** 动手：增删列表（kind: `list`）
+
+
+**测验：**
+- Q: key 优先用？
+  - [ ] 随机数
+  - [✓] 稳定 id
+  - [ ] 永远 index
+  - [ ] 不要 key
+  - 解析: 稳定业务 id。
+- Q: index 当 key 风险？
+  - [ ] 无
+  - [✓] 重排时状态错位
+  - [ ] 更快所以必须
+  - [ ] 仅 TypeScript
+  - 解析: 复用错组件状态。
+
+
+---
+
+# 表单与受控组件
+
+- slug: `forms`
+- track: 基础
+- level: 入门
+- minutes: 10
+
+### 受控输入
+
+```tsx
+const [name, setName] = useState('')
+<input value={name} onChange={(e) => setName(e.target.value)} />
+```
+
+
+### 受控组件
+
+value + onChange 让 React 成为唯一数据源。便于校验、禁用提交、即时预览。
+
+
+**交互 Demo：** 动手：受控表单（kind: `form`）
+
+
+**测验：**
+- Q: 受控组件？
+  - [ ] DOM 自己管
+  - [✓] React state 为唯一数据源
+  - [ ] 仅 class
+  - [ ] 无 onChange
+  - 解析: state 驱动 value。
+
+
+---
+
+# 自定义 Hooks
+
+- slug: `hooks-custom`
+- track: 基础
+- level: 进阶
+- minutes: 11
+
+### useCounter
+
+```ts
+function useCounter(initial = 0) {
+  const [n, setN] = useState(initial)
+  const inc = () => setN((x) => x + 1)
+  return { n, inc }
+}
+```
+
+
+### 自定义 Hook
+
+useXxx 抽取可复用状态逻辑。Hook 只能在组件或其他 Hook 顶层调用。
+
+
+**交互 Demo：** 复习：抽成 Hook 的计数器（kind: `counter`）
+
+
+> **提示：** Hook 只能在组件或其它 Hook 顶层调用；命名 use 开头。
+
+
+**测验：**
+- Q: 自定义 Hook 命名？
+  - [ ] getXxx
+  - [✓] useXxx
+  - [ ] makeXxx
+  - [ ] XxxService
+  - 解析: use 前缀。
+- Q: Hook 规则？
+  - [ ] 可在 if 里随意
+  - [✓] 顶层调用
+  - [ ] 仅 class
+  - [ ] 仅 SSR
+  - 解析: Rules of Hooks。
+
+
+---
+
+# Context 跨层传递
+
+- slug: `context`
+- track: 进阶
+- level: 进阶
+- minutes: 12
+
+### createContext
+
+```tsx
+const ThemeCtx = createContext<'dark' | 'light'>('dark')
+function App() {
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  return (
+    <ThemeCtx.Provider value={theme}>
+      <Toolbar />
+    </ThemeCtx.Provider>
+  )
+}
+function Child() {
+  const theme = useContext(ThemeCtx)
+  return <span>{theme}</span>
+}
+```
+
+
+### Context
+
+跨层传值避免 props 钻透。高频变化的值放 Context 要小心重渲染；可用拆分/memo。
+
+
+**交互 Demo：** 动手：主题 Context（kind: `context`）
+
+
+**测验：**
+- Q: Context 适合？
+  - [ ] 每个按钮本地状态
+  - [✓] 主题/当前用户等跨层
+  - [ ] 替代全部 state
+  - [ ] 仅 CSS
+  - 解析: 树内共享。
+- Q: 频繁变的大数据？
+  - [ ] 全塞 Context 最好
+  - [✓] 拆分或状态库，避免整树重渲
+  - [ ] 禁止 Context
+  - [ ] 只用 ref
+  - 解析: 注意性能。
+
+
+---
+
+# memo / useMemo / useCallback
+
+- slug: `memo`
+- track: 进阶
+- level: 进阶
+- minutes: 11
+
+### 先正确再优化
+
+memo 跳过 props 浅比较相同的重渲；useMemo 缓存计算；useCallback 稳定函数引用。不要过早到处包。
+
+
+### 对应源码 · memo / useMemo
+
+```tsx
+const Child = memo(function Child({ label }: { label: string }) {
+  return <div>{label}</div>
+})
+
+function Parent() {
+  const [n, setN] = useState(0)
+  const [label, setLabel] = useState('固定 props')
+  const doubled = useMemo(() => n * 2, [n])
+  return (
+    <>
+      <p>{n} / {doubled}</p>
+      <Child label={label} />
+    </>
+  )
+}
+```
+
+
+**交互 Demo：** 动手：感受渲染次数（kind: `memo`）
+
+
+**测验：**
+- Q: React.memo？
+  - [ ] 服务端缓存
+  - [✓] props 浅相等则跳过重渲
+  - [ ] 替代 useState
+  - [ ] 路由
+  - 解析: 纯展示优化。
+- Q: useMemo 用于？
+  - [ ] 必须每个变量
+  - [✓] 昂贵计算/稳定引用
+  - [ ] 替代 effect
+  - [ ] CSS
+  - 解析: 按需缓存。
+
+
+---
+
+# React Router 入门
+
+- slug: `router`
+- track: 进阶
+- level: 进阶
+- minutes: 12
+
+### 概念
+
+```tsx
+<BrowserRouter>
+  <Routes>
+    <Route path="/" element={<Home />} />
+    <Route path="/lesson/:slug" element={<Lesson />} />
+  </Routes>
+</BrowserRouter>
+```
+
+
+### 路由
+
+Link / useNavigate 导航，Outlet 渲染子路由，useParams 读动态段。
+
+
+**交互 Demo：** 动手：迷你路由（kind: `router`）
+
+
+**测验：**
+- Q: Link 相对 a？
+  - [ ] 强制刷新
+  - [✓] 客户端导航
+  - [ ] 不能用
+  - [ ] 仅外链
+  - 解析: SPA 导航。
+- Q: 读参数？
+  - [ ] useState
+  - [✓] useParams
+  - [ ] useMemo
+  - [ ] localStorage
+  - 解析: useParams。
+
+
+---
+
+# Zustand 状态管理
+
+- slug: `zustand`
+- track: 进阶
+- level: 进阶
+- minutes: 11
+
+### define store
+
+```ts
+import { create } from 'zustand'
+const useCart = create((set) => ({
+  items: [] as string[],
+  add: (name: string) =>
+    set((s) => ({ items: [...s.items, name] })),
+}))
+```
+
+
+### Zustand
+
+极简全局 store：create + selector。比 Context 更适合高频更新的客户端状态。
+
+
+**交互 Demo：** 动手：共享购物车（kind: `zustand`）
+
+
+**测验：**
+- Q: Zustand 特点？
+  - [ ] 必须 Redux 样板
+  - [✓] 轻量 hooks API
+  - [ ] 仅 class
+  - [ ] 仅 Vue
+  - 解析: 简洁全局状态。
+- Q: 何时用全局 store？
+  - [ ] 每个 input
+  - [✓] 跨页共享业务状态
+  - [ ] 替代 CSS
+  - [ ] 仅动画
+  - 解析: 跨组件共享。
+
+
+---
+
+# 异步数据与请求态
+
+- slug: `async-data`
+- track: 全栈准备
+- level: 实战
+- minutes: 13
+
+### useEffect + fetch
+
+```tsx
+useEffect(() => {
+  const c = new AbortController()
+  setLoading(true)
+  fetch(url, { signal: c.signal })
+    .then((r) => r.json())
+    .then(setData)
+    .catch((e) => { if (e.name !== 'AbortError') setError(e.message) })
+    .finally(() => setLoading(false))
+  return () => c.abort()
+}, [url])
+```
+
+
+### 异步三态
+
+idle/loading/ok/error 分支渲染。现代项目更推荐 TanStack Query 管理缓存与重试。
+
+
+**交互 Demo：** 动手：请求三态（kind: `async`）
+
+
+**测验：**
+- Q: 离开页面请求？
+  - [ ] 忽略
+  - [✓] AbortController
+  - [ ] 只锁 UI
+  - [ ] window
+  - 解析: 取消竞态。
+- Q: 最少 UI 状态？
+  - [ ] 仅成功
+  - [✓] loading/error/成功
+  - [ ] 仅 spinner
+  - [ ] 仅 toast
+  - 解析: 三态。
+
+
+---
+
+# 路由守卫心智
+
+- slug: `route-guards`
+- track: 全栈准备
+- level: 实战
+- minutes: 11
+
+> **提示：** 前端守卫可被绕过；API 必须鉴权。工坊里试 401。
+
+
+### 路由守卫心智
+
+未登录跳转登录并带 redirect。前端 Protected 只是 UX；API 必须鉴权。
+
+
+### 对应源码 · 路由守卫心智
+
+```tsx
+function Protected({ children }: { children: React.ReactNode }) {
+  const token = localStorage.getItem('token')
+  const loc = useLocation()
+  if (!token) {
+    return <Navigate to={`/login?redirect=${loc.pathname}`} replace />
+  }
+  return children
+}
+
+// <Route path="/dashboard" element={<Protected><Dash /></Protected>} />
+// 前端守卫 ≠ 安全：API 仍要验 token
+```
+
+
+**交互 Demo：** 动手：门禁模拟（kind: `guard`）
+
+
+**测验：**
+- Q: 前端守卫=安全？
+  - [ ] 是
+  - [✓] 否，服务端必验
+  - [ ] 仅 HTTPS
+  - [ ] 仅 CORS
+  - 解析: 可被绕过。
+- Q: 登录回跳？
+  - [ ] 写死
+  - [✓] redirect 查询参数
+  - [ ] reload
+  - [ ] 仅 back
+  - 解析: 常见模式。
+
+
+---
+
+# 表单校验
+
+- slug: `form-validate`
+- track: 全栈准备
+- level: 实战
+- minutes: 11
+
+### 表单校验
+
+字段错误映射到具体输入。可用手写或 React Hook Form + Zod。
+
+
+### 对应源码 · 字段级校验
+
+```tsx
+const [email, setEmail] = useState('')
+const [password, setPassword] = useState('')
+const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+
+function submit() {
+  const e: typeof errors = {}
+  if (!/@/.test(email)) e.email = '邮箱格式不对'
+  if (password.length < 6) e.password = '至少 6 位'
+  setErrors(e)
+  if (Object.keys(e).length === 0) { /* 提交 */ }
+}
+```
+
+
+**交互 Demo：** 动手：登录校验（kind: `validate`）
+
+
+**测验：**
+- Q: 前端校验=安全？
+  - [ ] 是
+  - [✓] 否
+  - [ ] HTTPS 即可
+  - [ ] Zod 即可
+  - 解析: 后端也要。
+- Q: 字段错误好处？
+  - [ ] 酷
+  - [✓] 知道哪错
+  - [ ] 少代码
+  - [ ] 无 label
+  - 解析: 可修正。
+
+
+---
+
+# REST 与 CRUD
+
+- slug: `rest-api`
+- track: 全栈实训
+- level: 实战
+- minutes: 12
+
+### 约定
+
+```text
+GET/POST /api/notes
+PUT/DELETE /api/notes/:id
+401 未登录 · 201 创建成功
+```
+
+
+> **提示：** 打开「全栈工坊」完成闯关，看请求日志。
+
+
+### REST
+
+围绕资源设计 URL 与方法；用状态码驱动客户端分支（401 清会话等）。
+
+
+**交互 Demo：** 复习：请求态（kind: `async`）
+
+
+**测验：**
+- Q: 创建资源？
+  - [ ] GET
+  - [✓] POST
+  - [ ] DELETE
+  - [ ] HEAD
+  - 解析: POST。
+- Q: 401？
+  - [ ] 成功
+  - [✓] 未认证
+  - [ ] 永久跳转
+  - [ ] 缓存
+  - 解析: Unauthorized。
+
+
+---
+
+# Token 登录
+
+- slug: `auth-token`
+- track: 全栈实训
+- level: 实战
+- minutes: 11
+
+### Token
+
+登录拿 token → 请求头携带 → 401 统一处理。优先 HttpOnly Cookie 方案时注意 CSRF。
+
+
+### 对应源码 · 路由守卫心智
+
+```tsx
+function Protected({ children }: { children: React.ReactNode }) {
+  const token = localStorage.getItem('token')
+  const loc = useLocation()
+  if (!token) {
+    return <Navigate to={`/login?redirect=${loc.pathname}`} replace />
+  }
+  return children
+}
+
+// <Route path="/dashboard" element={<Protected><Dash /></Protected>} />
+// 前端守卫 ≠ 安全：API 仍要验 token
+```
+
+
+**交互 Demo：** 复习：登录门禁（kind: `guard`）
+
+
+**测验：**
+- Q: Bearer 放？
+  - [ ] URL
+  - [✓] Authorization 头
+  - [ ] CSS
+  - [ ] 不发
+  - 解析: 请求头。
+- Q: HttpOnly Cookie？
+  - [ ] 更快
+  - [✓] JS 难读，降 XSS 偷 token
+  - [ ] 免 HTTPS
+  - [ ] 免 CSRF 全自动
+  - 解析: 更安全存储。
+
+
+---
+
+# 毕业作品清单
+
+- slug: `capstone`
+- track: 全栈实训
+- level: 实战
+- minutes: 9
+
+### 验收
+
+```text
+[ ] 登录退出
+[ ] CRUD + 空状态
+[ ] loading/error
+[ ] 校验
+[ ] 部署 + README 演示账号
+```
+
+
+### 毕业作品
+
+鉴权 + CRUD + 校验 + 部署 + 演示账号，构成可评审作品最小集。
+
+
+**交互 Demo：** 热身：修状态更新（kind: `challenge`）
+
+
+**测验：**
+- Q: 作品最少？
+  - [ ] 静态页
+  - [✓] 鉴权+CRUD
+  - [ ] 仅 CSS
+  - [ ] 仅动画
+  - 解析: 证明全栈协作。
+- Q: 演示账号？
+  - [ ] 不写
+  - [✓] README
+  - [ ] 口口
+  - [ ] CSS
+  - 解析: 方便评审。
+
+
+---
+
+# React 与 TypeScript
+
+- slug: `typescript-react`
+- track: 工程化
+- level: 实战
+- minutes: 12
+
+### Props 类型
+
+```tsx
+type Props = {
+  title: string
+  onSave: (id: string) => void
+  children?: React.ReactNode
+}
+export function Panel({ title, onSave, children }: Props) {
+  return <section>...</section>
+}
+```
+
+
+### React + TS
+
+为 props、state、事件对象建模。事件用 React.ChangeEvent<HTMLInputElement> 等。
+
+
+**交互 Demo：** 想象 props 都有类型（kind: `props`）
+
+
+**测验：**
+- Q: 事件类型常用？
+  - [ ] any
+  - [✓] React.ChangeEvent<HTMLInputElement>
+  - [ ] string
+  - [ ] EventTarget only
+  - 解析: 具体 DOM 事件泛型。
+- Q: useState 泛型？
+  - [ ] 禁止
+  - [✓] useState<User | null>(null)
+  - [ ] 仅 class
+  - [ ] 仅 Vue
+  - 解析: 显式状态类型。
+
+
+---
+
+# 测试入门
+
+- slug: `testing-react`
+- track: 工程化
+- level: 实战
+- minutes: 10
+
+### 测试
+
+React Testing Library 主张按用户行为测；E2E 覆盖关键路径。
+
+
+### 组件测试骨架
+
+```tsx
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { Counter } from './Counter'
+
+it('increments', async () => {
+  render(<Counter />)
+  await userEvent.click(screen.getByRole('button'))
+  expect(screen.getByText(/1/)).toBeInTheDocument()
+})
+```
+
+
+> **提示：** 工坊 6 关 ≈ E2E 用例：login / 401 / CRUD / logout。
+
+
+**测验：**
+- Q: RTL 强调？
+  - [ ] 测实现细节
+  - [✓] 像用户一样测
+  - [ ] 仅快照
+  - [ ] 仅 CSS
+  - 解析: 可访问角色与行为。
+- Q: E2E 适合？
+  - [ ] 每个私有函数
+  - [✓] 主用户路径
+  - [ ] 替代全部单测
+  - [ ] 像素对比必须
+  - 解析: 关键路径。
+
+
+---
+
+# 生产部署清单
+
+- slug: `deploy`
+- track: 工程化
+- level: 实战
+- minutes: 9
+
+### 部署
+
+build 产物为静态资源；SPA 需配置 fallback 到 index.html；环境变量勿把密钥打进前端。
+
+
+### 检查表
+
+```text
+[ ] VITE_API_BASE
+[ ] CORS
+[ ] history fallback → index.html
+[ ] 密钥不进前端包
+[ ] 错误可观测
+```
+
+
+**测验：**
+- Q: 刷新 /dashboard 404？
+  - [ ] React 坏了
+  - [✓] 服务器未 fallback
+  - [ ] 必须 hash
+  - [ ] Zustand 问题
+  - 解析: SPA 需服务器配合。
+- Q: 密钥放？
+  - [ ] git 明文
+  - [✓] 服务端环境变量
+  - [ ] 前端常量
+  - [ ] CSS
+  - 解析: 服务端。
+
+
+---
+
+# useReducer
+
+- slug: `use-reducer`
+- track: 进阶模式
+- level: 进阶
+- minutes: 12
+
+### 何时用
+
+多字段联动、下一步依赖上一步规则时，useReducer 比多个 useState 更清晰：dispatch(action) 描述「发生了什么」。
+
+
+### 计数器
+
+```tsx
+type Action = { type: 'inc' } | { type: 'dec' } | { type: 'set'; n: number }
+function reducer(state: number, action: Action) {
+  switch (action.type) {
+    case 'inc': return state + 1
+    case 'dec': return state - 1
+    case 'set': return action.n
+  }
+}
+const [n, dispatch] = useReducer(reducer, 0)
+```
+
+
+**交互 Demo：** 动手：dispatch（kind: `reducer`）
+
+
+**测验：**
+- Q: useReducer 适合？
+  - [ ] 仅字符串
+  - [✓] 规则清晰的复杂状态
+  - [ ] 替代 CSS
+  - [ ] 禁止 TypeScript
+  - 解析: action 驱动状态机式更新。
+- Q: 更新方式？
+  - [ ] 直接 mutate state
+  - [✓] dispatch(action)
+  - [ ] 仅 setState 对象
+  - [ ] document.write
+  - 解析: dispatch。
+
+
+---
+
+# useRef 与 DOM
+
+- slug: `use-ref`
+- track: 进阶模式
+- level: 进阶
+- minutes: 11
+
+### 聚焦输入
+
+```tsx
+const inputRef = useRef<HTMLInputElement>(null)
+function focus() {
+  inputRef.current?.focus()
+}
+return <input ref={inputRef} />
+```
+
+
+### useRef
+
+拿到 DOM 或保存可变值且不触发渲染。聚焦输入、存 timer id 常用。
+
+
+**交互 Demo：** 动手：ref 聚焦（kind: `ref`）
+
+
+**测验：**
+- Q: 改 ref.current？
+  - [ ] 一定重渲
+  - [✓] 不触发重渲
+  - [ ] 卸载组件
+  - [ ] 发请求
+  - 解析: 可变但不调度渲染。
+- Q: ref 常见用途？
+  - [ ] 全局 CSS
+  - [✓] DOM/保存上次值
+  - [ ] 替代 Router
+  - [ ] 仅服务端
+  - 解析: DOM 与持久值。
+
+
+---
+
+# Portal 传送门
+
+- slug: `portal`
+- track: 进阶模式
+- level: 进阶
+- minutes: 10
+
+### Modal
+
+```tsx
+import { createPortal } from 'react-dom'
+{open && createPortal(
+  <div className="mask"><dialog>…</dialog></div>,
+  document.body,
+)}
+```
+
+
+### Portal
+
+createPortal 把节点挂到 body，做模态框/浮层，脱离父级层叠上下文限制。
+
+
+**交互 Demo：** 动手：遮罩弹层（kind: `portal`）
+
+
+**测验：**
+- Q: Portal 解决？
+  - [ ] 鉴权
+  - [✓] DOM 挂载位置与组件树解耦
+  - [ ] 替代 useState
+  - [ ] CSS Modules
+  - 解析: 弹层挂 body。
+- Q: 事件冒泡？
+  - [ ] 不冒泡
+  - [✓] 仍按 React 树冒泡
+  - [ ] 仅 window
+  - [ ] 被禁用
+  - 解析: React 事件按组件树。
+
+
+---
+
+# 错误边界心智
+
+- slug: `error-boundary`
+- track: 进阶模式
+- level: 实战
+- minutes: 10
+
+### 为什么需要
+
+子组件 throw 时，没有边界会导致整页白屏。Error Boundary 捕获渲染期错误并展示降级 UI。事件处理器里的错误要用 try/catch。
+
+
+### 概念
+
+```tsx
+// 经典为 class：getDerivedStateFromError / componentDidCatch
+// 或使用 react-error-boundary 等库
+<ErrorBoundary fallback={<p>出错了</p>}>
+  <RiskyWidget />
+</ErrorBoundary>
+```
+
+
+**交互 Demo：** 类比：失败态 UI（kind: `async`）
+
+
+**测验：**
+- Q: Error Boundary 捕获？
+  - [ ] 所有 Promise
+  - [✓] 子树渲染错误
+  - [ ] 仅 CSS
+  - [ ] 网络层全部
+  - 解析: 渲染期错误。
+- Q: onClick 里 throw？
+  - [ ] 边界一定抓住
+  - [✓] 需 try/catch 或自己处理
+  - [ ] 自动 retry
+  - [ ] 忽略
+  - 解析: 事件不在渲染路径。
+
+
+---
+
+# 面试高频串讲
+
+- slug: `interview-react`
+- track: 进阶模式
+- level: 实战
+- minutes: 14
+
+### 渲染流程
+
+state/props 变 → 函数组件再执行 → 产出新 React 元素树 → 协调对比 → 提交 DOM。默认批处理更新。
+
+
+### Hooks 规则
+
+只在顶层调用，保证每次渲染顺序一致；自定义 Hook 以 use 开头复用逻辑。
+
+
+### key
+
+列表协调用 key 识别身份；稳定业务 id 优于 index。
+
+
+### 对应源码 · 不可变更新
+
+```tsx
+const [user, setUser] = useState({ name: 'Ada', score: 1 })
+
+// ✅ 新对象
+setUser({ ...user, score: user.score + 1 })
+setUser((u) => ({ ...u, name: u.name + '!' }))
+
+// ❌ 不要 mutate
+// user.score++
+```
+
+
+**交互 Demo：** 口述时配合此 Demo（kind: `state`）
+
+
+**测验：**
+- Q: Hooks 不能？
+  - [ ] 在顶层
+  - [✓] 在条件分支里随意调用
+  - [ ] 在自定义 Hook
+  - [ ] 在函数组件
+  - 解析: 保持调用顺序。
+- Q: 列表 key？
+  - [ ] 每次随机
+  - [✓] 稳定 id
+  - [ ] 永远 index
+  - [ ] 不要
+  - 解析: 稳定身份。
+
+
+---
+
+# Suspense 与懒加载
+
+- slug: `suspense`
+- track: 现代 React
+- level: 进阶
+- minutes: 12
+
+### 做什么
+
+React.lazy + Suspense 在加载代码时显示 fallback。数据 Suspense 需框架或库配合；先掌握「拆代码 + 占位 UI」。
+
+
+### lazy
+
+```tsx
+const Admin = lazy(() => import('./Admin'))
+function App() {
+  return (
+    <Suspense fallback={<p>加载中…</p>}>
+      <Admin />
+    </Suspense>
+  )
+}
+```
+
+
+**交互 Demo：** 类比：loading 边界（kind: `async`）
+
+
+**测验：**
+- Q: React.lazy 用于？
+  - [ ] CSS
+  - [✓] 动态 import 组件代码拆包
+  - [ ] 替代 useState
+  - [ ] 服务端鉴权
+  - 解析: 代码分割。
+- Q: Suspense fallback？
+  - [ ] 错误页
+  - [✓] 子内容未就绪时的占位
+  - [ ] 路由守卫
+  - [ ] Pinia
+  - 解析: 加载占位。
+
+
+---
+
+# useTransition 并发更新
+
+- slug: `use-transition`
+- track: 现代 React
+- level: 进阶
+- minutes: 11
+
+### 紧急 vs 过渡
+
+输入框应立即响应；过滤大列表可标为 transition，避免卡顿。isPending 可显示「更新中」。
+
+
+### 示例
+
+```tsx
+const [isPending, startTransition] = useTransition()
+const [q, setQ] = useState('')
+const [list, setList] = useState(items)
+function onChange(e) {
+  const v = e.target.value
+  setQ(v) // 紧急
+  startTransition(() => {
+    setList(filterHuge(v)) // 可延迟
+  })
+}
+```
+
+
+**交互 Demo：** 感受：重渲染与响应（kind: `memo`）
+
+
+**测验：**
+- Q: startTransition 适合？
+  - [ ] 密码输入每个字符加密到服务器
+  - [✓] 非紧急 UI 更新（大列表过滤）
+  - [ ] 替代 fetch
+  - [ ] 仅 class
+  - 解析: 保持输入流畅。
+- Q: isPending？
+  - [ ] 错误码
+  - [✓] 过渡更新进行中
+  - [ ] 路由参数
+  - [ ] CSS 变量
+  - 解析: pending 标志。
+
+
+---
+
+# 无障碍基础
+
+- slug: `a11y-react`
+- track: 现代 React
+- level: 实战
+- minutes: 11
+
+### 清单
+
+用 button/a 别用 div 冒充；可聚焦控件；图标按钮要 aria-label；对话框管焦点与 Esc；对比度达标。
+
+
+### 示例
+
+```tsx
+<button type="button" aria-label="关闭" onClick={onClose}>
+  <X aria-hidden />
+</button>
+<dialog open={open} aria-labelledby="t">
+  <h2 id="t">标题</h2>
+</dialog>
+```
+
+
+**交互 Demo：** 弹层也要可键盘关闭（kind: `portal`）
+
+
+**测验：**
+- Q: 图标按钮？
+  - [ ] 不用文字即可
+  - [✓] 需要可访问名称（aria-label 等）
+  - [ ] 禁止 button
+  - [ ] 仅 title 足够永远
+  - 解析: 屏幕阅读器要名称。
+- Q: 交互首选？
+  - [ ] div+onClick
+  - [✓] 语义化 button/a
+  - [ ] span
+  - [ ] canvas
+  - 解析: 原生语义。
+
+
+---
+
+# Next.js 全栈地图
+
+- slug: `nextjs-map`
+- track: 现代 React
+- level: 实战
+- minutes: 14
+
+### 对应工坊
+
+工坊的 mock API 在 Next 里常是 app/api/notes/route.ts；页面可用 Server Component 直接 await 数据，交互岛用 'use client'。
+
+
+### 结构
+
+```text
+app/
+  page.tsx              # Server Component
+  notes/page.tsx
+  api/notes/route.ts    # GET/POST
+  components/NoteForm.tsx  # 'use client'
+```
+
+
+### Route Handler
+
+```ts
+// app/api/notes/route.ts
+export async function GET() {
+  const notes = await db.note.findMany()
+  return Response.json(notes)
+}
+```
+
+
+**交互 Demo：** 复习：请求态（客户端岛）（kind: `async`）
+
+
+**测验：**
+- Q: 默认 Server Component？
+  - [✓] App Router 页面默认可在服务端
+  - [ ] 全部必须 use client
+  - [ ] 仅 Pages Router
+  - [ ] 禁止 async
+  - 解析: App Router 默认服务端。
+- Q: useState 组件？
+  - [ ] 随便放服务端
+  - [✓] 标 'use client'
+  - [ ] 只能写 CSS
+  - [ ] 禁止
+  - 解析: 客户端组件。
+
+
+---
+
+# 表单库心智（RHF）
+
+- slug: `rhf-forms`
+- track: 现代 React
+- level: 实战
+- minutes: 11
+
+### 为什么
+
+大表单全受控会频繁重渲。react-hook-form 用 ref 收集字段，校验可接 Zod，提交时一次拿到 values。
+
+
+### 骨架
+
+```tsx
+const { register, handleSubmit, formState: { errors } } = useForm()
+<form onSubmit={handleSubmit(onSubmit)}>
+  <input {...register('email', { required: true })} />
+  {errors.email && <span>必填</span>}
+</form>
+```
+
+
+**交互 Demo：** 校验 UI 仍重要（kind: `validate`）
+
+
+**测验：**
+- Q: RHF 优势之一？
+  - [ ] 必须 class
+  - [✓] 减少大表单重渲、统一校验
+  - [ ] 替代路由
+  - [ ] 仅 Vue
+  - 解析: 性能与 DX。
+- Q: register？
+  - [ ] 路由注册
+  - [✓] 注册字段到表单
+  - [ ] Service Worker
+  - [ ] CSS
+  - 解析: 字段注册。
+
+
+---
+
+# TanStack Query 心智
+
+- slug: `tanstack-query`
+- track: 数据层
+- level: 实战
+- minutes: 13
+
+### 客户端 state vs 服务端 state
+
+表单输入、弹层开关是客户端状态（useState）。列表/用户资料来自 API，适合 Query：queryKey + queryFn，自动缓存与后台刷新。
+
+
+### useQuery
+
+```tsx
+const { data, isPending, isError, error, refetch, isFetching } = useQuery({
+  queryKey: ['notes'],
+  queryFn: () => fetch('/api/notes').then(r => r.json()),
+})
+```
+
+
+**交互 Demo：** 动手：缓存与刷新（kind: `query`）
+
+
+**测验：**
+- Q: queryKey 作用？
+  - [ ] CSS 类名
+  - [✓] 标识缓存条目
+  - [ ] 路由 path 必须
+  - [ ] 仅调试
+  - 解析: 缓存与失效的钥匙。
+- Q: 适合放 Query 的？
+  - [ ] input 瞬时值
+  - [✓] API 列表/详情
+  - [ ] 仅动画 frame
+  - [ ] window 尺寸永远不用 state
+  - 解析: 服务端状态。
+
+
+---
+
+# Mutation 与乐观更新
+
+- slug: `mutations`
+- track: 数据层
+- level: 实战
+- minutes: 12
+
+### 流程
+
+useMutation 发 POST/PUT/DELETE；成功后 invalidateQueries 让列表重新拉。乐观更新：先改缓存，失败再回滚。
+
+
+### 骨架
+
+```tsx
+const qc = useQueryClient()
+const mut = useMutation({
+  mutationFn: (body) => api.createNote(body),
+  onSuccess: () => qc.invalidateQueries({ queryKey: ['notes'] }),
+})
+```
+
+
+**交互 Demo：** 结合工坊理解写路径（kind: `query`）
+
+
+> **提示：** 全栈工坊的创建/编辑/删除就是 mutation；真实项目里用 Query 接管缓存。
+
+
+**测验：**
+- Q: invalidateQueries？
+  - [ ] 删数据库
+  - [✓] 标记查询过期并重拉
+  - [ ] 清 localStorage
+  - [ ] 登出
+  - 解析: 刷新缓存。
+- Q: 乐观更新风险？
+  - [ ] 无
+  - [✓] 失败需回滚，注意一致性
+  - [ ] 只能 GET
+  - [ ] 禁止 loading
+  - 解析: 要处理失败回滚。
+
+
+---
+
+# Query Key 设计
+
+- slug: `query-keys`
+- track: 数据层
+- level: 实战
+- minutes: 10
+
+### 约定
+
+```ts
+['notes'] // 全部
+['notes', { status: 'open' }] // 过滤
+['notes', id] // 详情
+// 失效全部 notes：
+invalidateQueries({ queryKey: ['notes'] })
+```
+
+
+### Query Key
+
+queryKey 是缓存身份证。['notes', filters] 结构清晰；mutation 后 invalidate 对应 key。
+
+
+**交互 Demo：** 不同参数 = 不同缓存（kind: `async`）
+
+
+**测验：**
+- Q: 详情 key 常见？
+  - [ ] ['notes'] 仅
+  - [✓] ['notes', id]
+  - [ ] 随机数
+  - [ ] 仅 URL
+  - 解析: 含 id 区分。
+- Q: 过滤列表？
+  - [ ] 忽略 filter
+  - [✓] key 中带 filter 对象
+  - [ ] 禁止过滤
+  - [ ] 只用 index
+  - 解析: 参数进 key。
+
+
+---
+
+# 组合模式复盘
+
+- slug: `composition-patterns`
+- track: 数据层
+- level: 进阶
+- minutes: 11
+
+### 为什么放这里
+
+数据层组件常要拆：List + Item + Empty + Error。用组合而不是巨型 if，便于复用与测试。
+
+
+### 复合组件
+
+```tsx
+<Notes>
+  <Notes.Toolbar />
+  <Notes.List />
+  <Notes.Empty />
+</Notes>
+```
+
+
+**交互 Demo：** props/children 组合（kind: `props`）
+
+
+**测验：**
+- Q: 组合优于巨型组件？
+  - [ ] 否
+  - [✓] 职责清晰、易测易换
+  - [ ] 更慢必须
+  - [ ] 仅 class
+  - 解析: 可维护性。
+- Q: children？
+  - [ ] 非法
+  - [✓] 插槽式组合
+  - [ ] 仅字符串
+  - [ ] 生命周期
+  - 解析: 组合点。
+
+
+---
+
+# 工坊 × Query 对照
+
+- slug: `studio-query`
+- track: 数据层
+- level: 实战
+- minutes: 12
+
+### 对照表
+
+登录 = mutation；会话用户 = useQuery(['me'])；笔记列表 = useQuery(['notes'])；创建/改/删 = mutation + invalidateQueries(['notes'])。打开全栈工坊看顶部 fetchStatus。
+
+
+### 关键
+
+```tsx
+const notes = useQuery({
+  queryKey: ['studio','notes', token],
+  enabled: !!token,
+  queryFn: () => apiListNotes(token),
+})
+const create = useMutation({
+  mutationFn: (body) => apiCreateNote(token, body),
+  onSuccess: () => qc.invalidateQueries({ queryKey: ['studio','notes'] }),
+})
+```
+
+
+**交互 Demo：** 缓存心智复习（kind: `query`）
+
+
+> **提示：** 工坊已用 QueryClientProvider 包住本页，不影响全站其它路由。
+
+
+**测验：**
+- Q: 写成功后？
+  - [ ] 什么都不做
+  - [✓] invalidate 相关 query
+  - [ ] 必须整页刷新
+  - [ ] 删 QueryClient
+  - 解析: 让列表重拉。
+- Q: enabled: !!token？
+  - [ ] 无意义
+  - [✓] 无 token 不发 me/notes 请求
+  - [ ] 强制 SSR
+  - [ ] 仅 CSS
+  - 解析: 条件查询。
+
+
+---
+
+# useDeferredValue
+
+- slug: `deferred-value`
+- track: 现代 React
+- level: 进阶
+- minutes: 10
+
+### 与 transition
+
+useDeferredValue(value) 让基于 value 的昂贵渲染可延后；输入仍即时。适合搜索框 + 大结果列表。
+
+
+### 示例
+
+```tsx
+const [q, setQ] = useState('')
+const deferred = useDeferredValue(q)
+const results = useMemo(() => filterHuge(deferred), [deferred])
+```
+
+
+**交互 Demo：** 昂贵列表与输入（kind: `memo`）
+
+
+**测验：**
+- Q: useDeferredValue 适合？
+  - [ ] 替代服务端鉴权
+  - [✓] 延迟昂贵派生渲染
+  - [ ] 禁止 state
+  - [ ] 仅 class
+  - 解析: 保持输入流畅。
+- Q: 和 startTransition？
+  - [ ] 完全无关
+  - [✓] 都标记非紧急更新
+  - [ ] 只能二选一永远
+  - [ ] 仅 Vue
+  - 解析: 并发特性家族。
+

@@ -1,0 +1,85 @@
+# learning-react
+
+> 交互式中文 React 教程：讲解 + 源码 + Demo（代码即组件）+ 测验 + Playground + 全栈工坊。
+> 权威以 [react.dev/llms.txt](https://react.dev/llms.txt) 为准。
+
+完整上下文（全文）：[https://xiaoqianran.github.io/learning-react/llms-full.txt](https://xiaoqianran.github.io/learning-react/llms-full.txt)
+
+## 官方权威（务必优先）
+
+- [react.dev/llms.txt](https://react.dev/llms.txt)
+- [zh-hans.react.dev/llms.txt](https://zh-hans.react.dev/llms.txt)
+- [React Learn](https://react.dev/learn)
+- [React API Reference](https://react.dev/reference/react)
+
+## 站点入口
+
+- [首页大纲](https://xiaoqianran.github.io/learning-react/)
+- [文档地图](https://xiaoqianran.github.io/learning-react/docs)
+- [Playground](https://xiaoqianran.github.io/learning-react/playground)
+- [全栈工坊](https://xiaoqianran.github.io/learning-react/studio)
+- [路线图](https://xiaoqianran.github.io/learning-react/roadmap)
+- [速查表](https://xiaoqianran.github.io/learning-react/cheatsheet)
+- [学习中心](https://xiaoqianran.github.io/learning-react/hub)
+- [结业证明](https://xiaoqianran.github.io/learning-react/certificate)
+
+## 课程 · 基础
+
+- [React 是什么](https://xiaoqianran.github.io/learning-react/lesson/intro): 组件化 UI 库、声明式渲染与生态定位。（入门 · 7 分钟）
+- [JSX 与渲染](https://xiaoqianran.github.io/learning-react/lesson/jsx): 表达式、属性、条件渲染与列表。（入门 · 9 分钟）
+- [组件与 Props](https://xiaoqianran.github.io/learning-react/lesson/components-props): 拆分 UI、单向数据流、children。（入门 · 10 分钟）
+- [useState 状态](https://xiaoqianran.github.io/learning-react/lesson/state): 本地状态、不可变更新、批量更新。（入门 · 11 分钟）
+- [useEffect 副作用](https://xiaoqianran.github.io/learning-react/lesson/effects): 同步外部系统、依赖数组与清理。（入门 · 12 分钟）
+- [列表与 Key](https://xiaoqianran.github.io/learning-react/lesson/lists-keys): map 渲染、key 与重排陷阱。（入门 · 9 分钟）
+- [表单与受控组件](https://xiaoqianran.github.io/learning-react/lesson/forms): value + onChange 受控模式。（入门 · 10 分钟）
+- [自定义 Hooks](https://xiaoqianran.github.io/learning-react/lesson/hooks-custom): 复用状态逻辑：useXxx。（进阶 · 11 分钟）
+
+## 课程 · 进阶
+
+- [Context 跨层传递](https://xiaoqianran.github.io/learning-react/lesson/context): 避免 props 钻取；适合主题/会话。（进阶 · 12 分钟）
+- [memo / useMemo / useCallback](https://xiaoqianran.github.io/learning-react/lesson/memo): 何时优化重渲染。（进阶 · 11 分钟）
+- [React Router 入门](https://xiaoqianran.github.io/learning-react/lesson/router): SPA 路由、Link、动态参数。（进阶 · 12 分钟）
+- [Zustand 状态管理](https://xiaoqianran.github.io/learning-react/lesson/zustand): 轻量全局 store（本站进度也在用）。（进阶 · 11 分钟）
+
+## 课程 · 现代 React
+
+- [Suspense 与懒加载](https://xiaoqianran.github.io/learning-react/lesson/suspense): 按需拆包与 loading 边界。（进阶 · 12 分钟）
+- [useTransition 并发更新](https://xiaoqianran.github.io/learning-react/lesson/use-transition): 把非紧急更新标为可中断。（进阶 · 11 分钟）
+- [无障碍基础](https://xiaoqianran.github.io/learning-react/lesson/a11y-react): 语义、键盘、焦点与 ARIA。（实战 · 11 分钟）
+- [Next.js 全栈地图](https://xiaoqianran.github.io/learning-react/lesson/nextjs-map): App Router、Server Components、Route Handlers。（实战 · 14 分钟）
+- [表单库心智（RHF）](https://xiaoqianran.github.io/learning-react/lesson/rhf-forms): 非受控性能、校验与提交。（实战 · 11 分钟）
+- [useDeferredValue](https://xiaoqianran.github.io/learning-react/lesson/deferred-value): 延迟非紧急派生 UI。（进阶 · 10 分钟）
+
+## 课程 · 数据层
+
+- [TanStack Query 心智](https://xiaoqianran.github.io/learning-react/lesson/tanstack-query): 服务端状态：缓存、stale、refetch。（实战 · 13 分钟）
+- [Mutation 与乐观更新](https://xiaoqianran.github.io/learning-react/lesson/mutations): 写操作、invalidate、乐观 UI。（实战 · 12 分钟）
+- [Query Key 设计](https://xiaoqianran.github.io/learning-react/lesson/query-keys): 层级 key、过滤参数与失效范围。（实战 · 10 分钟）
+- [组合模式复盘](https://xiaoqianran.github.io/learning-react/lesson/composition-patterns): children、render props 思维、复合组件。（进阶 · 11 分钟）
+- [工坊 × Query 对照](https://xiaoqianran.github.io/learning-react/lesson/studio-query): 把 CRUD 映射到 useQuery / useMutation。（实战 · 12 分钟）
+
+## 课程 · 全栈准备
+
+- [异步数据与请求态](https://xiaoqianran.github.io/learning-react/lesson/async-data): loading / error / empty 与取消。（实战 · 13 分钟）
+- [路由守卫心智](https://xiaoqianran.github.io/learning-react/lesson/route-guards): 登录拦截与 redirect（体验层）。（实战 · 11 分钟）
+- [表单校验](https://xiaoqianran.github.io/learning-react/lesson/form-validate): 字段错误与提交门禁。（实战 · 11 分钟）
+
+## 课程 · 全栈实训
+
+- [REST 与 CRUD](https://xiaoqianran.github.io/learning-react/lesson/rest-api): HTTP 方法、状态码、资源路径。（实战 · 12 分钟）
+- [Token 登录](https://xiaoqianran.github.io/learning-react/lesson/auth-token): Bearer、会话与 401 清理。（实战 · 11 分钟）
+- [毕业作品清单](https://xiaoqianran.github.io/learning-react/lesson/capstone): 可演示的 React 全栈小产品。（实战 · 9 分钟）
+
+## 课程 · 工程化
+
+- [React 与 TypeScript](https://xiaoqianran.github.io/learning-react/lesson/typescript-react): 类型化 props、事件与 hooks。（实战 · 12 分钟）
+- [测试入门](https://xiaoqianran.github.io/learning-react/lesson/testing-react): Vitest + Testing Library 思路。（实战 · 10 分钟）
+- [生产部署清单](https://xiaoqianran.github.io/learning-react/lesson/deploy): 环境变量、SPA fallback、密钥。（实战 · 9 分钟）
+
+## 课程 · 进阶模式
+
+- [useReducer](https://xiaoqianran.github.io/learning-react/lesson/use-reducer): 复杂状态迁移：action → next state。（进阶 · 12 分钟）
+- [useRef 与 DOM](https://xiaoqianran.github.io/learning-react/lesson/use-ref): 可变盒子：DOM 句柄与不触发重渲的值。（进阶 · 11 分钟）
+- [Portal 传送门](https://xiaoqianran.github.io/learning-react/lesson/portal): createPortal 把弹层挂到 body。（进阶 · 10 分钟）
+- [错误边界心智](https://xiaoqianran.github.io/learning-react/lesson/error-boundary): 子树渲染错误兜底（class 边界 / 库）。（实战 · 10 分钟）
+- [面试高频串讲](https://xiaoqianran.github.io/learning-react/lesson/interview-react): 渲染、Hooks 规则、key、协调一句话答法。（实战 · 14 分钟）

@@ -1,3 +1,13 @@
+# learning-react
+
+交互式中文 **React** 教程（TanStack Start + Vite）。
+
+- 对齐 [react.dev/llms.txt](https://react.dev/llms.txt)（官方有！）
+- 本站：[`/llms.txt`](https://xiaoqianran.github.io/learning-react/llms.txt) · [`/llms-full.txt`](https://xiaoqianran.github.io/learning-react/llms-full.txt)
+- UI：Catppuccin + 学/查/练/我 导航（与 learning-vue3 同构）
+- 讲解与 Demo 源码一一对应（代码即组件）
+- 部署：GitHub Actions → GitHub Pages
+
 # React 实战学习
 
 **在线：** https://xiaoqianran.github.io/learning-react/  
