@@ -1,8 +1,10 @@
 import { useEffect, useState, memo, useMemo } from "react";
 import type { DemoKind } from "@/data/lessons";
 import { Button } from "@/components/ui/button";
+import { CodeBlock } from "@/components/CodeBlock";
+import { getDemoSource } from "@/data/demo-sources";
 import { cn } from "@/lib/utils";
-import { Plus, Trash2, Check, RotateCcw } from "lucide-react";
+import { Plus, Trash2, Check, RotateCcw, Code2, ChevronDown, ChevronUp } from "lucide-react";
 
 export function InteractiveDemo({
   kind,
@@ -13,24 +15,57 @@ export function InteractiveDemo({
   title: string;
   hint?: string;
 }) {
+  const [showSource, setShowSource] = useState(true);
+  const source = getDemoSource(kind);
+
   return (
     <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
       <div className="flex flex-wrap items-start justify-between gap-2 border-b border-border px-4 py-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-primary">
-            交互 Demo
+            交互 Demo · 代码即组件
           </p>
-          <h3 className="mt-0.5 font-display text-base font-semibold text-fg">
-            {title}
-          </h3>
+          <h3 className="mt-0.5 font-display text-base font-semibold text-fg">{title}</h3>
         </div>
-        <span className="rounded-full bg-primary-soft px-2.5 py-1 font-mono text-[10px] text-primary">
-          live
-        </span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowSource((v) => !v)}
+            className="inline-flex items-center gap-1 rounded-full border border-border bg-surface-2 px-2.5 py-1 text-[11px] text-muted transition-colors hover:text-fg"
+          >
+            <Code2 className="h-3.5 w-3.5" />
+            对应源码
+            {showSource ? (
+              <ChevronUp className="h-3.5 w-3.5" />
+            ) : (
+              <ChevronDown className="h-3.5 w-3.5" />
+            )}
+          </button>
+          <span className="rounded-full bg-primary-soft px-2.5 py-1 font-mono text-[10px] text-primary">
+            live
+          </span>
+        </div>
       </div>
       <div className="p-4 sm:p-5">
         {hint ? <p className="mb-4 text-sm text-muted">{hint}</p> : null}
+        <div className="mb-2 flex items-center gap-2">
+          <span className="rounded-sm bg-primary-soft px-1.5 py-0.5 font-mono text-[10px] text-primary">
+            A · 运行结果
+          </span>
+          <span className="text-xs text-muted">下方源码编译/等价实现后的可交互界面</span>
+        </div>
         <DemoBody kind={kind} />
+        {showSource ? (
+          <div className="mt-5 border-t border-border pt-4">
+            <div className="mb-2 flex items-center gap-2">
+              <span className="rounded-sm bg-surface-3 px-1.5 py-0.5 font-mono text-[10px] text-muted">
+                B · 对应源码
+              </span>
+              <span className="text-xs text-muted">与上方 Demo 同一套逻辑 — 读 B，操作 A</span>
+            </div>
+            <CodeBlock code={source.code} title={source.title} lang={source.lang} />
+          </div>
+        ) : null}
       </div>
     </section>
   );
@@ -91,15 +126,8 @@ function Panel({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "rounded-lg border border-border bg-surface-2 p-3 sm:p-4",
-        className,
-      )}
-    >
-      <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-subtle">
-        {label}
-      </p>
+    <div className={cn("rounded-lg border border-border bg-surface-2 p-3 sm:p-4", className)}>
+      <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-subtle">{label}</p>
       {children}
     </div>
   );
@@ -177,9 +205,7 @@ function PropsDemo() {
           onChange={(e) => setTitle(e.target.value)}
           className="h-10 w-full rounded-md border border-border bg-bg px-3 text-sm"
         />
-        <p className="mt-2 font-mono text-xs text-muted">
-          {`<Card title="${title}" />`}
-        </p>
+        <p className="mt-2 font-mono text-xs text-muted">{`<Card title="${title}" />`}</p>
       </Panel>
       <Panel label="子组件收到 props">
         <div className="rounded-md border border-border bg-bg p-3">
@@ -196,10 +222,7 @@ function StateDemo() {
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       <Panel label="不可变更新">
-        <Button
-          size="sm"
-          onClick={() => setUser((u) => ({ ...u, score: u.score + 1 }))}
-        >
+        <Button size="sm" onClick={() => setUser((u) => ({ ...u, score: u.score + 1 }))}>
           {"setUser({ ...u, score: u.score + 1 })"}
         </Button>
         <Button
@@ -212,9 +235,7 @@ function StateDemo() {
         </Button>
       </Panel>
       <Panel label="当前 state">
-        <pre className="font-mono text-xs text-primary">
-          {JSON.stringify(user, null, 2)}
-        </pre>
+        <pre className="font-mono text-xs text-primary">{JSON.stringify(user, null, 2)}</pre>
       </Panel>
     </div>
   );
@@ -352,10 +373,18 @@ function ContextDemo() {
     <div className="space-y-3">
       <Panel label="Provider 值">
         <div className="flex gap-2">
-          <Button size="sm" variant={theme === "dark" ? "default" : "secondary"} onClick={() => setTheme("dark")}>
+          <Button
+            size="sm"
+            variant={theme === "dark" ? "default" : "secondary"}
+            onClick={() => setTheme("dark")}
+          >
             dark
           </Button>
-          <Button size="sm" variant={theme === "light" ? "default" : "secondary"} onClick={() => setTheme("light")}>
+          <Button
+            size="sm"
+            variant={theme === "light" ? "default" : "secondary"}
+            onClick={() => setTheme("light")}
+          >
             light
           </Button>
         </div>
@@ -363,9 +392,7 @@ function ContextDemo() {
       <div
         className={cn(
           "rounded-lg border p-4 text-sm",
-          theme === "dark"
-            ? "border-border bg-bg text-fg"
-            : "border-border-strong bg-fg text-bg",
+          theme === "dark" ? "border-border bg-bg text-fg" : "border-border-strong bg-fg text-bg",
         )}
       >
         深层子组件 useContext → theme = <strong>{theme}</strong>
@@ -411,15 +438,10 @@ function MemoDemo() {
         </div>
       </Panel>
       <Panel label="子渲染次数">
-        <p className="text-sm text-muted">
-          仅 label 变化时子应增加渲染（memo 浅比较）
-        </p>
+        <p className="text-sm text-muted">仅 label 变化时子应增加渲染（memo 浅比较）</p>
         <p className="mt-1 font-mono text-primary">{childRenders}</p>
         <div className="mt-2">
-          <ExpensiveChild
-            label={label}
-            onRender={() => setChildRenders((c) => c + 1)}
-          />
+          <ExpensiveChild label={label} onRender={() => setChildRenders((c) => c + 1)} />
         </div>
       </Panel>
     </div>
@@ -427,9 +449,7 @@ function MemoDemo() {
 }
 
 function AsyncDemo() {
-  const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
   const [items, setItems] = useState<string[]>([]);
 
   function load(mode: "ok" | "error") {
@@ -452,7 +472,12 @@ function AsyncDemo() {
           <Button size="sm" onClick={() => load("ok")} disabled={status === "loading"}>
             成功
           </Button>
-          <Button size="sm" variant="secondary" onClick={() => load("error")} disabled={status === "loading"}>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => load("error")}
+            disabled={status === "loading"}
+          >
             失败
           </Button>
         </div>
@@ -575,7 +600,14 @@ function GuardDemo() {
           <Button size="sm" onClick={() => setToken("tok")}>
             登录
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => { setToken(null); setPage("home"); }}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setToken(null);
+              setPage("home");
+            }}
+          >
             退出
           </Button>
         </div>
@@ -607,16 +639,28 @@ function ValidateDemo() {
     <div className="mx-auto max-w-sm space-y-3">
       <input
         value={email}
-        onChange={(e) => { setEmail(e.target.value); setOk(false); }}
-        className={cn("h-10 w-full rounded-md border bg-bg px-3 text-sm", errors.email ? "border-danger" : "border-border")}
+        onChange={(e) => {
+          setEmail(e.target.value);
+          setOk(false);
+        }}
+        className={cn(
+          "h-10 w-full rounded-md border bg-bg px-3 text-sm",
+          errors.email ? "border-danger" : "border-border",
+        )}
         placeholder="email"
       />
       {errors.email ? <p className="text-xs text-danger">{errors.email}</p> : null}
       <input
         type="password"
         value={password}
-        onChange={(e) => { setPassword(e.target.value); setOk(false); }}
-        className={cn("h-10 w-full rounded-md border bg-bg px-3 text-sm", errors.password ? "border-danger" : "border-border")}
+        onChange={(e) => {
+          setPassword(e.target.value);
+          setOk(false);
+        }}
+        className={cn(
+          "h-10 w-full rounded-md border bg-bg px-3 text-sm",
+          errors.password ? "border-danger" : "border-border",
+        )}
         placeholder="password"
       />
       {errors.password ? <p className="text-xs text-danger">{errors.password}</p> : null}
@@ -644,12 +688,17 @@ function ChallengeDemo() {
     <Panel label="修状态更新">
       <textarea
         value={code}
-        onChange={(e) => { setCode(e.target.value); setStatus("idle"); }}
+        onChange={(e) => {
+          setCode(e.target.value);
+          setStatus("idle");
+        }}
         rows={6}
         className="w-full rounded-md border border-border bg-bg p-3 font-mono text-xs"
       />
       <div className="mt-2 flex gap-2">
-        <Button size="sm" onClick={check}>检查</Button>
+        <Button size="sm" onClick={check}>
+          检查
+        </Button>
         <Button
           size="sm"
           variant="secondary"
@@ -669,7 +718,6 @@ function ChallengeDemo() {
     </Panel>
   );
 }
-
 
 function ReducerDemo() {
   type Action = { type: "inc" } | { type: "dec" } | { type: "reset" };
@@ -696,11 +744,9 @@ function ReducerDemo() {
         </div>
       </Panel>
       <Panel label="心智">
-        <p className="text-sm text-muted">
-          描述「发生了什么」，由 reducer 算出下一状态。
-        </p>
+        <p className="text-sm text-muted">描述「发生了什么」，由 reducer 算出下一状态。</p>
         <pre className="mt-2 font-mono text-xs text-primary">
-{`// useReducer(reducer, 0)
+          {`// useReducer(reducer, 0)
 dispatch({ type: 'inc' })`}
         </pre>
       </Panel>
@@ -723,9 +769,7 @@ function RefDemo() {
           模拟 ref 聚焦
         </Button>
       </Panel>
-      <p className="text-xs text-muted">
-        useRef 改 .current 不会触发重渲；适合 DOM 与「上次值」。
-      </p>
+      <p className="text-xs text-muted">useRef 改 .current 不会触发重渲；适合 DOM 与「上次值」。</p>
     </div>
   );
 }
@@ -746,9 +790,7 @@ function PortalDemo() {
             role="dialog"
           >
             <h4 className="font-display font-semibold">createPortal(…, body)</h4>
-            <p className="mt-2 text-sm text-muted">
-              逻辑仍在当前组件，DOM 挂在高层。
-            </p>
+            <p className="mt-2 text-sm text-muted">逻辑仍在当前组件，DOM 挂在高层。</p>
             <Button className="mt-4" size="sm" onClick={() => setOpen(false)}>
               关闭
             </Button>
@@ -758,7 +800,6 @@ function PortalDemo() {
     </div>
   );
 }
-
 
 function QueryDemo() {
   const [cache, setCache] = useState<string[] | null>(null);
@@ -826,12 +867,8 @@ function QueryDemo() {
                 {x}
               </li>
             ))}
-            {fetching ? (
-              <li className="text-xs text-primary">isFetching 后台刷新…</li>
-            ) : null}
-            {stale ? (
-              <li className="text-xs text-warn">数据可能过期，下次读会 refetch</li>
-            ) : null}
+            {fetching ? <li className="text-xs text-primary">isFetching 后台刷新…</li> : null}
+            {stale ? <li className="text-xs text-warn">数据可能过期，下次读会 refetch</li> : null}
           </ul>
         )}
       </Panel>

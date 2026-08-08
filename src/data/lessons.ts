@@ -39,7 +39,8 @@ export type Lesson = {
   title: string;
   summary: string;
   level: "入门" | "进阶" | "实战";
-  track: "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式" | "现代 React" | "数据层";
+  track:
+    "基础" | "进阶" | "全栈准备" | "全栈实训" | "工程化" | "进阶模式" | "现代 React" | "数据层";
   minutes: number;
   blocks: LessonBlock[];
 };
@@ -163,6 +164,11 @@ function Card({ title, children }: CardProps) {
     </section>
   )
 }`,
+      },
+      {
+        type: "text",
+        title: "组件与 Props",
+        body: "组件是函数，props 是入参。单向数据流：父传子，子通过回调通知父。children 是组合插槽。",
       },
       {
         type: "demo",
@@ -295,6 +301,17 @@ setItems((xs) => xs.filter((x) => x.id !== id))`,
     minutes: 9,
     blocks: [
       {
+        type: "text",
+        title: "列表与 Key",
+        body: "map 渲染列表时 key 必须稳定。用 index 当 key 在重排/插入时会导致状态错位。",
+      },
+      {
+        type: "code",
+        title: "对应源码 · 列表 map + 稳定 key",
+        lang: "tsx",
+        code: "const [items, setItems] = useState([\n  { id: 1, text: '学 useState' },\n  { id: 2, text: '学 key' },\n])\n\n<ul>\n  {items.map((it) => (\n    <li key={it.id}>\n      {it.text}\n      <button onClick={() =>\n        setItems((xs) => xs.filter((x) => x.id !== it.id))\n      }>删</button>\n    </li>\n  ))}\n</ul>",
+      },
+      {
         type: "demo",
         kind: "list",
         title: "动手：增删列表",
@@ -336,6 +353,11 @@ setItems((xs) => xs.filter((x) => x.id !== id))`,
 <input value={name} onChange={(e) => setName(e.target.value)} />`,
       },
       {
+        type: "text",
+        title: "受控组件",
+        body: "value + onChange 让 React 成为唯一数据源。便于校验、禁用提交、即时预览。",
+      },
+      {
         type: "demo",
         kind: "form",
         title: "动手：受控表单",
@@ -371,6 +393,11 @@ setItems((xs) => xs.filter((x) => x.id !== id))`,
   const inc = () => setN((x) => x + 1)
   return { n, inc }
 }`,
+      },
+      {
+        type: "text",
+        title: "自定义 Hook",
+        body: "useXxx 抽取可复用状态逻辑。Hook 只能在组件或其他 Hook 顶层调用。",
       },
       {
         type: "demo",
@@ -429,6 +456,11 @@ function Child() {
 }`,
       },
       {
+        type: "text",
+        title: "Context",
+        body: "跨层传值避免 props 钻透。高频变化的值放 Context 要小心重渲染；可用拆分/memo。",
+      },
+      {
         type: "demo",
         kind: "context",
         title: "动手：主题 Context",
@@ -446,7 +478,12 @@ function Child() {
           {
             id: "c2",
             question: "频繁变的大数据？",
-            options: ["全塞 Context 最好", "拆分或状态库，避免整树重渲", "禁止 Context", "只用 ref"],
+            options: [
+              "全塞 Context 最好",
+              "拆分或状态库，避免整树重渲",
+              "禁止 Context",
+              "只用 ref",
+            ],
             answer: 1,
             explain: "注意性能。",
           },
@@ -466,6 +503,12 @@ function Child() {
         type: "text",
         title: "先正确再优化",
         body: "memo 跳过 props 浅比较相同的重渲；useMemo 缓存计算；useCallback 稳定函数引用。不要过早到处包。",
+      },
+      {
+        type: "code",
+        title: "对应源码 · memo / useMemo",
+        lang: "tsx",
+        code: "const Child = memo(function Child({ label }: { label: string }) {\n  return <div>{label}</div>\n})\n\nfunction Parent() {\n  const [n, setN] = useState(0)\n  const [label, setLabel] = useState('固定 props')\n  const doubled = useMemo(() => n * 2, [n])\n  return (\n    <>\n      <p>{n} / {doubled}</p>\n      <Child label={label} />\n    </>\n  )\n}",
       },
       {
         type: "demo",
@@ -513,6 +556,11 @@ function Child() {
 </BrowserRouter>`,
       },
       {
+        type: "text",
+        title: "路由",
+        body: "Link / useNavigate 导航，Outlet 渲染子路由，useParams 读动态段。",
+      },
+      {
         type: "demo",
         kind: "router",
         title: "动手：迷你路由",
@@ -556,6 +604,11 @@ const useCart = create((set) => ({
   add: (name: string) =>
     set((s) => ({ items: [...s.items, name] })),
 }))`,
+      },
+      {
+        type: "text",
+        title: "Zustand",
+        body: "极简全局 store：create + selector。比 Context 更适合高频更新的客户端状态。",
       },
       {
         type: "demo",
@@ -607,6 +660,11 @@ const useCart = create((set) => ({
 }, [url])`,
       },
       {
+        type: "text",
+        title: "异步三态",
+        body: "idle/loading/ok/error 分支渲染。现代项目更推荐 TanStack Query 管理缓存与重试。",
+      },
+      {
         type: "demo",
         kind: "async",
         title: "动手：请求三态",
@@ -645,6 +703,17 @@ const useCart = create((set) => ({
         body: "前端守卫可被绕过；API 必须鉴权。工坊里试 401。",
       },
       {
+        type: "text",
+        title: "路由守卫心智",
+        body: "未登录跳转登录并带 redirect。前端 Protected 只是 UX；API 必须鉴权。",
+      },
+      {
+        type: "code",
+        title: "对应源码 · 路由守卫心智",
+        lang: "tsx",
+        code: "function Protected({ children }: { children: React.ReactNode }) {\n  const token = localStorage.getItem('token')\n  const loc = useLocation()\n  if (!token) {\n    return <Navigate to={`/login?redirect=${loc.pathname}`} replace />\n  }\n  return children\n}\n\n// <Route path=\"/dashboard\" element={<Protected><Dash /></Protected>} />\n// 前端守卫 ≠ 安全：API 仍要验 token",
+      },
+      {
         type: "demo",
         kind: "guard",
         title: "动手：门禁模拟",
@@ -678,6 +747,17 @@ const useCart = create((set) => ({
     track: "全栈准备",
     minutes: 11,
     blocks: [
+      {
+        type: "text",
+        title: "表单校验",
+        body: "字段错误映射到具体输入。可用手写或 React Hook Form + Zod。",
+      },
+      {
+        type: "code",
+        title: "对应源码 · 字段级校验",
+        lang: "tsx",
+        code: "const [email, setEmail] = useState('')\nconst [password, setPassword] = useState('')\nconst [errors, setErrors] = useState<{ email?: string; password?: string }>({})\n\nfunction submit() {\n  const e: typeof errors = {}\n  if (!/@/.test(email)) e.email = '邮箱格式不对'\n  if (password.length < 6) e.password = '至少 6 位'\n  setErrors(e)\n  if (Object.keys(e).length === 0) { /* 提交 */ }\n}",
+      },
       {
         type: "demo",
         kind: "validate",
@@ -725,6 +805,11 @@ PUT/DELETE /api/notes/:id
         body: "打开「全栈工坊」完成闯关，看请求日志。",
       },
       {
+        type: "text",
+        title: "REST",
+        body: "围绕资源设计 URL 与方法；用状态码驱动客户端分支（401 清会话等）。",
+      },
+      {
         type: "demo",
         kind: "async",
         title: "复习：请求态",
@@ -758,6 +843,17 @@ PUT/DELETE /api/notes/:id
     track: "全栈实训",
     minutes: 11,
     blocks: [
+      {
+        type: "text",
+        title: "Token",
+        body: "登录拿 token → 请求头携带 → 401 统一处理。优先 HttpOnly Cookie 方案时注意 CSRF。",
+      },
+      {
+        type: "code",
+        title: "对应源码 · 路由守卫心智",
+        lang: "tsx",
+        code: "function Protected({ children }: { children: React.ReactNode }) {\n  const token = localStorage.getItem('token')\n  const loc = useLocation()\n  if (!token) {\n    return <Navigate to={`/login?redirect=${loc.pathname}`} replace />\n  }\n  return children\n}\n\n// <Route path=\"/dashboard\" element={<Protected><Dash /></Protected>} />\n// 前端守卫 ≠ 安全：API 仍要验 token",
+      },
       {
         type: "demo",
         kind: "guard",
@@ -801,6 +897,11 @@ PUT/DELETE /api/notes/:id
 [ ] loading/error
 [ ] 校验
 [ ] 部署 + README 演示账号`,
+      },
+      {
+        type: "text",
+        title: "毕业作品",
+        body: "鉴权 + CRUD + 校验 + 部署 + 演示账号，构成可评审作品最小集。",
       },
       {
         type: "demo",
@@ -850,6 +951,11 @@ export function Panel({ title, onSave, children }: Props) {
 }`,
       },
       {
+        type: "text",
+        title: "React + TS",
+        body: "为 props、state、事件对象建模。事件用 React.ChangeEvent<HTMLInputElement> 等。",
+      },
+      {
         type: "demo",
         kind: "props",
         title: "想象 props 都有类型",
@@ -883,6 +989,11 @@ export function Panel({ title, onSave, children }: Props) {
     track: "工程化",
     minutes: 10,
     blocks: [
+      {
+        type: "text",
+        title: "测试",
+        body: "React Testing Library 主张按用户行为测；E2E 覆盖关键路径。",
+      },
       {
         type: "code",
         title: "组件测试骨架",
@@ -930,6 +1041,11 @@ it('increments', async () => {
     track: "工程化",
     minutes: 9,
     blocks: [
+      {
+        type: "text",
+        title: "部署",
+        body: "build 产物为静态资源；SPA 需配置 fallback 到 index.html；环境变量勿把密钥打进前端。",
+      },
       {
         type: "code",
         title: "检查表",
@@ -1002,7 +1118,12 @@ const [n, dispatch] = useReducer(reducer, 0)`,
           {
             id: "ur2",
             question: "更新方式？",
-            options: ["直接 mutate state", "dispatch(action)", "仅 setState 对象", "document.write"],
+            options: [
+              "直接 mutate state",
+              "dispatch(action)",
+              "仅 setState 对象",
+              "document.write",
+            ],
             answer: 1,
             explain: "dispatch。",
           },
@@ -1027,6 +1148,11 @@ function focus() {
   inputRef.current?.focus()
 }
 return <input ref={inputRef} />`,
+      },
+      {
+        type: "text",
+        title: "useRef",
+        body: "拿到 DOM 或保存可变值且不触发渲染。聚焦输入、存 timer id 常用。",
       },
       { type: "demo", kind: "ref", title: "动手：ref 聚焦" },
       {
@@ -1067,6 +1193,11 @@ return <input ref={inputRef} />`,
   <div className="mask"><dialog>…</dialog></div>,
   document.body,
 )}`,
+      },
+      {
+        type: "text",
+        title: "Portal",
+        body: "createPortal 把节点挂到 body，做模态框/浮层，脱离父级层叠上下文限制。",
       },
       { type: "demo", kind: "portal", title: "动手：遮罩弹层" },
       {
@@ -1158,6 +1289,12 @@ return <input ref={inputRef} />`,
         title: "key",
         body: "列表协调用 key 识别身份；稳定业务 id 优于 index。",
       },
+      {
+        type: "code",
+        title: "对应源码 · 不可变更新",
+        lang: "tsx",
+        code: "const [user, setUser] = useState({ name: 'Ada', score: 1 })\n\n// ✅ 新对象\nsetUser({ ...user, score: user.score + 1 })\nsetUser((u) => ({ ...u, name: u.name + '!' }))\n\n// ❌ 不要 mutate\n// user.score++",
+      },
       { type: "demo", kind: "state", title: "口述时配合此 Demo" },
       {
         type: "quiz",
@@ -1179,7 +1316,8 @@ return <input ref={inputRef} />`,
         ],
       },
     ],
-  }, {
+  },
+  {
     slug: "suspense",
     title: "Suspense 与懒加载",
     summary: "按需拆包与 loading 边界。",
@@ -1262,7 +1400,12 @@ function onChange(e) {
           {
             id: "ut1",
             question: "startTransition 适合？",
-            options: ["密码输入每个字符加密到服务器", "非紧急 UI 更新（大列表过滤）", "替代 fetch", "仅 class"],
+            options: [
+              "密码输入每个字符加密到服务器",
+              "非紧急 UI 更新（大列表过滤）",
+              "替代 fetch",
+              "仅 class",
+            ],
             answer: 1,
             explain: "保持输入流畅。",
           },
@@ -1308,7 +1451,12 @@ function onChange(e) {
           {
             id: "a11",
             question: "图标按钮？",
-            options: ["不用文字即可", "需要可访问名称（aria-label 等）", "禁止 button", "仅 title 足够永远"],
+            options: [
+              "不用文字即可",
+              "需要可访问名称（aria-label 等）",
+              "禁止 button",
+              "仅 title 足够永远",
+            ],
             answer: 1,
             explain: "屏幕阅读器要名称。",
           },
@@ -1363,7 +1511,12 @@ export async function GET() {
           {
             id: "nx1",
             question: "默认 Server Component？",
-            options: ["App Router 页面默认可在服务端", "全部必须 use client", "仅 Pages Router", "禁止 async"],
+            options: [
+              "App Router 页面默认可在服务端",
+              "全部必须 use client",
+              "仅 Pages Router",
+              "禁止 async",
+            ],
             answer: 0,
             explain: "App Router 默认服务端。",
           },
@@ -1422,7 +1575,8 @@ export async function GET() {
         ],
       },
     ],
-  }, {
+  },
+  {
     slug: "tanstack-query",
     title: "TanStack Query 心智",
     summary: "服务端状态：缓存、stale、refetch。",
@@ -1532,6 +1686,11 @@ const mut = useMutation({
 ['notes', id] // 详情
 // 失效全部 notes：
 invalidateQueries({ queryKey: ['notes'] })`,
+      },
+      {
+        type: "text",
+        title: "Query Key",
+        body: "queryKey 是缓存身份证。['notes', filters] 结构清晰；mutation 后 invalidate 对应 key。",
       },
       { type: "demo", kind: "async", title: "不同参数 = 不同缓存" },
       {
@@ -1696,7 +1855,6 @@ const results = useMemo(() => filterHuge(deferred), [deferred])`,
       },
     ],
   },
-
 ];
 
 export const TRACKS = [
@@ -1737,9 +1895,7 @@ export function getLessonsByTrack(track: Lesson["track"]) {
 export function getAllQuizQuestions(): Array<
   QuizQuestion & { lessonSlug: string; lessonTitle: string }
 > {
-  const out: Array<
-    QuizQuestion & { lessonSlug: string; lessonTitle: string }
-  > = [];
+  const out: Array<QuizQuestion & { lessonSlug: string; lessonTitle: string }> = [];
   for (const lesson of LESSONS) {
     for (const block of lesson.blocks) {
       if (block.type === "quiz") {

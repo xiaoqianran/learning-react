@@ -26,3 +26,10 @@
 ```bash
 npm install && npm run dev
 ```
+
+## 代码 ↔ 组件对照
+
+- 每节课：**讲解 → 对应源码 → 交互 Demo → 测验**
+- Demo 卡片内嵌 **A 运行结果 / B 对应源码**，同一套逻辑，便于看出「什么代码产出什么组件」
+- 源码定义集中在 `src/data/demo-sources.ts`，与 `InteractiveDemos` 按 `DemoKind` 绑定
+
